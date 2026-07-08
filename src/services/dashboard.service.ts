@@ -123,7 +123,7 @@ export async function getUpcomingCatalysts(filters?: Record<string, string>): Pr
   // To filter catalysts, we need to apply filters on the related drug
   const supabase = await createServerClient();
   const { data: validDrugs } = await buildDrugQuery(supabase, filters);
-  const validDrugIds = validDrugs ? Array.from(new Set(validDrugs.map(d => d.id))) : [];
+  const validDrugIds = validDrugs ? Array.from(new Set(validDrugs.map((d: any) => d.id))) : [];
 
   let query = supabase.from('upcoming_events')
     .select('*, drugs(drug_name, companies(company_name))')
