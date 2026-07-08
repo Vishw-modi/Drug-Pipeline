@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-primary: #18A3A1;
+  --color-brand-secondary: #2CB6B2;
+  --color-brand-pink: #EE4B77;
+  --color-brand-coral: #F56A6A;
+  --color-brand-blue: #4F8CBD;
+  --color-brand-navy: #0F172A;
+
+  --color-background: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-border: #E5E7EB;
+  --color-muted: #64748B;
+  
+  --color-status-discovery: #9CA3AF; /* Gray */
+  --color-status-preclinical: #64748B; /* Slate */
+  --color-status-phase1: #3B82F6; /* Blue */
+  --color-status-phase2: #14B8A6; /* Teal */
+  --color-status-phase3: #EC4899; /* Pink */
+  --color-status-filed: #F97316; /* Orange */
+  --color-status-approved: #22C55E; /* Green */
+  --color-status-withdrawn: #EF4444; /* Red */
+}
+
+@layer base {
+  :root {
+    --background: var(--color-background);
+    --foreground: var(--color-brand-navy);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .kmk-card {
+    @apply bg-[var(--color-surface)] border-[var(--color-border)] rounded-xl border shadow-sm;
+  }
+}
