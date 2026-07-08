@@ -10,7 +10,7 @@ export async function getCompanies(): Promise<Company[]> {
 
 export async function getCompanyById(id: string): Promise<Company | null> {
   const supabase = await createClient();
-  const { data, error } = await supabase.from('companies').eq('id', id).single();
+  const { data, error } = await supabase.from('companies').select('*').eq('id', id).single();
   if (error || !data) return null;
   return data;
 }
