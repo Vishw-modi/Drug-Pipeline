@@ -147,7 +147,7 @@ export async function getUpcomingCatalysts(filters?: Record<string, string>): Pr
 export async function getRecentUpdates(filters?: Record<string, string>): Promise<DrugUpdate[]> {
   const supabase = await createServerClient();
   const { data: validDrugs } = await buildDrugQuery(supabase, filters);
-  const validDrugIds = validDrugs ? Array.from(new Set(validDrugs.map(d => d.id))) : [];
+  const validDrugIds = validDrugs ? Array.from(new Set(validDrugs.map((d: any) => d.id))) : [];
 
   let query = supabase.from('drug_updates')
     .select('*, drugs(drug_name)')

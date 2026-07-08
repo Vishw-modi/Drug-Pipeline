@@ -35,7 +35,7 @@ export function downloadPowerPoint(dataUrl: string, filename: string) {
     y: 0,
     w: '100%',
     h: '100%',
-    sizing: { type: 'contain' }
+    sizing: { type: 'contain', w: '100%', h: '100%' }
   });
 
   // Ensure it has .pptx extension
