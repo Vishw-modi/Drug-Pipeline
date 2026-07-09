@@ -20,7 +20,7 @@ export function HorizontalBarChart({ data, color = '#18A3A1', height = 250 }: Ho
   }
 
   return (
-    <ResponsiveContainer width="100%" height={height}>
+    <ResponsiveContainer width="100%" height={height as any}>
       <BarChart
         data={data}
         layout="vertical"
