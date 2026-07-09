@@ -1,18 +1,17 @@
-import html2canvas from 'html2canvas';
-import pptxgen from 'pptxgenjs';
+import { toPng } from 'html-to-image';
+import PptxGenJS from 'pptxgenjs';
 
 export async function generatePreview(elementId: string): Promise<string> {
   const element = document.getElementById(elementId);
   if (!element) throw new Error(`Element with id ${elementId} not found`);
 
-  const canvas = await html2canvas(element, {
-    scale: 2,
+  // Use html-to-image to avoid unsupported modern CSS colors (like lab, oklch) crashing html2canvas
+  const dataUrl = await toPng(element, {
+    pixelRatio: 2,
     backgroundColor: "#F8FAFC",
-    useCORS: true,
-    logging: false
   });
 
-  return canvas.toDataURL('image/png');
+  return dataUrl;
 }
 
 export function downloadImage(dataUrl: string, filename: string) {
@@ -25,7 +24,7 @@ export function downloadImage(dataUrl: string, filename: string) {
 }
 
 export function downloadPowerPoint(dataUrl: string, filename: string) {
-  const pptx = new pptxgen();
+  const pptx = new PptxGenJS();
   const slide = pptx.addSlide();
   
   // Add the screenshot to fill most of the slide

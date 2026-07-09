@@ -7,9 +7,10 @@ import { ChartDataCount } from '@/types/dashboard';
 interface HorizontalBarChartProps {
   data: ChartDataCount[];
   color?: string;
+  height?: number | string;
 }
 
-export function HorizontalBarChart({ data, color = '#18A3A1' }: HorizontalBarChartProps) {
+export function HorizontalBarChart({ data, color = '#18A3A1', height = 250 }: HorizontalBarChartProps) {
   if (!data || data.length === 0) {
     return (
       <div className="flex items-center justify-center h-64 text-[var(--color-muted)] text-sm">
@@ -19,21 +20,21 @@ export function HorizontalBarChart({ data, color = '#18A3A1' }: HorizontalBarCha
   }
 
   return (
-    <ResponsiveContainer width="100%" height={250}>
+    <ResponsiveContainer width="100%" height={height}>
       <BarChart
         data={data}
         layout="vertical"
         margin={{ top: 5, right: 40, left: 20, bottom: 5 }}
       >
         <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#E5E7EB" />
-        <XAxis type="number" hide />
+        <XAxis type="number" hide domain={[0, 'dataMax']} />
         <YAxis 
           dataKey="name" 
           type="category" 
           axisLine={false} 
           tickLine={false} 
           tick={{ fill: 'var(--color-muted)', fontSize: 12 }} 
-          width={150} 
+          width={110} 
         />
         <Tooltip
           cursor={{ fill: '#F8FAFC' }}

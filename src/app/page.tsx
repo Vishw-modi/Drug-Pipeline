@@ -76,12 +76,12 @@ async function ChartsSection({ filters }: { filters: Record<string, string> }) {
 
       {/* Second row: Top Companies & Upcoming Catalysts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-1">
+        <Card className="lg:col-span-1 flex flex-col">
           <CardHeader>
             <CardTitle>Top Companies</CardTitle>
           </CardHeader>
-          <CardContent>
-            <HorizontalBarChart data={sponsorData} color="var(--color-brand-primary)" />
+          <CardContent className="flex-1 flex flex-col min-h-[300px]">
+            <HorizontalBarChart data={sponsorData} color="var(--color-brand-primary)" height="100%" />
           </CardContent>
         </Card>
         
