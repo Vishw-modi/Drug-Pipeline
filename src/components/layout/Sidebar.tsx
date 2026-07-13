@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Beaker, Building2, FlaskConical, CalendarClock, 
-  Settings, FileText, Download, BookOpen, Activity, ChevronsLeft, ChevronsRight 
+  Settings, FileText, Download, BookOpen, Activity, ChevronsLeft, ChevronsRight, LineChart 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -53,7 +53,7 @@ export function Sidebar() {
               )}
             >
               <LayoutDashboard size={isCollapsed ? 20 : 18} className="shrink-0" />
-              {!isCollapsed && <span>Oncology</span>}
+              {!isCollapsed && <span className="text-sm">Oncology</span>}
             </Link>
             {!isCollapsed && ['Immunology', 'Neurology', 'Cardiovascular', 'Rare Disease', 'Endocrinology', 'Infectious Disease'].map(area => (
               <div key={area} className="flex items-center gap-3 px-3 py-2 rounded-md opacity-50 cursor-not-allowed">
@@ -68,8 +68,9 @@ export function Sidebar() {
           {!isCollapsed && <p className="px-3 text-xs font-semibold text-muted uppercase tracking-wider mb-2">Analytics</p>}
           <div className="space-y-1">
             {[
+              { route: '/companies', icon: Building2, label: 'Companies Directory' },
               { route: '/pipeline', icon: Beaker, label: 'Drug Database' },
-              { route: '/compare', icon: Building2, label: 'Comparative Analysis' },
+              { route: '/compare', icon: LineChart, label: 'Comparative Analysis' },
               { route: '/trials', icon: FlaskConical, label: 'Market Insights' },
               { route: '/catalysts', icon: CalendarClock, label: 'Upcoming Catalysts' }
             ].map(({ route, icon: Icon, label }) => (
@@ -84,7 +85,7 @@ export function Sidebar() {
                 )}
               >
                 <Icon size={isCollapsed ? 20 : 18} className="shrink-0" />
-                {!isCollapsed && <span className="truncate">{label}</span>}
+                {!isCollapsed && <span className="text-sm truncate">{label}</span>}
               </Link>
             ))}
           </div>
@@ -108,7 +109,7 @@ export function Sidebar() {
                 )}
               >
                 <Icon size={isCollapsed ? 20 : 18} className="shrink-0" />
-                {!isCollapsed && <span className="truncate">{label}</span>}
+                {!isCollapsed && <span className="text-sm truncate">{label}</span>}
               </Link>
             ))}
           </div>
@@ -125,7 +126,7 @@ export function Sidebar() {
           )}
         >
           <Settings size={isCollapsed ? 20 : 18} className="shrink-0" />
-          {!isCollapsed && <span>Settings</span>}
+          {!isCollapsed && <span className="text-sm">Settings</span>}
         </Link>
       </div>
     </aside>
