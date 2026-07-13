@@ -20,10 +20,17 @@ export function Topbar() {
   const [exportFormat, setExportFormat] = useState<'image' | 'ppt'>('image');
   const [loadingMessage, setLoadingMessage] = useState('Preparing Export...');
 
+  const [lastUpdated, setLastUpdated] = useState<string>('');
+
+  React.useEffect(() => {
+    setLastUpdated(new Date().toLocaleString('en-US', { timeZone: 'America/New_York', dateStyle: 'short', timeStyle: 'short' }) + ' EST');
+  }, []);
+
   const handleRefresh = () => {
     startTransition(() => {
       resetFilters();
       router.refresh();
+      setLastUpdated(new Date().toLocaleString('en-US', { timeZone: 'America/New_York', dateStyle: 'short', timeStyle: 'short' }) + ' EST');
     });
   };
 
@@ -85,13 +92,14 @@ export function Topbar() {
         
         <div className="flex items-center gap-4 ml-4 text-slate-500">
           <div className="text-xs text-slate-400 hidden md:block mr-2" suppressHydrationWarning>
-            Last Updated: {new Date().toLocaleString('en-US', { timeZone: 'America/New_York', dateStyle: 'short', timeStyle: 'short' })} EST
+            {lastUpdated ? `Last Updated: ${lastUpdated}` : ''}
           </div>
           
           <ThemeSwitcher />
           <ExportDropdown onExport={handleExport} />
           
           <button 
+            suppressHydrationWarning
             onClick={handleRefresh}
             disabled={isPending}
             title="Refresh the dashboard"

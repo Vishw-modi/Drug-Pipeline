@@ -4,7 +4,7 @@ import { getDashboardSummary, getPipelineByPhase, getPipelineByCancerType, getPi
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DonutChart } from '@/components/charts/DonutChart';
 import { HorizontalBarChart } from '@/components/charts/HorizontalBarChart';
-import { Pill, Activity, CheckCircle, Clock, ArrowRight } from 'lucide-react';
+import { Pill, Activity, CheckCircle, Clock, ArrowRight, Building2, Stethoscope } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import { getDrugs } from '@/services/drugs.service';
@@ -97,7 +97,7 @@ async function ChartsSection({ filters }: { filters: Record<string, string> }) {
             <CardTitle>Pipeline by Cancer Type</CardTitle>
           </CardHeader>
           <CardContent>
-            <HorizontalBarChart data={cancerTypeData} />
+            <HorizontalBarChart data={cancerTypeData} filterKey="cancerType" tooltipIcon={<Stethoscope size={16} />} />
           </CardContent>
         </Card>
 
@@ -106,7 +106,7 @@ async function ChartsSection({ filters }: { filters: Record<string, string> }) {
             <CardTitle>Top Companies</CardTitle>
           </CardHeader>
           <CardContent>
-            <HorizontalBarChart data={sponsorData} />
+            <HorizontalBarChart data={sponsorData} filterKey="sponsor" tooltipIcon={<Building2 size={16} />} />
           </CardContent>
         </Card>
       </div>
@@ -215,7 +215,7 @@ export default async function OverviewDashboard({ searchParams }: PageProps) {
 
       <FilterBar options={filterOptions} />
 
-      <Suspense key={`metrics-${JSON.stringify(filters)}`} fallback={
+      <Suspense fallback={
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
           {[...Array(5)].map((_, i) => <MetricCardSkeleton key={i} />)}
         </div>
@@ -223,15 +223,15 @@ export default async function OverviewDashboard({ searchParams }: PageProps) {
         <DashboardMetrics filters={filters} />
       </Suspense>
 
-      <Suspense key={`charts-${JSON.stringify(filters)}`} fallback={<div className="h-96 bg-slate-50 animate-pulse rounded-xl mb-6"></div>}>
+      <Suspense fallback={<div className="h-96 bg-slate-50 animate-pulse rounded-xl mb-6"></div>}>
         <ChartsSection filters={filters} />
       </Suspense>
 
-      <Suspense key={`sample-${JSON.stringify(filters)}`} fallback={<div className="h-64 bg-slate-50 animate-pulse rounded-xl mb-6"></div>}>
+      <Suspense fallback={<div className="h-64 bg-slate-50 animate-pulse rounded-xl mb-6"></div>}>
         <SamplePipelineSection filters={filters} />
       </Suspense>
 
-      <Suspense key={`lists-${JSON.stringify(filters)}`} fallback={<div className="h-64 bg-slate-50 animate-pulse rounded-xl"></div>}>
+      <Suspense fallback={<div className="h-64 bg-slate-50 animate-pulse rounded-xl"></div>}>
         <ListsSection filters={filters} />
       </Suspense>
     </div>

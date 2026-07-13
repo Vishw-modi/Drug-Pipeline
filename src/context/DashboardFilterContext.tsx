@@ -39,7 +39,6 @@ function FilterProviderInner({ children }: { children: ReactNode }) {
 
   const [isPending, startTransition] = React.useTransition();
 
-  // Initialize state from URL params
   const [filters, setFilters] = useState<FilterState>(() => {
     return {
       therapeuticArea: searchParams.get('therapeuticArea') || defaultFilters.therapeuticArea,
@@ -51,6 +50,19 @@ function FilterProviderInner({ children }: { children: ReactNode }) {
       sponsor: searchParams.get('sponsor') || defaultFilters.sponsor,
     };
   });
+
+  // Keep state perfectly in sync with URL (handles browser back/forward and chart clicks)
+  useEffect(() => {
+    setFilters({
+      therapeuticArea: searchParams.get('therapeuticArea') || defaultFilters.therapeuticArea,
+      indication: searchParams.get('indication') || defaultFilters.indication,
+      cancerType: searchParams.get('cancerType') || defaultFilters.cancerType,
+      drug: searchParams.get('drug') || defaultFilters.drug,
+      developmentPhase: searchParams.get('developmentPhase') || defaultFilters.developmentPhase,
+      moleculeType: searchParams.get('moleculeType') || defaultFilters.moleculeType,
+      sponsor: searchParams.get('sponsor') || defaultFilters.sponsor,
+    });
+  }, [searchParams]);
 
   const updateUrl = useCallback((newFilters: FilterState) => {
     const params = new URLSearchParams(searchParams.toString());

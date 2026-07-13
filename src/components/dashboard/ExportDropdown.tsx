@@ -13,7 +13,7 @@ export function ExportDropdown({ onExport }: ExportDropdownProps) {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-500 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]" title="Export">
+        <Menu.Button suppressHydrationWarning className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-500 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]" title="Export">
           <Download size={18} />
         </Menu.Button>
       </div>
