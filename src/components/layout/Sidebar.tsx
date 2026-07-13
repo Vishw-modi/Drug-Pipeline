@@ -24,10 +24,10 @@ export function Sidebar() {
     >
       <div className={cn("p-4 flex items-center", isCollapsed ? "justify-center" : "justify-between")}>
         {!isCollapsed && (
-          <h1 className="text-lg font-bold text-brand-navy flex items-center gap-2">
+          <Link href="/" className="text-lg font-bold text-brand-navy flex items-center gap-2 hover:opacity-80 transition-opacity">
             <Activity className="text-brand-primary shrink-0" size={20} />
             <span className="truncate">KMK Pipeline</span>
-          </h1>
+          </Link>
         )}
         <button 
           onClick={() => setIsCollapsed(!isCollapsed)}

@@ -95,7 +95,7 @@ export function DrugComparisonSelector({ availableDrugs }: DrugComparisonSelecto
                     return (
                       <div 
                         key={drug.id}
-                        className={`px-4 py-2 text-sm cursor-pointer flex items-center justify-between transition-colors hover:bg-brand-primary/10 ${isSelected ? 'bg-brand-primary/5 text-brand-primary font-medium' : 'text-slate-700 dark:text-slate-300'}`}
+                        className={`px-4 py-2 text-sm cursor-pointer flex items-center justify-between transition-colors hover:bg-brand-primary/10 ${isSelected ? 'bg-brand-primary/5 text-brand-primary font-medium' : 'text-brand-navy'}`}
                         onClick={() => toggleDrug(drug.id)}
                       >
                         {drug.drug_name}

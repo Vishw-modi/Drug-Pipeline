@@ -40,13 +40,13 @@ export function ComparisonGrid({ drugs }: ComparisonGridProps) {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+            <tr className="hover:bg-[var(--color-surface-hover)]">
               <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Generic Name</td>
               {drugs.map(drug => (
                 <td key={drug.id} className="px-6 py-4 text-brand-navy/90 border-r border-border last:border-r-0">{drug.generic_name || '-'}</td>
               ))}
             </tr>
-            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+            <tr className="hover:bg-[var(--color-surface-hover)]">
               <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Development Phase</td>
               {drugs.map(drug => (
                 <td key={drug.id} className="px-6 py-4 text-brand-navy/90 border-r border-border last:border-r-0">
@@ -56,54 +56,55 @@ export function ComparisonGrid({ drugs }: ComparisonGridProps) {
                 </td>
               ))}
             </tr>
-            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+            <tr className="hover:bg-[var(--color-surface-hover)]">
               <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Molecule Type</td>
               {drugs.map(drug => (
                 <td key={drug.id} className="px-6 py-4 text-brand-navy/90 border-r border-border last:border-r-0">{drug.molecule_type}</td>
               ))}
             </tr>
-            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+            <tr className="hover:bg-[var(--color-surface-hover)]">
               <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Target</td>
               {drugs.map(drug => (
                 <td key={drug.id} className="px-6 py-4 text-brand-navy/90 border-r border-border last:border-r-0 font-medium">{drug.target}</td>
               ))}
             </tr>
-            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+            <tr className="hover:bg-[var(--color-surface-hover)]">
               <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Mechanism of Action</td>
               {drugs.map(drug => (
                 <td key={drug.id} className="px-6 py-4 text-brand-navy/90 border-r border-border last:border-r-0 text-xs leading-relaxed">{drug.mechanism_of_action}</td>
               ))}
             </tr>
-            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+            <tr className="hover:bg-[var(--color-surface-hover)]">
               <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Approval Status</td>
               {drugs.map(drug => (
                 <td key={drug.id} className="px-6 py-4 text-brand-navy/90 border-r border-border last:border-r-0">{drug.approval_status}</td>
               ))}
             </tr>
-            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 bg-slate-50/30 dark:bg-slate-800/30">
-              <td className="px-6 py-3 font-semibold text-brand-navy border-r border-border sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)] uppercase text-xs tracking-wider" colSpan={drugs.length + 1}>
+            <tr className="bg-[var(--color-surface-hover)]">
+              <td className="px-6 py-3 font-semibold text-brand-navy border-r border-border sticky left-0 z-10 bg-[var(--color-surface-hover)] [box-shadow:inset_-1px_0_0_0_var(--color-border)] uppercase text-xs tracking-wider">
                 Designations
               </td>
+              <td colSpan={drugs.length} className="border-r border-border last:border-r-0"></td>
             </tr>
-            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+            <tr className="hover:bg-[var(--color-surface-hover)]">
               <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">First in Class</td>
               {drugs.map(drug => (
                 <td key={drug.id} className="px-6 py-4 text-center border-r border-border last:border-r-0">{renderBoolean(drug.first_in_class)}</td>
               ))}
             </tr>
-            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+            <tr className="hover:bg-[var(--color-surface-hover)]">
               <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Orphan Designation</td>
               {drugs.map(drug => (
                 <td key={drug.id} className="px-6 py-4 text-center border-r border-border last:border-r-0">{renderBoolean(drug.orphan_designation)}</td>
               ))}
             </tr>
-            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+            <tr className="hover:bg-[var(--color-surface-hover)]">
               <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Fast Track</td>
               {drugs.map(drug => (
                 <td key={drug.id} className="px-6 py-4 text-center border-r border-border last:border-r-0">{renderBoolean(drug.fast_track)}</td>
               ))}
             </tr>
-            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+            <tr className="hover:bg-[var(--color-surface-hover)]">
               <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Breakthrough</td>
               {drugs.map(drug => (
                 <td key={drug.id} className="px-6 py-4 text-center border-r border-border last:border-r-0">{renderBoolean(drug.breakthrough_designation)}</td>
