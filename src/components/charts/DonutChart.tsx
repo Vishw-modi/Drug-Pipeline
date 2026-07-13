@@ -4,14 +4,32 @@ import React from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend, Label } from 'recharts';
 import { ChartDataCount } from '@/types/dashboard';
 
+import { useTheme } from 'next-themes';
+
 interface DonutChartProps {
   data: ChartDataCount[];
-  colors?: string[];
+  colorScheme?: 'default' | 'molecule';
 }
 
-const DEFAULT_COLORS = ['#18A3A1', '#4F8CBD', '#EE4B77', '#F56A6A', '#2CB6B2', '#0F172A', '#9CA3AF'];
+const THEME_COLORS = {
+  light: ['#18A3A1', '#4F8CBD', '#EE4B77', '#F56A6A', '#2CB6B2', '#0F172A', '#9CA3AF'],
+  dark: ['#18A3A1', '#4F8CBD', '#EE4B77', '#F56A6A', '#2CB6B2', '#F8FAFC', '#9CA3AF'],
+  system: ['#18A3A1', '#4F8CBD', '#EE4B77', '#F56A6A', '#2CB6B2', '#0F172A', '#9CA3AF'],
+  claude: ['#D97757', '#332D2B', '#B06550', '#79716B', '#E19B84', '#5C5552', '#D4CCC1'],
+  professional: ['#0284C7', '#0369A1', '#0EA5E9', '#38BDF8', '#075985', '#0C4A6E', '#94A3B8'],
+};
 
-export function DonutChart({ data, colors = DEFAULT_COLORS }: DonutChartProps) {
+export function DonutChart({ data, colorScheme = 'default' }: DonutChartProps) {
+  const { theme } = useTheme();
+  
+  // Resolve current theme array
+  const activeTheme = (theme && THEME_COLORS[theme as keyof typeof THEME_COLORS]) ? theme : 'light';
+  const baseColors = THEME_COLORS[activeTheme as keyof typeof THEME_COLORS];
+  
+  // Custom ordering for molecule chart specifically to match original design
+  const colors = colorScheme === 'molecule' 
+    ? [baseColors[2], baseColors[1], baseColors[0], baseColors[5]] 
+    : baseColors;
   if (!data || data.length === 0) {
     return (
       <div className="flex items-center justify-center h-64 text-[var(--color-muted)] text-sm">
@@ -60,7 +78,10 @@ export function DonutChart({ data, colors = DEFAULT_COLORS }: DonutChartProps) {
           stroke="none"
         >
           {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+            <Cell 
+              key={`cell-${index}`} 
+              fill={colors[index % colors.length]} 
+            />
           ))}
           <Label 
             value={total.toLocaleString()} 
@@ -78,8 +99,35 @@ export function DonutChart({ data, colors = DEFAULT_COLORS }: DonutChartProps) {
           />
         </Pie>
         <Tooltip 
-          contentStyle={{ borderRadius: '8px', border: '1px solid var(--color-border)', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-          itemStyle={{ color: 'var(--color-brand-navy)' }}
+          content={({ active, payload }) => {
+            if (active && payload && payload.length) {
+              const data = payload[0];
+              
+              // Generate a leadership insight based on the category name
+              let insight = 'Key segment driving future growth.';
+              const name = data.name || data.payload.name || '';
+              
+              if (name.includes('Phase I') || name.includes('Preclinical')) insight = 'Early pipeline laying foundation for future.';
+              if (name.includes('Phase II')) insight = 'Critical stage for proof of concept and efficacy.';
+              if (name.includes('Phase III')) insight = 'Late-stage assets nearing potential commercialization.';
+              if (name.includes('Approved')) insight = 'De-risked assets generating revenue.';
+              if (name.includes('Small Molecule')) insight = 'Traditional modality with predictable manufacturing.';
+              if (name.includes('Antibody')) insight = 'High-value targeted biologics.';
+              
+              return (
+                <div className="bg-[var(--color-surface)] border border-[var(--color-border)] p-3 rounded-lg shadow-lg max-w-xs">
+                  <p className="font-semibold text-[var(--color-brand-navy)] mb-1 flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full" style={{ backgroundColor: data.color }}></span>
+                    {name}
+                  </p>
+                  <p className="text-sm text-[var(--color-muted)]">
+                    Count: <span className="font-medium text-[var(--color-brand-navy)]">{data.value?.toLocaleString()}</span>
+                  </p>
+                </div>
+              );
+            }
+            return null;
+          }}
         />
         <Legend 
           content={renderLegend} 

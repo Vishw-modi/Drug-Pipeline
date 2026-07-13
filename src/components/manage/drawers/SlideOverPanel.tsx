@@ -51,16 +51,16 @@ export function SlideOverPanel({ isOpen, onClose, title, children, isDirty = fal
                 leaveTo="translate-x-full"
               >
                 <DialogPanel className="pointer-events-auto w-screen max-w-2xl">
-                  <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
-                    <div className="px-4 py-6 sm:px-6 border-b border-slate-200">
+                  <div className="flex h-full flex-col overflow-y-scroll bg-[var(--color-surface)] shadow-xl">
+                    <div className="px-4 py-6 sm:px-6 border-b border-[var(--color-border)]">
                       <div className="flex items-start justify-between">
-                        <DialogTitle className="text-xl font-semibold leading-6 text-slate-900">
+                        <DialogTitle className="text-xl font-semibold leading-6 text-[var(--color-brand-navy)]">
                           {title}
                         </DialogTitle>
                         <div className="ml-3 flex h-7 items-center">
                           <button
                             type="button"
-                            className="relative rounded-md bg-white text-slate-400 hover:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]"
+                            className="relative rounded-md bg-[var(--color-surface)] text-[var(--color-muted)] hover:text-[var(--color-brand-navy)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]"
                             onClick={handleClose}
                           >
                             <span className="absolute -inset-2.5" />

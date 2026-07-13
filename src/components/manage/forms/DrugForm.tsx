@@ -70,171 +70,204 @@ export function DrugForm({ initialData, companies, mode, onSuccess, onCancel }: 
           </div>
         )}
 
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Drug Name *</label>
-            <input
-              type="text"
-              name="drug_name"
-              required
-              disabled={isReadOnly}
-              defaultValue={initialData?.drug_name || ''}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Company *</label>
-            <div className="mt-1">
-              <RelationshipSelect 
-                id="company_id"
-                name="company_id"
-                options={companyOptions}
-                defaultValue={initialData?.company_id}
-                disabled={isReadOnly}
-                required
-                placeholder="Select a company..."
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Generic Name</label>
-              <input
-                type="text"
-                name="generic_name"
-                disabled={isReadOnly}
-                defaultValue={initialData?.generic_name || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Internal Code</label>
-              <input
-                type="text"
-                name="internal_code"
-                disabled={isReadOnly}
-                defaultValue={initialData?.internal_code || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Molecule Type</label>
-              <input
-                type="text"
-                name="molecule_type"
-                disabled={isReadOnly}
-                defaultValue={initialData?.molecule_type || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Target</label>
-              <input
-                type="text"
-                name="target"
-                disabled={isReadOnly}
-                defaultValue={initialData?.target || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Mechanism of Action</label>
-            <input
-              type="text"
-              name="mechanism_of_action"
-              disabled={isReadOnly}
-              defaultValue={initialData?.mechanism_of_action || ''}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Development Phase</label>
-              <select
-                name="development_phase"
-                disabled={isReadOnly}
-                defaultValue={initialData?.development_phase || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              >
-                <option value="">Select phase...</option>
-                <option value="Discovery">Discovery</option>
-                <option value="Preclinical">Preclinical</option>
-                <option value="Phase I">Phase I</option>
-                <option value="Phase II">Phase II</option>
-                <option value="Phase III">Phase III</option>
-                <option value="Filed">Filed</option>
-                <option value="Approved">Approved</option>
-                <option value="Withdrawn">Withdrawn</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Approval Status</label>
-              <select
-                name="approval_status"
-                disabled={isReadOnly}
-                defaultValue={initialData?.approval_status || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              >
-                <option value="">Select status...</option>
-                <option value="Investigational">Investigational</option>
-                <option value="Approved">Approved</option>
-                <option value="Withdrawn">Withdrawn</option>
-                <option value="Discontinued">Discontinued</option>
-              </select>
-            </div>
-          </div>
+        <div className="space-y-8">
           
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Expected Launch Date</label>
-            <input
-              type="date"
-              name="expected_launch_date"
-              disabled={isReadOnly}
-              defaultValue={initialData?.expected_launch_date || ''}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-            />
-          </div>
+          {/* Section 1: Basic Information */}
+          <fieldset className="space-y-4">
+            <legend className="text-sm font-semibold text-[var(--color-brand-primary)] uppercase tracking-wider mb-4 border-b border-[var(--color-border)] w-full pb-2">
+              Basic Information
+            </legend>
+            <div className="grid grid-cols-1 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Drug Name *</label>
+                <input
+                  type="text"
+                  name="drug_name"
+                  required
+                  disabled={isReadOnly}
+                  defaultValue={initialData?.drug_name || ''}
+                  className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Designations</label>
-            <div className="space-y-2">
-              <div className="flex items-center">
-                <input id="first_in_class" name="first_in_class" type="checkbox" disabled={isReadOnly} defaultChecked={initialData?.first_in_class || false} className="h-4 w-4 rounded border-slate-300 text-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)]" />
-                <label htmlFor="first_in_class" className="ml-2 block text-sm text-slate-700">First in Class</label>
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Company *</label>
+                <RelationshipSelect 
+                  id="company_id"
+                  name="company_id"
+                  options={companyOptions}
+                  defaultValue={initialData?.company_id}
+                  disabled={isReadOnly}
+                  required
+                  placeholder="Select a company..."
+                />
               </div>
-              <div className="flex items-center">
-                <input id="orphan_designation" name="orphan_designation" type="checkbox" disabled={isReadOnly} defaultChecked={initialData?.orphan_designation || false} className="h-4 w-4 rounded border-slate-300 text-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)]" />
-                <label htmlFor="orphan_designation" className="ml-2 block text-sm text-slate-700">Orphan Designation</label>
-              </div>
-              <div className="flex items-center">
-                <input id="fast_track" name="fast_track" type="checkbox" disabled={isReadOnly} defaultChecked={initialData?.fast_track || false} className="h-4 w-4 rounded border-slate-300 text-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)]" />
-                <label htmlFor="fast_track" className="ml-2 block text-sm text-slate-700">Fast Track</label>
-              </div>
-              <div className="flex items-center">
-                <input id="breakthrough_designation" name="breakthrough_designation" type="checkbox" disabled={isReadOnly} defaultChecked={initialData?.breakthrough_designation || false} className="h-4 w-4 rounded border-slate-300 text-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)]" />
-                <label htmlFor="breakthrough_designation" className="ml-2 block text-sm text-slate-700">Breakthrough Designation</label>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Generic Name</label>
+                  <input
+                    type="text"
+                    name="generic_name"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.generic_name || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Internal Code</label>
+                  <input
+                    type="text"
+                    name="internal_code"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.internal_code || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          </fieldset>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Description</label>
-            <textarea
-              name="description"
-              rows={3}
-              disabled={isReadOnly}
-              defaultValue={initialData?.description || ''}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-            />
-          </div>
+          {/* Section 2: Scientific Profile */}
+          <fieldset className="space-y-4">
+            <legend className="text-sm font-semibold text-[var(--color-brand-primary)] uppercase tracking-wider mb-4 border-b border-[var(--color-border)] w-full pb-2">
+              Scientific Profile
+            </legend>
+            <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Molecule Type</label>
+                  <input
+                    type="text"
+                    name="molecule_type"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.molecule_type || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Target</label>
+                  <input
+                    type="text"
+                    name="target"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.target || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Mechanism of Action</label>
+                <input
+                  type="text"
+                  name="mechanism_of_action"
+                  disabled={isReadOnly}
+                  defaultValue={initialData?.mechanism_of_action || ''}
+                  className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                />
+              </div>
+            </div>
+          </fieldset>
+
+          {/* Section 3: Development Status */}
+          <fieldset className="space-y-4">
+            <legend className="text-sm font-semibold text-[var(--color-brand-primary)] uppercase tracking-wider mb-4 border-b border-[var(--color-border)] w-full pb-2">
+              Development Status
+            </legend>
+            <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Development Phase</label>
+                  <select
+                    name="development_phase"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.development_phase || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  >
+                    <option value="">Select phase...</option>
+                    <option value="Discovery">Discovery</option>
+                    <option value="Preclinical">Preclinical</option>
+                    <option value="Phase I">Phase I</option>
+                    <option value="Phase II">Phase II</option>
+                    <option value="Phase III">Phase III</option>
+                    <option value="Filed">Filed</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Withdrawn">Withdrawn</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Approval Status</label>
+                  <select
+                    name="approval_status"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.approval_status || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  >
+                    <option value="">Select status...</option>
+                    <option value="Investigational">Investigational</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Withdrawn">Withdrawn</option>
+                    <option value="Discontinued">Discontinued</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Expected Launch Date</label>
+                  <input
+                    type="date"
+                    name="expected_launch_date"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.expected_launch_date || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  />
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          
+          {/* Section 4: Designations & Notes */}
+          <fieldset className="space-y-4">
+            <legend className="text-sm font-semibold text-[var(--color-brand-primary)] uppercase tracking-wider mb-4 border-b border-[var(--color-border)] w-full pb-2">
+              Designations & Notes
+            </legend>
+            <div className="grid grid-cols-1 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-3">Designations</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex items-center">
+                    <input id="first_in_class" name="first_in_class" type="checkbox" disabled={isReadOnly} defaultChecked={initialData?.first_in_class || false} className="h-4 w-4 rounded border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)]" />
+                    <label htmlFor="first_in_class" className="ml-2 block text-sm text-[var(--color-brand-navy)]">First in Class</label>
+                  </div>
+                  <div className="flex items-center">
+                    <input id="orphan_designation" name="orphan_designation" type="checkbox" disabled={isReadOnly} defaultChecked={initialData?.orphan_designation || false} className="h-4 w-4 rounded border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)]" />
+                    <label htmlFor="orphan_designation" className="ml-2 block text-sm text-[var(--color-brand-navy)]">Orphan Designation</label>
+                  </div>
+                  <div className="flex items-center">
+                    <input id="fast_track" name="fast_track" type="checkbox" disabled={isReadOnly} defaultChecked={initialData?.fast_track || false} className="h-4 w-4 rounded border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)]" />
+                    <label htmlFor="fast_track" className="ml-2 block text-sm text-[var(--color-brand-navy)]">Fast Track</label>
+                  </div>
+                  <div className="flex items-center">
+                    <input id="breakthrough_designation" name="breakthrough_designation" type="checkbox" disabled={isReadOnly} defaultChecked={initialData?.breakthrough_designation || false} className="h-4 w-4 rounded border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)]" />
+                    <label htmlFor="breakthrough_designation" className="ml-2 block text-sm text-[var(--color-brand-navy)]">Breakthrough Designation</label>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Description</label>
+                <textarea
+                  name="description"
+                  rows={3}
+                  disabled={isReadOnly}
+                  defaultValue={initialData?.description || ''}
+                  className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                />
+              </div>
+            </div>
+          </fieldset>
         </div>
       </div>
 
@@ -242,7 +275,7 @@ export function DrugForm({ initialData, companies, mode, onSuccess, onCancel }: 
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none"
+          className="rounded-md border border-[var(--color-border)] bg-transparent px-4 py-2 text-sm font-medium text-[var(--color-brand-navy)] shadow-sm hover:bg-[var(--color-bg)] focus:outline-none"
         >
           {isReadOnly ? 'Close' : 'Cancel'}
         </button>

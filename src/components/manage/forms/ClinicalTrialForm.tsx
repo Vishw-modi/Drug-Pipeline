@@ -70,199 +70,221 @@ export function ClinicalTrialForm({ initialData, drugs, mode, onSuccess, onCance
           </div>
         )}
 
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Drug *</label>
-            <div className="mt-1">
-              <RelationshipSelect 
-                id="drug_id"
-                name="drug_id"
-                options={drugOptions}
-                defaultValue={initialData?.drug_id}
-                disabled={isReadOnly}
-                required
-                placeholder="Select a drug..."
-              />
-            </div>
-          </div>
+        <div className="space-y-8">
+          
+          {/* Section 1: Trial Identification */}
+          <fieldset className="space-y-4">
+            <legend className="text-sm font-semibold text-[var(--color-brand-primary)] uppercase tracking-wider mb-4 border-b border-[var(--color-border)] w-full pb-2">
+              Trial Identification
+            </legend>
+            <div className="grid grid-cols-1 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Drug *</label>
+                <RelationshipSelect 
+                  id="drug_id"
+                  name="drug_id"
+                  options={drugOptions}
+                  defaultValue={initialData?.drug_id}
+                  disabled={isReadOnly}
+                  required
+                  placeholder="Select a drug..."
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Trial Name / Title *</label>
-            <input
-              type="text"
-              name="trial_name"
-              required
-              disabled={isReadOnly}
-              defaultValue={initialData?.trial_name || ''}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-            />
-          </div>
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Trial Name / Title *</label>
+                <input
+                  type="text"
+                  name="trial_name"
+                  required
+                  disabled={isReadOnly}
+                  defaultValue={initialData?.trial_name || ''}
+                  className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                />
+              </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700">NCT ID (ClinicalTrials.gov)</label>
-              <input
-                type="text"
-                name="nct_id"
-                disabled={isReadOnly}
-                defaultValue={initialData?.nct_id || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">NCT ID (ClinicalTrials.gov)</label>
+                  <input
+                    type="text"
+                    name="nct_id"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.nct_id || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Sponsor</label>
+                  <input
+                    type="text"
+                    name="sponsor"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.sponsor || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  />
+                </div>
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Sponsor</label>
-              <input
-                type="text"
-                name="sponsor"
-                disabled={isReadOnly}
-                defaultValue={initialData?.sponsor || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              />
-            </div>
-          </div>
+          </fieldset>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Phase</label>
-              <select
-                name="phase"
-                disabled={isReadOnly}
-                defaultValue={initialData?.phase || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              >
-                <option value="">Select phase...</option>
-                <option value="Phase I">Phase I</option>
-                <option value="Phase I/II">Phase I/II</option>
-                <option value="Phase II">Phase II</option>
-                <option value="Phase II/III">Phase II/III</option>
-                <option value="Phase III">Phase III</option>
-                <option value="Phase IV">Phase IV</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Status</label>
-              <select
-                name="status"
-                disabled={isReadOnly}
-                defaultValue={initialData?.status || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              >
-                <option value="">Select status...</option>
-                <option value="Not Yet Recruiting">Not Yet Recruiting</option>
-                <option value="Recruiting">Recruiting</option>
-                <option value="Active, Not Recruiting">Active, Not Recruiting</option>
-                <option value="Completed">Completed</option>
-                <option value="Terminated">Terminated</option>
-                <option value="Withdrawn">Withdrawn</option>
-                <option value="Suspended">Suspended</option>
-                <option value="Unknown">Unknown</option>
-              </select>
-            </div>
-          </div>
+          {/* Section 2: Study Details */}
+          <fieldset className="space-y-4">
+            <legend className="text-sm font-semibold text-[var(--color-brand-primary)] uppercase tracking-wider mb-4 border-b border-[var(--color-border)] w-full pb-2">
+              Study Details
+            </legend>
+            <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Phase</label>
+                  <select
+                    name="phase"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.phase || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  >
+                    <option value="">Select phase...</option>
+                    <option value="Phase I">Phase I</option>
+                    <option value="Phase I/II">Phase I/II</option>
+                    <option value="Phase II">Phase II</option>
+                    <option value="Phase II/III">Phase II/III</option>
+                    <option value="Phase III">Phase III</option>
+                    <option value="Phase IV">Phase IV</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Status</label>
+                  <select
+                    name="status"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.status || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  >
+                    <option value="">Select status...</option>
+                    <option value="Not Yet Recruiting">Not Yet Recruiting</option>
+                    <option value="Recruiting">Recruiting</option>
+                    <option value="Active, Not Recruiting">Active, Not Recruiting</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Terminated">Terminated</option>
+                    <option value="Withdrawn">Withdrawn</option>
+                    <option value="Suspended">Suspended</option>
+                    <option value="Unknown">Unknown</option>
+                  </select>
+                </div>
+              </div>
 
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Study Type</label>
-              <select
-                name="study_type"
-                disabled={isReadOnly}
-                defaultValue={initialData?.study_type || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              >
-                <option value="">Select type...</option>
-                <option value="Interventional">Interventional</option>
-                <option value="Observational">Observational</option>
-                <option value="Expanded Access">Expanded Access</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Enrollment</label>
-              <input
-                type="number"
-                name="enrollment"
-                disabled={isReadOnly}
-                defaultValue={initialData?.enrollment || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Geography</label>
-              <input
-                type="text"
-                name="geography"
-                disabled={isReadOnly}
-                defaultValue={initialData?.geography || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              />
-            </div>
-          </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Study Type</label>
+                  <select
+                    name="study_type"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.study_type || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  >
+                    <option value="">Select type...</option>
+                    <option value="Interventional">Interventional</option>
+                    <option value="Observational">Observational</option>
+                    <option value="Expanded Access">Expanded Access</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Enrollment</label>
+                  <input
+                    type="number"
+                    name="enrollment"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.enrollment || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Geography</label>
+                  <input
+                    type="text"
+                    name="geography"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.geography || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  />
+                </div>
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Indication Details</label>
-            <input
-              type="text"
-              name="indication"
-              disabled={isReadOnly}
-              defaultValue={initialData?.indication || ''}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-            />
-          </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Start Date</label>
-              <input
-                type="date"
-                name="start_date"
-                disabled={isReadOnly}
-                defaultValue={initialData?.start_date || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              />
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Indication Details</label>
+                <input
+                  type="text"
+                  name="indication"
+                  disabled={isReadOnly}
+                  defaultValue={initialData?.indication || ''}
+                  className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Primary Completion</label>
-              <input
-                type="date"
-                name="primary_completion_date"
-                disabled={isReadOnly}
-                defaultValue={initialData?.primary_completion_date || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              />
+          </fieldset>
+
+          {/* Section 3: Timeline & Results */}
+          <fieldset className="space-y-4">
+            <legend className="text-sm font-semibold text-[var(--color-brand-primary)] uppercase tracking-wider mb-4 border-b border-[var(--color-border)] w-full pb-2">
+              Timeline & Results
+            </legend>
+            <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Start Date</label>
+                  <input
+                    type="date"
+                    name="start_date"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.start_date || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Primary Completion</label>
+                  <input
+                    type="date"
+                    name="primary_completion_date"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.primary_completion_date || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Completion Date</label>
+                  <input
+                    type="date"
+                    name="completion_date"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.completion_date || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Primary Endpoint</label>
+                <textarea
+                  name="primary_endpoint"
+                  rows={2}
+                  disabled={isReadOnly}
+                  defaultValue={initialData?.primary_endpoint || ''}
+                  className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Result Summary</label>
+                <textarea
+                  name="result_summary"
+                  rows={3}
+                  disabled={isReadOnly}
+                  defaultValue={initialData?.result_summary || ''}
+                  className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Completion Date</label>
-              <input
-                type="date"
-                name="completion_date"
-                disabled={isReadOnly}
-                defaultValue={initialData?.completion_date || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Primary Endpoint</label>
-            <textarea
-              name="primary_endpoint"
-              rows={2}
-              disabled={isReadOnly}
-              defaultValue={initialData?.primary_endpoint || ''}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Result Summary</label>
-            <textarea
-              name="result_summary"
-              rows={3}
-              disabled={isReadOnly}
-              defaultValue={initialData?.result_summary || ''}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-            />
-          </div>
-
+          </fieldset>
         </div>
       </div>
 
@@ -270,7 +292,7 @@ export function ClinicalTrialForm({ initialData, drugs, mode, onSuccess, onCance
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none"
+          className="rounded-md border border-[var(--color-border)] bg-transparent px-4 py-2 text-sm font-medium text-[var(--color-brand-navy)] shadow-sm hover:bg-[var(--color-bg)] focus:outline-none"
         >
           {isReadOnly ? 'Close' : 'Cancel'}
         </button>

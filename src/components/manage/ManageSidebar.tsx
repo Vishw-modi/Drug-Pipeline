@@ -26,10 +26,10 @@ export function ManageSidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="w-64 flex-shrink-0 bg-white border-r border-slate-200 h-full flex flex-col">
-      <div className="p-4 border-b border-slate-200">
-        <h2 className="text-lg font-semibold text-slate-800">Data Manager</h2>
-        <p className="text-xs text-slate-500">Pipeline Administration</p>
+    <div className="w-64 flex-shrink-0 bg-[var(--color-surface)] border-r border-[var(--color-border)] h-full flex flex-col">
+      <div className="p-4 border-b border-[var(--color-border)]">
+        <h2 className="text-lg font-semibold text-[var(--color-brand-navy)]">Data Manager</h2>
+        <p className="text-xs text-[var(--color-muted)]">Pipeline Administration</p>
       </div>
       
       <nav className="flex-1 overflow-y-auto p-4 space-y-1">
@@ -43,13 +43,13 @@ export function ManageSidebar() {
                 "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
                 isActive 
                   ? "bg-[var(--color-brand-primary)] text-white" 
-                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  : "text-[var(--color-muted)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-brand-navy)]"
               )}
             >
               <item.icon 
                 className={cn(
                   "mr-3 flex-shrink-0 h-5 w-5",
-                  isActive ? "text-white" : "text-slate-400"
+                  isActive ? "text-white" : "text-[var(--color-muted)] opacity-70"
                 )} 
                 aria-hidden="true" 
               />

@@ -46,7 +46,7 @@ export function RelationshipSelect({
         disabled={disabled}
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "flex w-full items-center justify-between rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]",
+          "flex w-full items-center justify-between rounded-md border border-slate-300 bg-[var(--color-surface)] px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]",
           disabled && "bg-slate-50 text-slate-500 cursor-not-allowed"
         )}
       >
@@ -61,7 +61,7 @@ export function RelationshipSelect({
           {/* Backdrop to close */}
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
           
-          <div className="absolute z-50 mt-1 w-full rounded-md bg-white shadow-lg border border-slate-200">
+          <div className="absolute z-50 mt-1 w-full rounded-md bg-[var(--color-surface)] shadow-lg border border-slate-200">
             <div className="p-2 border-b border-slate-100">
               <div className="relative">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />

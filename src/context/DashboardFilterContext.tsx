@@ -25,6 +25,7 @@ interface FilterContextType {
   filters: FilterState;
   setFilter: (key: keyof FilterState, value: string) => void;
   resetFilters: () => void;
+  isPending: boolean;
 }
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
@@ -33,6 +34,8 @@ function FilterProviderInner({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const [isPending, startTransition] = React.useTransition();
 
   // Initialize state from URL params
   const [filters, setFilters] = useState<FilterState>(() => {
@@ -58,7 +61,9 @@ function FilterProviderInner({ children }: { children: ReactNode }) {
     });
 
     const query = params.toString();
-    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    startTransition(() => {
+      router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    });
   }, [pathname, router, searchParams]);
 
   const setFilter = (key: keyof FilterState, value: string) => {
@@ -73,7 +78,7 @@ function FilterProviderInner({ children }: { children: ReactNode }) {
   };
 
   return (
-    <FilterContext.Provider value={{ filters, setFilter, resetFilters }}>
+    <FilterContext.Provider value={{ filters, setFilter, resetFilters, isPending }}>
       {children}
     </FilterContext.Provider>
   );

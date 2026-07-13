@@ -61,104 +61,116 @@ export function DrugUpdateForm({ initialData, drugs, mode, onSuccess, onCancel }
           </div>
         )}
 
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Drug *</label>
-            <div className="mt-1">
-              <RelationshipSelect 
-                id="drug_id"
-                name="drug_id"
-                options={drugOptions}
-                defaultValue={initialData?.drug_id}
-                disabled={isReadOnly}
-                required
-                placeholder="Select a drug..."
-              />
-            </div>
-          </div>
+        <div className="space-y-8">
+          
+          {/* Section 1: Update Details */}
+          <fieldset className="space-y-4">
+            <legend className="text-sm font-semibold text-[var(--color-brand-primary)] uppercase tracking-wider mb-4 border-b border-[var(--color-border)] w-full pb-2">
+              Update Details
+            </legend>
+            <div className="grid grid-cols-1 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Drug *</label>
+                <RelationshipSelect 
+                  id="drug_id"
+                  name="drug_id"
+                  options={drugOptions}
+                  defaultValue={initialData?.drug_id}
+                  disabled={isReadOnly}
+                  required
+                  placeholder="Select a drug..."
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Update Title *</label>
-            <input
-              type="text"
-              name="update_title"
-              required
-              disabled={isReadOnly}
-              defaultValue={initialData?.update_title || ''}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-            />
-          </div>
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Update Title *</label>
+                <input
+                  type="text"
+                  name="update_title"
+                  required
+                  disabled={isReadOnly}
+                  defaultValue={initialData?.update_title || ''}
+                  className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                />
+              </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Update Type</label>
-              <select
-                name="update_type"
-                disabled={isReadOnly}
-                defaultValue={initialData?.update_type || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              >
-                <option value="">Select type...</option>
-                <option value="FDA Approval">FDA Approval</option>
-                <option value="FDA Submission">FDA Submission</option>
-                <option value="Clinical Trial Update">Clinical Trial Update</option>
-                <option value="Topline Results">Topline Results</option>
-                <option value="Publication">Publication</option>
-                <option value="Conference Presentation">Conference Presentation</option>
-                <option value="Company Announcement">Company Announcement</option>
-                <option value="Label Expansion">Label Expansion</option>
-                <option value="Partnership">Partnership</option>
-                <option value="Acquisition">Acquisition</option>
-                <option value="Safety Update">Safety Update</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Date</label>
-              <input
-                type="date"
-                name="update_date"
-                disabled={isReadOnly}
-                defaultValue={initialData?.update_date || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              />
-            </div>
-          </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Update Type</label>
+                  <select
+                    name="update_type"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.update_type || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  >
+                    <option value="">Select type...</option>
+                    <option value="FDA Approval">FDA Approval</option>
+                    <option value="FDA Submission">FDA Submission</option>
+                    <option value="Clinical Trial Update">Clinical Trial Update</option>
+                    <option value="Topline Results">Topline Results</option>
+                    <option value="Publication">Publication</option>
+                    <option value="Conference Presentation">Conference Presentation</option>
+                    <option value="Company Announcement">Company Announcement</option>
+                    <option value="Label Expansion">Label Expansion</option>
+                    <option value="Partnership">Partnership</option>
+                    <option value="Acquisition">Acquisition</option>
+                    <option value="Safety Update">Safety Update</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Date</label>
+                  <input
+                    type="date"
+                    name="update_date"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.update_date || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  />
+                </div>
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Summary</label>
-            <textarea
-              name="update_summary"
-              rows={4}
-              disabled={isReadOnly}
-              defaultValue={initialData?.update_summary || ''}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Source Name</label>
-              <input
-                type="text"
-                name="source"
-                disabled={isReadOnly}
-                defaultValue={initialData?.source || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              />
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Summary</label>
+                <textarea
+                  name="update_summary"
+                  rows={4}
+                  disabled={isReadOnly}
+                  defaultValue={initialData?.update_summary || ''}
+                  className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Source URL</label>
-              <input
-                type="url"
-                name="source_url"
-                disabled={isReadOnly}
-                defaultValue={initialData?.source_url || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              />
-            </div>
-          </div>
+          </fieldset>
 
+          {/* Section 2: Source Information */}
+          <fieldset className="space-y-4">
+            <legend className="text-sm font-semibold text-[var(--color-brand-primary)] uppercase tracking-wider mb-4 border-b border-[var(--color-border)] w-full pb-2">
+              Source Information
+            </legend>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Source Name</label>
+                <input
+                  type="text"
+                  name="source"
+                  disabled={isReadOnly}
+                  defaultValue={initialData?.source || ''}
+                  className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Source URL</label>
+                <input
+                  type="url"
+                  name="source_url"
+                  disabled={isReadOnly}
+                  defaultValue={initialData?.source_url || ''}
+                  className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                />
+              </div>
+            </div>
+          </fieldset>
         </div>
       </div>
 
@@ -166,7 +178,7 @@ export function DrugUpdateForm({ initialData, drugs, mode, onSuccess, onCancel }
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none"
+          className="rounded-md border border-[var(--color-border)] bg-transparent px-4 py-2 text-sm font-medium text-[var(--color-brand-navy)] shadow-sm hover:bg-[var(--color-bg)] focus:outline-none"
         >
           {isReadOnly ? 'Close' : 'Cancel'}
         </button>

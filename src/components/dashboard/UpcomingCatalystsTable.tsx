@@ -37,14 +37,14 @@ const columns: ColumnDef<any>[] = [
   }
 ];
 
-export function UpcomingCatalystsTable({ data }: { data: any[] }) {
-  const previewData = data.slice(0, 5);
+export function UpcomingCatalystsTable({ data, preview = true }: { data: any[], preview?: boolean }) {
+  const displayData = preview ? data.slice(0, 5) : data;
   
   return (
     <div className="text-sm">
       <DataTable 
         columns={columns} 
-        data={previewData} 
+        data={displayData} 
       />
     </div>
   );

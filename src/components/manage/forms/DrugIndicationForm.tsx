@@ -65,150 +65,182 @@ export function DrugIndicationForm({ initialData, drugs, mode, onSuccess, onCanc
           </div>
         )}
 
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Drug *</label>
-            <div className="mt-1">
-              <RelationshipSelect 
-                id="drug_id"
-                name="drug_id"
-                options={drugOptions}
-                defaultValue={initialData?.drug_id}
+        <div className="space-y-8">
+          
+          {/* Section 1: General Details */}
+          <fieldset className="space-y-4">
+            <legend className="text-sm font-semibold text-[var(--color-brand-primary)] uppercase tracking-wider mb-4 border-b border-[var(--color-border)] w-full pb-2">
+              General Details
+            </legend>
+            <div className="grid grid-cols-1 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Drug *</label>
+                <RelationshipSelect 
+                  id="drug_id"
+                  name="drug_id"
+                  options={drugOptions}
+                  defaultValue={initialData?.drug_id}
+                  disabled={isReadOnly}
+                  required
+                  placeholder="Select a drug..."
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Therapeutic Area *</label>
+                  <input
+                    type="text"
+                    name="therapeutic_area"
+                    required
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.therapeutic_area || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Cancer Type *</label>
+                  <input
+                    type="text"
+                    name="cancer_type"
+                    required
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.cancer_type || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Indication (Full Name) *</label>
+                <input
+                  type="text"
+                  name="indication"
+                  required
+                  disabled={isReadOnly}
+                  defaultValue={initialData?.indication || ''}
+                  className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                />
+              </div>
+            </div>
+          </fieldset>
+
+          {/* Section 2: Clinical Profile */}
+          <fieldset className="space-y-4">
+            <legend className="text-sm font-semibold text-[var(--color-brand-primary)] uppercase tracking-wider mb-4 border-b border-[var(--color-border)] w-full pb-2">
+              Clinical Profile
+            </legend>
+            <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Biomarker</label>
+                  <input
+                    type="text"
+                    name="biomarker"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.biomarker || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Line of Therapy</label>
+                  <input
+                    type="text"
+                    name="line_of_therapy"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.line_of_therapy || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Phase</label>
+                  <select
+                    name="development_phase"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.development_phase || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  >
+                    <option value="">Select phase...</option>
+                    <option value="Discovery">Discovery</option>
+                    <option value="Preclinical">Preclinical</option>
+                    <option value="Phase I">Phase I</option>
+                    <option value="Phase II">Phase II</option>
+                    <option value="Phase III">Phase III</option>
+                    <option value="Filed">Filed</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Withdrawn">Withdrawn</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          {/* Section 3: Status & Priority */}
+          <fieldset className="space-y-4">
+            <legend className="text-sm font-semibold text-[var(--color-brand-primary)] uppercase tracking-wider mb-4 border-b border-[var(--color-border)] w-full pb-2">
+              Status & Priority
+            </legend>
+            <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Status</label>
+                  <select
+                    name="approval_status"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.approval_status || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  >
+                    <option value="">Select status...</option>
+                    <option value="Investigational">Investigational</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Withdrawn">Withdrawn</option>
+                    <option value="Discontinued">Discontinued</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Priority</label>
+                  <select
+                    name="market_priority"
+                    disabled={isReadOnly}
+                    defaultValue={initialData?.market_priority || ''}
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  >
+                    <option value="">Select priority...</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center mt-2">
+                  <input id="is_primary" name="is_primary" type="checkbox" disabled={isReadOnly} defaultChecked={initialData?.is_primary || false} className="h-4 w-4 rounded border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)]" />
+                  <label htmlFor="is_primary" className="ml-2 block text-sm font-medium text-[var(--color-brand-navy)]">Primary Indication</label>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          {/* Section 4: Additional Information */}
+          <fieldset className="space-y-4">
+            <legend className="text-sm font-semibold text-[var(--color-brand-primary)] uppercase tracking-wider mb-4 border-b border-[var(--color-border)] w-full pb-2">
+              Additional Information
+            </legend>
+            <div>
+              <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Notes</label>
+              <textarea
+                name="notes"
+                rows={3}
                 disabled={isReadOnly}
-                required
-                placeholder="Select a drug..."
+                defaultValue={initialData?.notes || ''}
+                className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
               />
             </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Therapeutic Area *</label>
-              <input
-                type="text"
-                name="therapeutic_area"
-                required
-                disabled={isReadOnly}
-                defaultValue={initialData?.therapeutic_area || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Cancer Type *</label>
-              <input
-                type="text"
-                name="cancer_type"
-                required
-                disabled={isReadOnly}
-                defaultValue={initialData?.cancer_type || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Indication (Full Name) *</label>
-            <input
-              type="text"
-              name="indication"
-              required
-              disabled={isReadOnly}
-              defaultValue={initialData?.indication || ''}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Biomarker</label>
-              <input
-                type="text"
-                name="biomarker"
-                disabled={isReadOnly}
-                defaultValue={initialData?.biomarker || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Line of Therapy</label>
-              <input
-                type="text"
-                name="line_of_therapy"
-                disabled={isReadOnly}
-                defaultValue={initialData?.line_of_therapy || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Phase</label>
-              <select
-                name="development_phase"
-                disabled={isReadOnly}
-                defaultValue={initialData?.development_phase || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              >
-                <option value="">Select phase...</option>
-                <option value="Discovery">Discovery</option>
-                <option value="Preclinical">Preclinical</option>
-                <option value="Phase I">Phase I</option>
-                <option value="Phase II">Phase II</option>
-                <option value="Phase III">Phase III</option>
-                <option value="Filed">Filed</option>
-                <option value="Approved">Approved</option>
-                <option value="Withdrawn">Withdrawn</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Status</label>
-              <select
-                name="approval_status"
-                disabled={isReadOnly}
-                defaultValue={initialData?.approval_status || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              >
-                <option value="">Select status...</option>
-                <option value="Investigational">Investigational</option>
-                <option value="Approved">Approved</option>
-                <option value="Withdrawn">Withdrawn</option>
-                <option value="Discontinued">Discontinued</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700">Priority</label>
-              <select
-                name="market_priority"
-                disabled={isReadOnly}
-                defaultValue={initialData?.market_priority || ''}
-                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-              >
-                <option value="">Select priority...</option>
-                <option value="High">High</option>
-                <option value="Medium">Medium</option>
-                <option value="Low">Low</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center">
-              <input id="is_primary" name="is_primary" type="checkbox" disabled={isReadOnly} defaultChecked={initialData?.is_primary || false} className="h-4 w-4 rounded border-slate-300 text-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)]" />
-              <label htmlFor="is_primary" className="ml-2 block text-sm font-medium text-slate-700">Primary Indication</label>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700">Notes</label>
-            <textarea
-              name="notes"
-              rows={3}
-              disabled={isReadOnly}
-              defaultValue={initialData?.notes || ''}
-              className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-[var(--color-brand-primary)] sm:text-sm disabled:bg-slate-50"
-            />
-          </div>
+          </fieldset>
         </div>
       </div>
 
@@ -216,7 +248,7 @@ export function DrugIndicationForm({ initialData, drugs, mode, onSuccess, onCanc
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none"
+          className="rounded-md border border-[var(--color-border)] bg-transparent px-4 py-2 text-sm font-medium text-[var(--color-brand-navy)] shadow-sm hover:bg-[var(--color-bg)] focus:outline-none"
         >
           {isReadOnly ? 'Close' : 'Cancel'}
         </button>

@@ -50,7 +50,7 @@ export function ManagementTable<TData, TValue>({
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+      <div className="flex-1 min-h-0 bg-[var(--color-surface)] rounded-lg shadow-sm border border-[var(--color-border)] overflow-hidden flex flex-col">
         {/* We reuse the DataTable component which handles Search, Pagination, Sorting */}
         <DataTable 
           columns={columns}

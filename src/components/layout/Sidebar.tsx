@@ -11,19 +11,19 @@ export function Sidebar() {
   const isRouteActive = (route: string) => pathname === route;
 
   return (
-    <aside className="w-64 bg-[var(--color-brand-navy)] text-slate-300 flex flex-col h-screen fixed top-0 left-0 overflow-y-auto">
-      <div className="p-6">
-        <h1 className="text-xl font-bold text-white flex items-center gap-2">
-          <Activity className="text-[var(--color-brand-primary)]" />
+    <aside className="w-56 bg-surface border-r border-border text-muted flex flex-col h-screen fixed top-0 left-0 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <div className="p-4">
+        <h1 className="text-xl font-bold text-brand-navy flex items-center gap-2">
+          <Activity className="text-brand-primary" />
           KMK Pipeline
         </h1>
       </div>
 
-      <nav className="flex-1 px-4 space-y-6">
+      <nav className="flex-1 px-3 space-y-6">
         <div>
-          <p className="px-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Therapeutic Areas</p>
+          <p className="px-2 text-xs font-semibold text-muted uppercase tracking-wider mb-2">Therapeutic Areas</p>
           <div className="space-y-1">
-            <Link href="/" className={cn("flex items-center gap-3 px-2 py-2 rounded-md transition-colors", isRouteActive('/') ? "bg-slate-800 text-white" : "hover:bg-slate-800/50 hover:text-white")}>
+            <Link href="/" className={cn("flex items-center gap-3 px-2 py-2 rounded-md transition-colors", isRouteActive('/') ? "bg-brand-primary/10 text-brand-primary font-medium" : "hover:bg-slate-100 hover:text-brand-navy")}>
               <LayoutDashboard size={18} />
               <span>Oncology</span>
             </Link>
@@ -37,21 +37,21 @@ export function Sidebar() {
         </div>
 
         <div>
-          <p className="px-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Analytics</p>
+          <p className="px-2 text-xs font-semibold text-muted uppercase tracking-wider mb-2">Analytics</p>
           <div className="space-y-1">
-            <Link href="/pipeline" className={cn("flex items-center gap-3 px-2 py-2 rounded-md transition-colors", isRouteActive('/pipeline') ? "bg-slate-800 text-white" : "hover:bg-slate-800/50 hover:text-white")}>
+            <Link href="/pipeline" className={cn("flex items-center gap-3 px-2 py-2 rounded-md transition-colors", isRouteActive('/pipeline') ? "bg-brand-primary/10 text-brand-primary font-medium" : "hover:bg-slate-100 hover:text-brand-navy")}>
               <Beaker size={18} />
               <span>Pipeline Explorer</span>
             </Link>
-            <Link href="/companies" className={cn("flex items-center gap-3 px-2 py-2 rounded-md transition-colors", isRouteActive('/companies') ? "bg-slate-800 text-white" : "hover:bg-slate-800/50 hover:text-white")}>
+            <Link href="/companies" className={cn("flex items-center gap-3 px-2 py-2 rounded-md transition-colors", isRouteActive('/companies') ? "bg-brand-primary/10 text-brand-primary font-medium" : "hover:bg-slate-100 hover:text-brand-navy")}>
               <Building2 size={18} />
               <span>Comparative Analysis</span>
             </Link>
-            <Link href="/trials" className={cn("flex items-center gap-3 px-2 py-2 rounded-md transition-colors", isRouteActive('/trials') ? "bg-slate-800 text-white" : "hover:bg-slate-800/50 hover:text-white")}>
+            <Link href="/trials" className={cn("flex items-center gap-3 px-2 py-2 rounded-md transition-colors", isRouteActive('/trials') ? "bg-brand-primary/10 text-brand-primary font-medium" : "hover:bg-slate-100 hover:text-brand-navy")}>
               <FlaskConical size={18} />
               <span>Market Insights</span>
             </Link>
-            <Link href="/catalysts" className={cn("flex items-center gap-3 px-2 py-2 rounded-md transition-colors", isRouteActive('/catalysts') ? "bg-slate-800 text-white" : "hover:bg-slate-800/50 hover:text-white")}>
+            <Link href="/catalysts" className={cn("flex items-center gap-3 px-2 py-2 rounded-md transition-colors", isRouteActive('/catalysts') ? "bg-brand-primary/10 text-brand-primary font-medium" : "hover:bg-slate-100 hover:text-brand-navy")}>
               <CalendarClock size={18} />
               <span>Upcoming Catalysts</span>
             </Link>
@@ -59,17 +59,17 @@ export function Sidebar() {
         </div>
 
         <div>
-          <p className="px-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Resources</p>
+          <p className="px-2 text-xs font-semibold text-muted uppercase tracking-wider mb-2">Resources</p>
           <div className="space-y-1">
-            <Link href="/reports" className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-slate-800/50 hover:text-white transition-colors">
+            <Link href="/reports" className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-slate-100 hover:text-brand-navy transition-colors">
               <FileText size={18} />
               <span>Reports</span>
             </Link>
-            <Link href="/downloads" className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-slate-800/50 hover:text-white transition-colors">
+            <Link href="/downloads" className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-slate-100 hover:text-brand-navy transition-colors">
               <Download size={18} />
               <span>Downloads</span>
             </Link>
-            <Link href="/glossary" className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-slate-800/50 hover:text-white transition-colors">
+            <Link href="/glossary" className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-slate-100 hover:text-brand-navy transition-colors">
               <BookOpen size={18} />
               <span>Glossary</span>
             </Link>
@@ -78,7 +78,7 @@ export function Sidebar() {
       </nav>
 
       <div className="p-4 mt-auto">
-        <Link href="/settings" className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-slate-800/50 hover:text-white transition-colors">
+        <Link href="/settings" className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-slate-100 hover:text-brand-navy transition-colors">
           <Settings size={18} />
           <span>Settings</span>
         </Link>

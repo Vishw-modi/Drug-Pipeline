@@ -1,26 +1,122 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-primary: #18A3A1;
-  --color-brand-secondary: #2CB6B2;
-  --color-brand-pink: #EE4B77;
-  --color-brand-coral: #F56A6A;
-  --color-brand-blue: #4F8CBD;
-  --color-brand-navy: #0F172A;
+  --color-brand-primary: var(--color-brand-primary);
+  --color-brand-secondary: var(--color-brand-secondary);
+  --color-brand-pink: var(--color-brand-pink);
+  --color-brand-coral: var(--color-brand-coral);
+  --color-brand-blue: var(--color-brand-blue);
+  --color-brand-navy: var(--color-brand-navy);
 
-  --color-background: #F8FAFC;
-  --color-surface: #FFFFFF;
-  --color-border: #E5E7EB;
-  --color-muted: #64748B;
+  --color-background: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-border: var(--color-border);
+  --color-muted: var(--color-muted);
   
-  --color-status-discovery: #9CA3AF; /* Gray */
-  --color-status-preclinical: #64748B; /* Slate */
-  --color-status-phase1: #3B82F6; /* Blue */
-  --color-status-phase2: #14B8A6; /* Teal */
-  --color-status-phase3: #EC4899; /* Pink */
-  --color-status-filed: #F97316; /* Orange */
-  --color-status-approved: #22C55E; /* Green */
-  --color-status-withdrawn: #EF4444; /* Red */
+  --color-status-discovery: #9CA3AF;
+  --color-status-preclinical: #64748B;
+  --color-status-phase1: #3B82F6;
+  --color-status-phase2: #14B8A6;
+  --color-status-phase3: #EC4899;
+  --color-status-filed: #F97316;
+  --color-status-approved: #22C55E;
+  --color-status-withdrawn: #EF4444;
+}
+
+@layer base {
+  :root {
+    --color-brand-primary: #18A3A1;
+    --color-brand-secondary: #2CB6B2;
+    --color-brand-pink: #EE4B77;
+    --color-brand-coral: #F56A6A;
+    --color-brand-blue: #4F8CBD;
+    --color-brand-navy: #0F172A;
+
+    --color-bg: #F8FAFC;
+    --color-surface: #FFFFFF;
+    --color-surface-hover: #F1F5F9;
+    --color-border: #E5E7EB;
+    --color-muted: #64748B;
+
+    /* Default Chart Colors */
+    --chart-1: #18A3A1;
+    --chart-2: #4F8CBD;
+    --chart-3: #EE4B77;
+    --chart-4: #F56A6A;
+    --chart-5: #2CB6B2;
+    --chart-6: #0F172A;
+    --chart-7: #9CA3AF;
+  }
+
+  [data-theme="dark"] {
+    --color-brand-primary: #18A3A1;
+    --color-brand-secondary: #2CB6B2;
+    --color-brand-pink: #EE4B77;
+    --color-brand-coral: #F56A6A;
+    --color-brand-blue: #4F8CBD;
+    --color-brand-navy: #F8FAFC; /* Light text for dark mode */
+
+    --color-bg: #0F172A; /* Deep slate */
+    --color-surface: #1E293B; /* Elevated slate */
+    --color-surface-hover: #334155;
+    --color-border: #334155;
+    --color-muted: #94A3B8;
+
+    --chart-1: #18A3A1;
+    --chart-2: #4F8CBD;
+    --chart-3: #EE4B77;
+    --chart-4: #F56A6A;
+    --chart-5: #2CB6B2;
+    --chart-6: #F8FAFC;
+    --chart-7: #94A3B8;
+  }
+
+  [data-theme="claude"] {
+    --color-brand-primary: #D97757;
+    --color-brand-secondary: #B06550;
+    --color-brand-pink: #D97757;
+    --color-brand-coral: #E19B84;
+    --color-brand-blue: #8C8684;
+    --color-brand-navy: #332D2B;
+
+    --color-bg: #F2EFE8;
+    --color-surface: #FAF8F5;
+    --color-surface-hover: #E2DDD5;
+    --color-border: #E2DDD5;
+    --color-muted: #79716B;
+
+    --chart-1: #D97757;
+    --chart-2: #332D2B;
+    --chart-3: #B06550;
+    --chart-4: #79716B;
+    --chart-5: #E19B84;
+    --chart-6: #5C5552;
+    --chart-7: #D4CCC1;
+  }
+
+
+  [data-theme="professional"] {
+    --color-brand-primary: #0284C7;
+    --color-brand-secondary: #0369A1;
+    --color-brand-pink: #0284C7;
+    --color-brand-coral: #38BDF8;
+    --color-brand-blue: #0EA5E9;
+    --color-brand-navy: #0C4A6E;
+
+    --color-bg: #F0F4F8;
+    --color-surface: #FFFFFF;
+    --color-surface-hover: #E2E8F0;
+    --color-border: #CBD5E1;
+    --color-muted: #64748B;
+
+    --chart-1: #0284C7;
+    --chart-2: #0369A1;
+    --chart-3: #0EA5E9;
+    --chart-4: #38BDF8;
+    --chart-5: #075985;
+    --chart-6: #0C4A6E;
+    --chart-7: #94A3B8;
+  }
 }
 
 @layer base {

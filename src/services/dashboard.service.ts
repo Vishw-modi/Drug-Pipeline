@@ -119,16 +119,16 @@ export async function getPipelineBySponsor(filters?: Record<string, string>): Pr
   return Object.entries(counts).map(([name, value]) => ({ name, value })).sort((a,b) => b.value - a.value).slice(0,10);
 }
 
-export async function getUpcomingCatalysts(filters?: Record<string, string>): Promise<UpcomingEvent[]> {
+export async function getUpcomingCatalysts(filters?: Record<string, string>, limit = 100): Promise<UpcomingEvent[]> {
   // To filter catalysts, we need to apply filters on the related drug
   const supabase = await createServerClient();
   const { data: validDrugs } = await buildDrugQuery(supabase, filters);
   const validDrugIds = validDrugs ? Array.from(new Set(validDrugs.map((d: any) => d.id))) : [];
 
   let query = supabase.from('upcoming_events')
-    .select('*, drugs(drug_name, companies(company_name))')
+    .select('*, drugs(drug_name, development_phase, companies(company_name), drug_indications(indication))')
     .order('expected_date', { ascending: true })
-    .limit(10);
+    .limit(limit);
 
   if (filters && Object.keys(filters).length > 0 && validDrugIds.length > 0) {
     query = query.in('drug_id', validDrugIds);
@@ -140,7 +140,9 @@ export async function getUpcomingCatalysts(filters?: Record<string, string>): Pr
   return data.map((item: any) => ({
     ...item,
     drug_name: item.drugs?.drug_name,
-    company_name: item.drugs?.companies?.company_name
+    company_name: item.drugs?.companies?.company_name,
+    phase: item.drugs?.development_phase || 'Unknown',
+    indication: item.drugs?.drug_indications?.[0]?.indication || 'Unknown'
   }));
 }
 

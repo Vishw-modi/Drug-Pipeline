@@ -76,7 +76,7 @@ export function AddDrugForm({ companies }: AddDrugFormProps) {
                 id="company_id"
                 name="company_id"
                 required
-                className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] bg-white"
+                className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] bg-[var(--color-surface)]"
               >
                 <option value="">Select a company...</option>
                 {companies.map(c => (
@@ -101,7 +101,7 @@ export function AddDrugForm({ companies }: AddDrugFormProps) {
               <select
                 id="development_phase"
                 name="development_phase"
-                className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] bg-white"
+                className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] bg-[var(--color-surface)]"
               >
                 <option value="">Select Phase...</option>
                 <option value="Discovery">Discovery</option>

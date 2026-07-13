@@ -24,11 +24,36 @@ async function DashboardMetrics({ filters }: { filters: Record<string, string> }
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-      <MetricCard title="Total Pipeline Drugs" value={summary.total_pipeline_drugs} icon={<Pill size={20} />} />
-      <MetricCard title="Early Stage" value={summary.early_stage} icon={<Activity size={20} />} />
-      <MetricCard title="Mid Stage" value={summary.mid_stage} icon={<Clock size={20} />} />
-      <MetricCard title="Late Stage" value={summary.late_stage} icon={<Clock size={20} />} />
-      <MetricCard title="Approved" value={summary.approved} icon={<CheckCircle size={20} />} />
+      <MetricCard 
+        title="Total Pipeline Drugs" 
+        value={summary.total_pipeline_drugs} 
+        icon={<Pill size={20} />} 
+        insight="Total active development programs across all phases."
+      />
+      <MetricCard 
+        title="Early Stage" 
+        value={summary.early_stage} 
+        icon={<Activity size={20} />} 
+        insight="Preclinical and Phase I candidates showing promise."
+      />
+      <MetricCard 
+        title="Mid Stage" 
+        value={summary.mid_stage} 
+        icon={<Clock size={20} />} 
+        insight="Phase II clinical trials evaluating efficacy and safety."
+      />
+      <MetricCard 
+        title="Late Stage" 
+        value={summary.late_stage} 
+        icon={<Clock size={20} />} 
+        insight="Phase III trials nearing regulatory submission."
+      />
+      <MetricCard 
+        title="Approved" 
+        value={summary.approved} 
+        icon={<CheckCircle size={20} />} 
+        insight="Successfully launched commercial products."
+      />
     </div>
   );
 }
@@ -44,8 +69,8 @@ async function ChartsSection({ filters }: { filters: Record<string, string> }) {
 
   return (
     <div className="flex flex-col gap-6 mb-6">
-      {/* First row of charts (3 columns) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* First row: Donut Charts (2 cols) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
             <CardTitle>Pipeline by Development Phase</CardTitle>
@@ -57,35 +82,38 @@ async function ChartsSection({ filters }: { filters: Record<string, string> }) {
         
         <Card>
           <CardHeader>
+            <CardTitle>Pipeline by Molecule Type</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <DonutChart data={moleculeData} colorScheme="molecule" />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Second row: Horizontal Bars (2 cols) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
             <CardTitle>Pipeline by Cancer Type</CardTitle>
           </CardHeader>
           <CardContent>
-            <HorizontalBarChart data={cancerTypeData} color="var(--color-brand-primary)" />
+            <HorizontalBarChart data={cancerTypeData} />
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Pipeline by Molecule Type</CardTitle>
+            <CardTitle>Top Companies</CardTitle>
           </CardHeader>
           <CardContent>
-            <DonutChart data={moleculeData} colors={['#EE4B77', '#4F8CBD', '#18A3A1', '#0F172A']} />
+            <HorizontalBarChart data={sponsorData} />
           </CardContent>
         </Card>
       </div>
 
-      {/* Second row: Top Companies & Upcoming Catalysts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-1 flex flex-col">
-          <CardHeader>
-            <CardTitle>Top Companies</CardTitle>
-          </CardHeader>
-          <CardContent className="flex-1 flex flex-col min-h-[300px]">
-            <HorizontalBarChart data={sponsorData} color="var(--color-brand-primary)" height="100%" />
-          </CardContent>
-        </Card>
-        
-        <Card className="lg:col-span-2 flex flex-col">
+      {/* Third row: Catalysts Table (1 col, full width) */}
+      <div className="grid grid-cols-1 gap-6">
+        <Card className="flex flex-col">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle>Upcoming Key Catalysts (Next 12 Months)</CardTitle>
           </CardHeader>
@@ -162,53 +190,15 @@ async function ListsSection({ filters }: { filters: Record<string, string> }) {
   );
 }
 
-function ChartCardSkeleton({ className = "" }: { className?: string }) {
-  return (
-    <Card className={`overflow-hidden ${className}`}>
-      <CardHeader>
-        <div className="h-6 w-1/2 bg-slate-200 rounded animate-pulse"></div>
-      </CardHeader>
-      <CardContent>
-        <div className="h-64 bg-slate-100 rounded animate-pulse mt-2"></div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function ChartsSectionSkeleton() {
-  return (
-    <div className="flex flex-col gap-6 mb-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <ChartCardSkeleton />
-        <ChartCardSkeleton />
-        <ChartCardSkeleton />
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <ChartCardSkeleton className="lg:col-span-1" />
-        <ChartCardSkeleton className="lg:col-span-2" />
-      </div>
-    </div>
-  );
-}
-
-function TableSkeleton() {
-  return (
-    <Card className="mb-6">
-      <CardHeader>
-        <div className="h-6 w-1/3 bg-slate-200 rounded animate-pulse"></div>
-      </CardHeader>
-      <CardContent>
-        <div className="h-48 bg-slate-100 rounded animate-pulse mt-2"></div>
-      </CardContent>
-    </Card>
-  );
-}
-
 export default async function OverviewDashboard({ searchParams }: PageProps) {
   const filterOptions = await getFilterOptions();
   
+  // Await searchParams in Next.js 15+, or just read them in 14. 
+  // For safety with Turbopack / Next 15 types, we await it if it's a promise, but TS might complain if it's not.
+  // In Next 14, searchParams is an object. In 15, it's a promise. We defined it as Promise in PageProps to support 15.
   const resolvedParams = await searchParams;
   
+  // Cast and clean up searchParams to Record<string, string>
   const filters: Record<string, string> = {};
   if (resolvedParams) {
     Object.entries(resolvedParams).forEach(([k, v]) => {
@@ -225,23 +215,23 @@ export default async function OverviewDashboard({ searchParams }: PageProps) {
 
       <FilterBar options={filterOptions} />
 
-      <Suspense fallback={
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+      <Suspense key={`metrics-${JSON.stringify(filters)}`} fallback={
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
           {[...Array(5)].map((_, i) => <MetricCardSkeleton key={i} />)}
         </div>
       }>
         <DashboardMetrics filters={filters} />
       </Suspense>
 
-      <Suspense fallback={<ChartsSectionSkeleton />}>
+      <Suspense key={`charts-${JSON.stringify(filters)}`} fallback={<div className="h-96 bg-slate-50 animate-pulse rounded-xl mb-6"></div>}>
         <ChartsSection filters={filters} />
       </Suspense>
 
-      <Suspense fallback={<TableSkeleton />}>
+      <Suspense key={`sample-${JSON.stringify(filters)}`} fallback={<div className="h-64 bg-slate-50 animate-pulse rounded-xl mb-6"></div>}>
         <SamplePipelineSection filters={filters} />
       </Suspense>
 
-      <Suspense fallback={<TableSkeleton />}>
+      <Suspense key={`lists-${JSON.stringify(filters)}`} fallback={<div className="h-64 bg-slate-50 animate-pulse rounded-xl"></div>}>
         <ListsSection filters={filters} />
       </Suspense>
     </div>

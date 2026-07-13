@@ -54,7 +54,7 @@ export function DataTable<TData, TValue>({
             suppressHydrationWarning
             value={globalFilter ?? ''}
             onChange={(e) => setGlobalFilter(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]"
+            className="w-full pl-9 pr-4 py-2 border border-[var(--color-border)] bg-[var(--color-surface)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]"
             placeholder={searchPlaceholder}
           />
         </div>
@@ -62,7 +62,7 @@ export function DataTable<TData, TValue>({
       
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-left">
-          <thead className="bg-slate-50 text-[var(--color-muted)] text-xs uppercase border-b border-[var(--color-border)]">
+          <thead className="bg-[var(--color-bg)] text-[var(--color-muted)] text-xs uppercase border-b border-[var(--color-border)]">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -94,7 +94,7 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
-                  className="bg-white hover:bg-slate-50 transition-colors"
+                  className="bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)] transition-colors"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-6 py-4 text-[var(--color-brand-navy)]">
@@ -121,14 +121,14 @@ export function DataTable<TData, TValue>({
         </div>
         <div className="flex items-center gap-2">
           <button
-            className="p-1 rounded hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1 rounded hover:bg-[var(--color-surface-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
             <ChevronLeft size={20} />
           </button>
           <button
-            className="p-1 rounded hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1 rounded hover:bg-[var(--color-surface-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
