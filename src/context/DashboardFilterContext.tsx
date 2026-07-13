@@ -88,7 +88,8 @@ export function DashboardFilterProvider({ children }: { children: ReactNode }) {
   const fallbackValue = {
     filters: defaultFilters,
     setFilter: () => {},
-    resetFilters: () => {}
+    resetFilters: () => {},
+    isPending: false
   };
 
   return (

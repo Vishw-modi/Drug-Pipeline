@@ -68,7 +68,7 @@ export function HorizontalBarChart({ data, height }: HorizontalBarChartProps) {
               let insight = 'Significant contributor to the oncology portfolio.';
               if (name.includes('Breast') || name.includes('Lung')) insight = 'High-prevalence indication with large market potential.';
               if (name.includes('Rare')) insight = 'Niche indication with potential orphan drug benefits.';
-              if (data.value > 15) insight = 'Core strategic focus area with heavy investment.';
+              if (typeof data.value === 'number' && data.value > 15) insight = 'Core strategic focus area with heavy investment.';
               
               return (
                 <div className="bg-[var(--color-surface)] border border-[var(--color-border)] p-3 rounded-lg shadow-lg max-w-xs">
