@@ -17,12 +17,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="antialiased min-h-screen bg-background text-foreground">
+      <body className="antialiased min-h-screen bg-background text-foreground" suppressHydrationWarning>
         <ThemeProvider>
           <DashboardFilterProvider>
             <div className="flex h-screen overflow-hidden">
               <Sidebar />
-              <div id="export-container" className="flex-1 ml-56 flex flex-col h-screen overflow-hidden">
+              <div id="export-container" className="flex-1 flex flex-col h-screen overflow-hidden">
                 <Topbar />
                 <main className="flex-1 overflow-y-auto p-6 bg-background">
                   {children}

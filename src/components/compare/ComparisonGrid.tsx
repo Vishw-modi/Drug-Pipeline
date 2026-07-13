@@ -26,9 +26,9 @@ export function ComparisonGrid({ drugs }: ComparisonGridProps) {
     <div className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-left">
-          <thead className="bg-slate-50 border-b border-border">
+          <thead className="bg-background border-b border-border">
             <tr>
-              <th className="px-6 py-4 font-semibold text-brand-navy w-48 min-w-[12rem] border-r border-border bg-slate-50 sticky left-0 z-10 shadow-[1px_0_0_0_#e2e8f0]">
+              <th className="px-6 py-4 font-semibold text-brand-navy w-48 min-w-[12rem] border-r border-border bg-background sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">
                 Attribute
               </th>
               {drugs.map(drug => (
@@ -40,71 +40,71 @@ export function ComparisonGrid({ drugs }: ComparisonGridProps) {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            <tr className="hover:bg-slate-50/50">
-              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-white sticky left-0 z-10 shadow-[1px_0_0_0_#e2e8f0]">Generic Name</td>
+            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Generic Name</td>
               {drugs.map(drug => (
-                <td key={drug.id} className="px-6 py-4 text-slate-700 border-r border-border last:border-r-0">{drug.generic_name || '-'}</td>
+                <td key={drug.id} className="px-6 py-4 text-brand-navy/90 border-r border-border last:border-r-0">{drug.generic_name || '-'}</td>
               ))}
             </tr>
-            <tr className="hover:bg-slate-50/50">
-              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-white sticky left-0 z-10 shadow-[1px_0_0_0_#e2e8f0]">Development Phase</td>
+            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Development Phase</td>
               {drugs.map(drug => (
-                <td key={drug.id} className="px-6 py-4 text-slate-700 border-r border-border last:border-r-0">
+                <td key={drug.id} className="px-6 py-4 text-brand-navy/90 border-r border-border last:border-r-0">
                   <span className={`px-2.5 py-1 rounded-full text-xs font-medium bg-brand-primary/10 text-brand-primary border border-brand-primary/20`}>
                     {drug.development_phase}
                   </span>
                 </td>
               ))}
             </tr>
-            <tr className="hover:bg-slate-50/50">
-              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-white sticky left-0 z-10 shadow-[1px_0_0_0_#e2e8f0]">Molecule Type</td>
+            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Molecule Type</td>
               {drugs.map(drug => (
-                <td key={drug.id} className="px-6 py-4 text-slate-700 border-r border-border last:border-r-0">{drug.molecule_type}</td>
+                <td key={drug.id} className="px-6 py-4 text-brand-navy/90 border-r border-border last:border-r-0">{drug.molecule_type}</td>
               ))}
             </tr>
-            <tr className="hover:bg-slate-50/50">
-              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-white sticky left-0 z-10 shadow-[1px_0_0_0_#e2e8f0]">Target</td>
+            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Target</td>
               {drugs.map(drug => (
-                <td key={drug.id} className="px-6 py-4 text-slate-700 border-r border-border last:border-r-0 font-medium">{drug.target}</td>
+                <td key={drug.id} className="px-6 py-4 text-brand-navy/90 border-r border-border last:border-r-0 font-medium">{drug.target}</td>
               ))}
             </tr>
-            <tr className="hover:bg-slate-50/50">
-              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-white sticky left-0 z-10 shadow-[1px_0_0_0_#e2e8f0]">Mechanism of Action</td>
+            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Mechanism of Action</td>
               {drugs.map(drug => (
-                <td key={drug.id} className="px-6 py-4 text-slate-700 border-r border-border last:border-r-0 text-xs leading-relaxed">{drug.mechanism_of_action}</td>
+                <td key={drug.id} className="px-6 py-4 text-brand-navy/90 border-r border-border last:border-r-0 text-xs leading-relaxed">{drug.mechanism_of_action}</td>
               ))}
             </tr>
-            <tr className="hover:bg-slate-50/50">
-              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-white sticky left-0 z-10 shadow-[1px_0_0_0_#e2e8f0]">Approval Status</td>
+            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Approval Status</td>
               {drugs.map(drug => (
-                <td key={drug.id} className="px-6 py-4 text-slate-700 border-r border-border last:border-r-0">{drug.approval_status}</td>
+                <td key={drug.id} className="px-6 py-4 text-brand-navy/90 border-r border-border last:border-r-0">{drug.approval_status}</td>
               ))}
             </tr>
-            <tr className="hover:bg-slate-50/50 bg-slate-50/30">
-              <td className="px-6 py-3 font-semibold text-brand-navy border-r border-border sticky left-0 z-10 shadow-[1px_0_0_0_#e2e8f0] uppercase text-xs tracking-wider" colSpan={drugs.length + 1}>
+            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 bg-slate-50/30 dark:bg-slate-800/30">
+              <td className="px-6 py-3 font-semibold text-brand-navy border-r border-border sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)] uppercase text-xs tracking-wider" colSpan={drugs.length + 1}>
                 Designations
               </td>
             </tr>
-            <tr className="hover:bg-slate-50/50">
-              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-white sticky left-0 z-10 shadow-[1px_0_0_0_#e2e8f0]">First in Class</td>
+            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">First in Class</td>
               {drugs.map(drug => (
                 <td key={drug.id} className="px-6 py-4 text-center border-r border-border last:border-r-0">{renderBoolean(drug.first_in_class)}</td>
               ))}
             </tr>
-            <tr className="hover:bg-slate-50/50">
-              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-white sticky left-0 z-10 shadow-[1px_0_0_0_#e2e8f0]">Orphan Designation</td>
+            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Orphan Designation</td>
               {drugs.map(drug => (
                 <td key={drug.id} className="px-6 py-4 text-center border-r border-border last:border-r-0">{renderBoolean(drug.orphan_designation)}</td>
               ))}
             </tr>
-            <tr className="hover:bg-slate-50/50">
-              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-white sticky left-0 z-10 shadow-[1px_0_0_0_#e2e8f0]">Fast Track</td>
+            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Fast Track</td>
               {drugs.map(drug => (
                 <td key={drug.id} className="px-6 py-4 text-center border-r border-border last:border-r-0">{renderBoolean(drug.fast_track)}</td>
               ))}
             </tr>
-            <tr className="hover:bg-slate-50/50">
-              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-white sticky left-0 z-10 shadow-[1px_0_0_0_#e2e8f0]">Breakthrough</td>
+            <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+              <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Breakthrough</td>
               {drugs.map(drug => (
                 <td key={drug.id} className="px-6 py-4 text-center border-r border-border last:border-r-0">{renderBoolean(drug.breakthrough_designation)}</td>
               ))}

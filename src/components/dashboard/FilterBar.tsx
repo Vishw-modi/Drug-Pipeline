@@ -45,12 +45,12 @@ export function FilterBar({ options }: FilterBarProps) {
       <SelectGroup label="Drug" value={filters.drug} onChange={(v) => setFilter('drug', v)} items={options.drugs} />
       <SelectGroup label="Development Phase" value={filters.developmentPhase} onChange={(v) => setFilter('developmentPhase', v)} items={options.developmentPhases} />
       <SelectGroup label="Molecule Type" value={filters.moleculeType} onChange={(v) => setFilter('moleculeType', v)} items={options.moleculeTypes} />
-      <SelectGroup label="Company Type" value={filters.sponsor} onChange={(v) => setFilter('sponsor', v)} items={options.sponsors} />
+      <SelectGroup label="Company" value={filters.sponsor} onChange={(v) => setFilter('sponsor', v)} items={options.sponsors} />
       
       <button 
         onClick={resetFilters}
         disabled={isPending}
-        className="px-4 py-2 bg-[#6345ED] hover:bg-[#5235C7] disabled:opacity-70 disabled:hover:bg-[#6345ED] text-white text-sm font-medium rounded-lg transition-colors shadow-sm ml-auto mt-2 sm:mt-0 flex items-center justify-center min-w-[140px]"
+        className="px-4 py-2 bg-brand-primary hover:bg-brand-secondary disabled:opacity-70 disabled:hover:bg-brand-primary text-white text-sm font-medium rounded-lg transition-colors shadow-sm ml-auto mt-2 sm:mt-0 flex items-center justify-center min-w-[140px]"
       >
         {isPending ? (
           <div className="flex items-center gap-2">

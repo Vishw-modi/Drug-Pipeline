@@ -1,86 +1,131 @@
 'use client';
 
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Beaker, Building2, FlaskConical, CalendarClock, Settings, FileText, Download, BookOpen, Activity } from 'lucide-react';
+import { 
+  LayoutDashboard, Beaker, Building2, FlaskConical, CalendarClock, 
+  Settings, FileText, Download, BookOpen, Activity, ChevronsLeft, ChevronsRight 
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function Sidebar() {
   const pathname = usePathname();
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const isRouteActive = (route: string) => pathname === route;
 
   return (
-    <aside className="w-56 bg-surface border-r border-border text-muted flex flex-col h-screen fixed top-0 left-0 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-      <div className="p-4">
-        <h1 className="text-xl font-bold text-brand-navy flex items-center gap-2">
-          <Activity className="text-brand-primary" />
-          KMK Pipeline
-        </h1>
+    <aside 
+      className={cn(
+        "bg-surface border-r border-border text-muted flex flex-col h-screen transition-all duration-300 ease-in-out shrink-0",
+        isCollapsed ? "w-16" : "w-56"
+      )}
+    >
+      <div className={cn("p-4 flex items-center", isCollapsed ? "justify-center" : "justify-between")}>
+        {!isCollapsed && (
+          <h1 className="text-lg font-bold text-brand-navy flex items-center gap-2">
+            <Activity className="text-brand-primary shrink-0" size={20} />
+            <span className="truncate">KMK Pipeline</span>
+          </h1>
+        )}
+        <button 
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="text-muted hover:text-brand-navy transition-colors p-1 rounded-md hover:bg-[var(--color-surface-hover)]"
+          title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          suppressHydrationWarning
+        >
+          {isCollapsed ? <ChevronsRight size={20} /> : <ChevronsLeft size={20} />}
+        </button>
       </div>
 
-      <nav className="flex-1 px-3 space-y-6">
+      <nav className="flex-1 px-2 space-y-6 mt-2 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         <div>
-          <p className="px-2 text-xs font-semibold text-muted uppercase tracking-wider mb-2">Therapeutic Areas</p>
+          {!isCollapsed && <p className="px-3 text-xs font-semibold text-muted uppercase tracking-wider mb-2">Therapeutic Areas</p>}
           <div className="space-y-1">
-            <Link href="/" className={cn("flex items-center gap-3 px-2 py-2 rounded-md transition-colors", isRouteActive('/') ? "bg-brand-primary/10 text-brand-primary font-medium" : "hover:bg-slate-100 hover:text-brand-navy")}>
-              <LayoutDashboard size={18} />
-              <span>Oncology</span>
+            <Link 
+              href="/" 
+              title="Oncology"
+              className={cn(
+                "flex items-center rounded-md transition-colors", 
+                isCollapsed ? "justify-center py-3" : "gap-3 px-3 py-2",
+                isRouteActive('/') ? "bg-brand-primary/10 text-brand-primary font-medium" : "hover:bg-[var(--color-surface-hover)] hover:text-brand-navy"
+              )}
+            >
+              <LayoutDashboard size={isCollapsed ? 20 : 18} className="shrink-0" />
+              {!isCollapsed && <span>Oncology</span>}
             </Link>
-            {['Immunology', 'Neurology', 'Cardiovascular', 'Rare Disease', 'Endocrinology', 'Infectious Disease'].map(area => (
-              <div key={area} className="flex items-center gap-3 px-2 py-2 rounded-md opacity-50 cursor-not-allowed">
-                <div className="w-[18px]" />
-                <span className="text-sm">{area}</span>
+            {!isCollapsed && ['Immunology', 'Neurology', 'Cardiovascular', 'Rare Disease', 'Endocrinology', 'Infectious Disease'].map(area => (
+              <div key={area} className="flex items-center gap-3 px-3 py-2 rounded-md opacity-50 cursor-not-allowed">
+                <div className="w-[18px] shrink-0" />
+                <span className="text-sm truncate">{area}</span>
               </div>
             ))}
           </div>
         </div>
 
         <div>
-          <p className="px-2 text-xs font-semibold text-muted uppercase tracking-wider mb-2">Analytics</p>
+          {!isCollapsed && <p className="px-3 text-xs font-semibold text-muted uppercase tracking-wider mb-2">Analytics</p>}
           <div className="space-y-1">
-            <Link href="/pipeline" className={cn("flex items-center gap-3 px-2 py-2 rounded-md transition-colors", isRouteActive('/pipeline') ? "bg-brand-primary/10 text-brand-primary font-medium" : "hover:bg-slate-100 hover:text-brand-navy")}>
-              <Beaker size={18} />
-              <span>Pipeline Explorer</span>
-            </Link>
-            <Link href="/compare" className={cn("flex items-center gap-3 px-2 py-2 rounded-md transition-colors", isRouteActive('/compare') ? "bg-brand-primary/10 text-brand-primary font-medium" : "hover:bg-slate-100 hover:text-brand-navy")}>
-              <Building2 size={18} />
-              <span>Comparative Analysis</span>
-            </Link>
-            <Link href="/trials" className={cn("flex items-center gap-3 px-2 py-2 rounded-md transition-colors", isRouteActive('/trials') ? "bg-brand-primary/10 text-brand-primary font-medium" : "hover:bg-slate-100 hover:text-brand-navy")}>
-              <FlaskConical size={18} />
-              <span>Market Insights</span>
-            </Link>
-            <Link href="/catalysts" className={cn("flex items-center gap-3 px-2 py-2 rounded-md transition-colors", isRouteActive('/catalysts') ? "bg-brand-primary/10 text-brand-primary font-medium" : "hover:bg-slate-100 hover:text-brand-navy")}>
-              <CalendarClock size={18} />
-              <span>Upcoming Catalysts</span>
-            </Link>
+            {[
+              { route: '/pipeline', icon: Beaker, label: 'Pipeline Explorer' },
+              { route: '/compare', icon: Building2, label: 'Comparative Analysis' },
+              { route: '/trials', icon: FlaskConical, label: 'Market Insights' },
+              { route: '/catalysts', icon: CalendarClock, label: 'Upcoming Catalysts' }
+            ].map(({ route, icon: Icon, label }) => (
+              <Link 
+                key={route}
+                href={route} 
+                title={label}
+                className={cn(
+                  "flex items-center rounded-md transition-colors", 
+                  isCollapsed ? "justify-center py-3" : "gap-3 px-3 py-2",
+                  isRouteActive(route) ? "bg-brand-primary/10 text-brand-primary font-medium" : "hover:bg-[var(--color-surface-hover)] hover:text-brand-navy"
+                )}
+              >
+                <Icon size={isCollapsed ? 20 : 18} className="shrink-0" />
+                {!isCollapsed && <span className="truncate">{label}</span>}
+              </Link>
+            ))}
           </div>
         </div>
 
         <div>
-          <p className="px-2 text-xs font-semibold text-muted uppercase tracking-wider mb-2">Resources</p>
+          {!isCollapsed && <p className="px-3 text-xs font-semibold text-muted uppercase tracking-wider mb-2">Resources</p>}
           <div className="space-y-1">
-            <Link href="/reports" className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-slate-100 hover:text-brand-navy transition-colors">
-              <FileText size={18} />
-              <span>Reports</span>
-            </Link>
-            <Link href="/downloads" className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-slate-100 hover:text-brand-navy transition-colors">
-              <Download size={18} />
-              <span>Downloads</span>
-            </Link>
-            <Link href="/glossary" className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-slate-100 hover:text-brand-navy transition-colors">
-              <BookOpen size={18} />
-              <span>Glossary</span>
-            </Link>
+            {[
+              { route: '/reports', icon: FileText, label: 'Reports' },
+              { route: '/downloads', icon: Download, label: 'Downloads' },
+              { route: '/glossary', icon: BookOpen, label: 'Glossary' }
+            ].map(({ route, icon: Icon, label }) => (
+              <Link 
+                key={route}
+                href={route} 
+                title={label}
+                className={cn(
+                  "flex items-center rounded-md transition-colors hover:bg-[var(--color-surface-hover)] hover:text-brand-navy",
+                  isCollapsed ? "justify-center py-3" : "gap-3 px-3 py-2"
+                )}
+              >
+                <Icon size={isCollapsed ? 20 : 18} className="shrink-0" />
+                {!isCollapsed && <span className="truncate">{label}</span>}
+              </Link>
+            ))}
           </div>
         </div>
       </nav>
 
-      <div className="p-4 mt-auto">
-        <Link href="/settings" className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-slate-100 hover:text-brand-navy transition-colors">
-          <Settings size={18} />
-          <span>Settings</span>
+      <div className="p-3 mt-auto space-y-1">
+        <Link 
+          href="/settings" 
+          title="Settings"
+          className={cn(
+            "flex items-center rounded-md transition-colors hover:bg-[var(--color-surface-hover)] hover:text-brand-navy",
+            isCollapsed ? "justify-center py-3" : "gap-3 px-3 py-2"
+          )}
+        >
+          <Settings size={isCollapsed ? 20 : 18} className="shrink-0" />
+          {!isCollapsed && <span>Settings</span>}
         </Link>
       </div>
     </aside>
