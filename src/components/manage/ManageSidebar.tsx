@@ -9,11 +9,13 @@ import {
   Stethoscope, 
   Microscope, 
   Calendar, 
-  Activity 
+  Activity,
+  Zap
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navigation = [
+  { name: 'Quick Add', href: '/manage/quick-add', icon: Zap },
   { name: 'Companies', href: '/manage/companies', icon: Building2 },
   { name: 'Drugs', href: '/manage/drugs', icon: Pill },
   { name: 'Drug Indications', href: '/manage/indications', icon: Stethoscope },

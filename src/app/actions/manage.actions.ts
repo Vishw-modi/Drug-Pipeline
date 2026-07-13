@@ -53,11 +53,48 @@ export async function deleteCompany(id: number) {
 // ---------------------------
 // DRUGS
 // ---------------------------
-export async function createDrug(data: any) {
+export async function createDrug(payload: any) {
   return handleAction(async () => {
     const supabase = await createClient();
-    const { error } = await supabase.from('drugs').insert([data]);
-    if (error) throw new Error(error.message);
+    
+    const { new_company_name, primary_indication, ...drugData } = payload;
+    let finalCompanyId = drugData.company_id;
+
+    // 1. Create company if needed
+    if (new_company_name) {
+       const { data: newCompany, error: compErr } = await supabase
+         .from('companies')
+         .insert([{ company_name: new_company_name }])
+         .select('id')
+         .single();
+       if (compErr) throw new Error(compErr.message);
+       finalCompanyId = newCompany.id;
+    }
+    
+    drugData.company_id = finalCompanyId;
+    
+    // 2. Create drug
+    const { data: newDrug, error: drugErr } = await supabase
+      .from('drugs')
+      .insert([drugData])
+      .select('id')
+      .single();
+      
+    if (drugErr) throw new Error(drugErr.message);
+    
+    // 3. Create primary indication if provided
+    if (primary_indication && (primary_indication.therapeutic_area || primary_indication.indication || primary_indication.cancer_type)) {
+       const { error: indErr } = await supabase
+         .from('drug_indications')
+         .insert([{
+           drug_id: newDrug.id,
+           therapeutic_area: primary_indication.therapeutic_area || null,
+           indication: primary_indication.indication || null,
+           cancer_type: primary_indication.cancer_type || null
+         }]);
+       if (indErr) throw new Error(indErr.message);
+    }
+    
     revalidateAll();
     return { success: true };
   });

@@ -14,9 +14,10 @@ interface DrugFormProps {
   onCancel: () => void;
 }
 
-export function DrugForm({ initialData, companies, mode, onSuccess, onCancel }: DrugFormProps) {
+export function QuickAddForm({ initialData, companies, mode, onSuccess, onCancel }: DrugFormProps) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [isNewCompany, setIsNewCompany] = useState(false);
 
   const isReadOnly = mode === 'view';
   const companyOptions = companies.map(c => ({ id: c.id, label: c.company_name }));
@@ -27,9 +28,8 @@ export function DrugForm({ initialData, companies, mode, onSuccess, onCancel }: 
     
     setError(null);
     const formData = new FormData(e.currentTarget);
-    const data = {
+    const data: any = {
       drug_name: formData.get('drug_name') as string,
-      company_id: parseInt(formData.get('company_id') as string),
       generic_name: formData.get('generic_name') as string || null,
       internal_code: formData.get('internal_code') as string || null,
       molecule_type: formData.get('molecule_type') as string || null,
@@ -45,9 +45,35 @@ export function DrugForm({ initialData, companies, mode, onSuccess, onCancel }: 
       breakthrough_designation: formData.get('breakthrough_designation') === 'on',
     };
 
-    if (isNaN(data.company_id)) {
-      setError('Please select a company.');
-      return;
+    if (isNewCompany) {
+      const newName = formData.get('new_company_name') as string;
+      if (!newName || newName.trim() === '') {
+        setError('Please enter a new company name.');
+        return;
+      }
+      data.new_company_name = newName;
+    } else {
+      const compId = parseInt(formData.get('company_id') as string);
+      if (isNaN(compId)) {
+        setError('Please select a company.');
+        return;
+      }
+      data.company_id = compId;
+    }
+    
+    // Quick Add: Primary Indication
+    if (mode === 'create') {
+      const therapeuticArea = formData.get('therapeutic_area') as string;
+      const indication = formData.get('indication') as string;
+      const cancerType = formData.get('cancer_type') as string;
+      
+      if (therapeuticArea || indication || cancerType) {
+        data.primary_indication = {
+          therapeutic_area: therapeuticArea,
+          indication: indication,
+          cancer_type: cancerType
+        };
+      }
     }
 
     startTransition(async () => {
@@ -96,16 +122,38 @@ export function DrugForm({ initialData, companies, mode, onSuccess, onCancel }: 
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Company *</label>
-                <RelationshipSelect 
-                  id="company_id"
-                  name="company_id"
-                  options={companyOptions}
-                  defaultValue={initialData?.company_id}
-                  disabled={isReadOnly}
-                  required
-                  placeholder="Select a company..."
-                />
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)]">Company *</label>
+                  {!isReadOnly && mode === 'create' && (
+                    <button
+                      type="button"
+                      onClick={() => setIsNewCompany(!isNewCompany)}
+                      className="text-xs text-[var(--color-brand-primary)] hover:underline focus:outline-none"
+                    >
+                      {isNewCompany ? 'Select Existing Company' : '+ Create New Company'}
+                    </button>
+                  )}
+                </div>
+                {isNewCompany ? (
+                  <input
+                    type="text"
+                    name="new_company_name"
+                    required
+                    disabled={isReadOnly}
+                    placeholder="Enter new company name..."
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm disabled:opacity-50"
+                  />
+                ) : (
+                  <RelationshipSelect 
+                    id="company_id"
+                    name="company_id"
+                    options={companyOptions}
+                    defaultValue={initialData?.company_id}
+                    disabled={isReadOnly}
+                    required={!isNewCompany}
+                    placeholder="Select a company..."
+                  />
+                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -132,6 +180,44 @@ export function DrugForm({ initialData, companies, mode, onSuccess, onCancel }: 
               </div>
             </div>
           </fieldset>
+
+          {/* Quick Add: Primary Indication (Only shown on create) */}
+          {mode === 'create' && (
+            <fieldset className="space-y-4">
+              <legend className="text-sm font-semibold text-[var(--color-brand-primary)] uppercase tracking-wider mb-4 border-b border-[var(--color-border)] w-full pb-2 flex items-center justify-between">
+                <span>Quick Add: Primary Indication <span className="text-xs font-normal text-[var(--color-muted)] normal-case ml-2">(Optional - can add more later)</span></span>
+              </legend>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-[var(--color-surface)] p-4 rounded-lg border border-[var(--color-border)]">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Therapeutic Area</label>
+                  <input
+                    type="text"
+                    name="therapeutic_area"
+                    placeholder="e.g. Oncology"
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Cancer Type</label>
+                  <input
+                    type="text"
+                    name="cancer_type"
+                    placeholder="e.g. NSCLC"
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-brand-navy)] mb-1">Indication Details</label>
+                  <input
+                    type="text"
+                    name="indication"
+                    placeholder="e.g. 1st line metastatic"
+                    className="block w-full px-3 py-2 rounded-md border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-brand-navy)] shadow-sm focus:border-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)] sm:text-sm"
+                  />
+                </div>
+              </div>
+            </fieldset>
+          )}
 
           {/* Section 2: Scientific Profile */}
           <fieldset className="space-y-4">
