@@ -6,6 +6,7 @@ import { useDashboardFilter } from '@/context/DashboardFilterContext';
 interface FilterOptions {
   therapeuticAreas: string[];
   cancerTypes: string[];
+  drugs: string[];
   developmentPhases: string[];
   moleculeTypes: string[];
   sponsors: string[];
@@ -41,9 +42,10 @@ export function FilterBar({ options }: FilterBarProps) {
       <SelectGroup label="Therapeutic Area" value={filters.therapeuticArea} onChange={(v) => setFilter('therapeuticArea', v)} items={options.therapeuticAreas} />
       <SelectGroup label="Indication" value={filters.indication} onChange={(v) => setFilter('indication', v)} items={['All']} />
       <SelectGroup label="Cancer Type" value={filters.cancerType} onChange={(v) => setFilter('cancerType', v)} items={options.cancerTypes} />
+      <SelectGroup label="Drug" value={filters.drug} onChange={(v) => setFilter('drug', v)} items={options.drugs} />
       <SelectGroup label="Development Phase" value={filters.developmentPhase} onChange={(v) => setFilter('developmentPhase', v)} items={options.developmentPhases} />
       <SelectGroup label="Molecule Type" value={filters.moleculeType} onChange={(v) => setFilter('moleculeType', v)} items={options.moleculeTypes} />
-      <SelectGroup label="Sponsor Type" value={filters.sponsor} onChange={(v) => setFilter('sponsor', v)} items={options.sponsors} />
+      <SelectGroup label="Company Type" value={filters.sponsor} onChange={(v) => setFilter('sponsor', v)} items={options.sponsors} />
       
       <button 
         onClick={resetFilters}

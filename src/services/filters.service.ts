@@ -7,7 +7,7 @@ export const getFilterOptions = unstable_cache(
     
     const [indicationsRes, drugsRes, companiesRes] = await Promise.all([
       supabase.from('drug_indications').select('therapeutic_area, cancer_type'),
-      supabase.from('drugs').select('development_phase, molecule_type'),
+      supabase.from('drugs').select('development_phase, molecule_type, drug_name'),
       supabase.from('companies').select('company_name')
     ]);
 
@@ -25,6 +25,7 @@ export const getFilterOptions = unstable_cache(
     return {
       therapeuticAreas: extractDistinct(indicationsRes.data, 'therapeutic_area'),
       cancerTypes: extractDistinct(indicationsRes.data, 'cancer_type'),
+      drugs: extractDistinct(drugsRes.data, 'drug_name'),
       developmentPhases: extractDistinct(drugsRes.data, 'development_phase'),
       moleculeTypes: extractDistinct(drugsRes.data, 'molecule_type'),
       sponsors: extractDistinct(companiesRes.data, 'company_name'),

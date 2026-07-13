@@ -7,6 +7,7 @@ const buildDrugQuery = (supabase: any, filters?: Record<string, string>) => {
   let query = supabase.from('drugs').select(selectStr);
 
   if (filters) {
+    if (filters.drug) query = query.eq('drug_name', filters.drug);
     if (filters.developmentPhase) query = query.eq('development_phase', filters.developmentPhase);
     if (filters.moleculeType) query = query.eq('molecule_type', filters.moleculeType);
     if (filters.sponsor) query = query.eq('companies.company_name', filters.sponsor);

@@ -7,6 +7,7 @@ export interface FilterState {
   therapeuticArea: string;
   indication: string;
   cancerType: string;
+  drug: string;
   developmentPhase: string;
   moleculeType: string;
   sponsor: string;
@@ -16,6 +17,7 @@ export const defaultFilters: FilterState = {
   therapeuticArea: 'All',
   indication: 'All',
   cancerType: 'All',
+  drug: 'All',
   developmentPhase: 'All',
   moleculeType: 'All',
   sponsor: 'All',
@@ -43,6 +45,7 @@ function FilterProviderInner({ children }: { children: ReactNode }) {
       therapeuticArea: searchParams.get('therapeuticArea') || defaultFilters.therapeuticArea,
       indication: searchParams.get('indication') || defaultFilters.indication,
       cancerType: searchParams.get('cancerType') || defaultFilters.cancerType,
+      drug: searchParams.get('drug') || defaultFilters.drug,
       developmentPhase: searchParams.get('developmentPhase') || defaultFilters.developmentPhase,
       moleculeType: searchParams.get('moleculeType') || defaultFilters.moleculeType,
       sponsor: searchParams.get('sponsor') || defaultFilters.sponsor,

@@ -46,3 +46,31 @@ export async function getDrugById(id: string): Promise<Drug | null> {
     company: data.companies
   };
 }
+
+export async function getDrugsMinimal(): Promise<{ id: number; drug_name: string }[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('drugs')
+    .select('id, drug_name')
+    .order('drug_name');
+
+  if (error || !data) return [];
+  return data;
+}
+
+export async function getDrugsByIds(ids: string[]): Promise<Drug[]> {
+  if (!ids || ids.length === 0) return [];
+  
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('drugs')
+    .select('*, companies!inner(company_name), drug_indications(therapeutic_area, indication, cancer_type)')
+    .in('id', ids);
+
+  if (error || !data) return [];
+  
+  return data.map((d: any) => ({
+    ...d,
+    company: d.companies
+  }));
+}

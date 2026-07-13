@@ -6,6 +6,8 @@ export const metadata = {
   title: 'Pipeline Data Manager | Pharma Dashboard',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default function ManageLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="h-full flex flex-col overflow-hidden -m-6">

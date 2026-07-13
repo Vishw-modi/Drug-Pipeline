@@ -43,7 +43,7 @@ export function Sidebar() {
               <Beaker size={18} />
               <span>Pipeline Explorer</span>
             </Link>
-            <Link href="/companies" className={cn("flex items-center gap-3 px-2 py-2 rounded-md transition-colors", isRouteActive('/companies') ? "bg-brand-primary/10 text-brand-primary font-medium" : "hover:bg-slate-100 hover:text-brand-navy")}>
+            <Link href="/compare" className={cn("flex items-center gap-3 px-2 py-2 rounded-md transition-colors", isRouteActive('/compare') ? "bg-brand-primary/10 text-brand-primary font-medium" : "hover:bg-slate-100 hover:text-brand-navy")}>
               <Building2 size={18} />
               <span>Comparative Analysis</span>
             </Link>
