@@ -66,7 +66,7 @@ export function Topbar() {
           <p className="text-muted mt-2">Fetching latest data from the server</p>
         </div>
       )}
-      <header className="h-16 bg-surface border-b border-border flex items-center justify-between px-6 sticky top-0 z-10">
+      <header className="h-16 bg-surface border-b border-border flex items-center justify-between px-6 sticky top-0 z-40">
         <div className="flex-1 max-w-xl">
           <div className="flex items-center text-sm font-medium text-muted">
             <span className="hidden sm:inline">Drugscape</span>
