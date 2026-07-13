@@ -46,8 +46,8 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <Card>
-      <div className="p-4 border-b border-[var(--color-border)] flex items-center justify-between">
+    <Card className="flex flex-col h-full shadow-none border-0 bg-transparent rounded-none">
+      <div className="p-4 border-b border-[var(--color-border)] flex items-center justify-between shrink-0">
         <div className="relative w-72">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
           <input
@@ -60,14 +60,14 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
       
-      <div className="overflow-x-auto">
+      <div className="overflow-auto flex-1">
         <table className="w-full text-sm text-left">
-          <thead className="bg-[var(--color-bg)] text-[var(--color-muted)] text-xs uppercase border-b border-[var(--color-border)]">
+          <thead className="bg-[var(--color-bg)] text-[var(--color-muted)] text-xs uppercase border-b border-[var(--color-border)] sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <th key={header.id} className="px-6 py-4 font-semibold tracking-wider">
+                    <th key={header.id} className="px-6 py-4 font-semibold tracking-wider bg-[var(--color-bg)]">
                       {header.isPlaceholder ? null : (
                         <div
                           className={header.column.getCanSort() ? 'cursor-pointer select-none flex items-center gap-2 hover:text-[var(--color-brand-navy)] transition-colors' : ''}
@@ -114,21 +114,21 @@ export function DataTable<TData, TValue>({
         </table>
       </div>
 
-      <div className="flex items-center justify-between p-4 border-t border-[var(--color-border)]">
+      <div className="flex items-center justify-between p-4 border-t border-[var(--color-border)] shrink-0 bg-[var(--color-surface)]">
         <div className="text-sm text-[var(--color-muted)]">
           Page {table.getState().pagination.pageIndex + 1} of{' '}
           {table.getPageCount()}
         </div>
         <div className="flex items-center gap-2">
           <button
-            className="p-1 rounded hover:bg-[var(--color-surface-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1 rounded hover:bg-[var(--color-surface-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-brand-navy)]"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
             <ChevronLeft size={20} />
           </button>
           <button
-            className="p-1 rounded hover:bg-[var(--color-surface-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1 rounded hover:bg-[var(--color-surface-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-brand-navy)]"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
