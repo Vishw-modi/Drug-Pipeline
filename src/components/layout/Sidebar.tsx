@@ -68,7 +68,7 @@ export function Sidebar() {
           {!isCollapsed && <p className="px-3 text-xs font-semibold text-muted uppercase tracking-wider mb-2">Analytics</p>}
           <div className="space-y-1">
             {[
-              { route: '/pipeline', icon: Beaker, label: 'Pipeline Explorer' },
+              { route: '/pipeline', icon: Beaker, label: 'Drug Database' },
               { route: '/compare', icon: Building2, label: 'Comparative Analysis' },
               { route: '/trials', icon: FlaskConical, label: 'Market Insights' },
               { route: '/catalysts', icon: CalendarClock, label: 'Upcoming Catalysts' }

@@ -45,7 +45,7 @@ export function PipelineTable({ data }: { data: Drug[] }) {
     <DataTable 
       columns={columns} 
       data={data} 
-      searchPlaceholder="Search drugs, companies, targets..." 
+      searchPlaceholder="Search drugs..." 
     />
   );
 }

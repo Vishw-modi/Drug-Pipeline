@@ -141,7 +141,7 @@ async function SamplePipelineSection({ filters }: { filters: Record<string, stri
   return (
     <Card className="mb-6">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle>Pipeline Explorer (Sample View)</CardTitle>
+        <CardTitle>Drug Database (Sample View)</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="-mx-6">
@@ -149,7 +149,7 @@ async function SamplePipelineSection({ filters }: { filters: Record<string, stri
         </div>
         <div className="flex justify-end mt-4">
           <Link href="/pipeline" className="flex items-center text-sm font-medium text-[var(--color-brand-primary)] hover:underline">
-            View Full Pipeline Explorer <ArrowRight size={16} className="ml-1" />
+            View Full Drug Database <ArrowRight size={16} className="ml-1" />
           </Link>
         </div>
       </CardContent>

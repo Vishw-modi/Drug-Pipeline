@@ -23,7 +23,7 @@ export default async function PipelinePage({ searchParams }: PageProps) {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[var(--color-brand-navy)]">Pipeline Explorer</h1>
+        <h1 className="text-2xl font-bold text-[var(--color-brand-navy)]">Drug Database</h1>
         <p className="text-[var(--color-muted)] mt-1">Detailed view of all pipeline drugs and their current status.</p>
       </div>
 

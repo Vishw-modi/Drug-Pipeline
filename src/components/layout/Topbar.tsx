@@ -73,7 +73,7 @@ export function Topbar() {
             <span className="mx-2 hidden sm:inline">/</span>
             <span className="text-brand-navy">
               {pathname === '/' ? 'Oncology Overview' : 
-               pathname === '/pipeline' ? 'Pipeline Explorer' :
+               pathname === '/pipeline' ? 'Drug Database' :
                pathname === '/compare' ? 'Comparative Analysis' :
                pathname === '/trials' ? 'Market Insights' :
                pathname === '/catalysts' ? 'Upcoming Catalysts' :
