@@ -26,7 +26,7 @@ export function Sidebar() {
         {!isCollapsed && (
           <Link href="/" className="text-lg font-bold text-brand-navy flex items-center gap-2 hover:opacity-80 transition-opacity">
             <Activity className="text-brand-primary shrink-0" size={20} />
-            <span className="truncate">KMK Pipeline</span>
+            <span className="truncate">Drugscape</span>
           </Link>
         )}
         <button 

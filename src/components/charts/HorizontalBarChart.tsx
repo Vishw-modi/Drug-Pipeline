@@ -47,7 +47,6 @@ export function HorizontalBarChart({ data, height }: HorizontalBarChartProps) {
         layout="vertical"
         margin={{ top: 5, right: 40, left: 20, bottom: 5 }}
       >
-        <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#E5E7EB" />
         <XAxis type="number" hide domain={[0, 'dataMax']} />
         <YAxis 
           dataKey="name" 

@@ -6,8 +6,8 @@ import { DashboardFilterProvider } from '@/context/DashboardFilterContext';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 
 export const metadata: Metadata = {
-  title: 'KMK Pipeline Intelligence',
-  description: 'Competitive Oncology Pipeline Intelligence Platform',
+  title: 'Drugscape',
+  description: 'Interactive dashboard for tracking pharmaceutical pipeline drugs and clinical trials',
 };
 
 export default function RootLayout({
