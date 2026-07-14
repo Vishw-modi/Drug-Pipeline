@@ -8,6 +8,9 @@ import { ThemeProvider } from '@/providers/ThemeProvider';
 export const metadata: Metadata = {
   title: 'DRUGSCAPE',
   description: 'Interactive dashboard for tracking pharmaceutical pipeline drugs and clinical trials',
+  icons: {
+    icon: '/Drugscrape.png',
+  },
 };
 
 export default function RootLayout({

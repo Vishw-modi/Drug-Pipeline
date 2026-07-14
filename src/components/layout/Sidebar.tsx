@@ -25,7 +25,7 @@ export function Sidebar() {
       <div className={cn("p-4 flex items-center", isCollapsed ? "justify-center" : "justify-between")}>
         {!isCollapsed && (
           <Link href="/" className="text-lg font-bold text-brand-navy flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <Activity className="text-brand-primary shrink-0" size={20} />
+            <img src="/Drugscrape.png" alt="Drugscape Logo" className="h-6 w-auto object-contain shrink-0" />
             <span className="truncate">DRUGSCAPE</span>
           </Link>
         )}
