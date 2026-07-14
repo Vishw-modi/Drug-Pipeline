@@ -41,11 +41,16 @@ export async function getDashboardSummary(filters?: Record<string, string>): Pro
 
   let early = 0, mid = 0, late = 0, approved = 0;
   drugs.forEach(d => {
-    const phase = d.development_phase;
-    if (['Discovery', 'Preclinical', 'Phase I'].includes(phase)) early++;
-    else if (phase === 'Phase II') mid++;
-    else if (['Phase III', 'Filed'].includes(phase)) late++;
-    if (d.approval_status === 'Approved' || phase === 'Approved') approved++;
+    const phase = d.development_phase || '';
+    if (d.approval_status === 'Approved' || phase === 'Approved') {
+      approved++;
+    } else if (['Phase III', 'Filed'].includes(phase)) {
+      late++;
+    } else if (phase === 'Phase II') {
+      mid++;
+    } else if (['Discovery', 'Preclinical', 'Phase I'].includes(phase)) {
+      early++;
+    }
   });
 
   return { total_pipeline_drugs: drugs.length, early_stage: early, mid_stage: mid, late_stage: late, approved };
@@ -137,8 +142,7 @@ export async function getPipelineByCancerType(filters?: Record<string, string>):
         phaseDistribution,
         kpiTiles: [
           { label: 'Companies', value: Object.keys(data.companies).length },
-          { label: 'Approved', value: approved },
-          { label: 'Late Stage', value: lateStage }
+          { label: 'Approved', value: approved }
         ],
         footerMetrics: [
           ...(topTarget ? [{ label: 'Top Target', primaryText: topTarget.name, secondaryText: `${topTarget.count} Drugs`, icon: 'target' }] : []),
@@ -239,8 +243,7 @@ export async function getPipelineBySponsor(filters?: Record<string, string>): Pr
         phaseDistribution,
         kpiTiles: [
           { label: 'Indications', value: data.uniqueIndications.size },
-          { label: 'Approved', value: approved },
-          { label: 'Late Stage', value: lateStage }
+          { label: 'Approved', value: approved }
         ],
         footerMetrics: [
           ...(topIndication ? [{ label: 'Top Indication', primaryText: topIndication.name, secondaryText: `${topIndication.count} Drugs`, icon: 'target' }] : []),
