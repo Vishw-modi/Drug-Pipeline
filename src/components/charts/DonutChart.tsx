@@ -42,10 +42,11 @@ export function DonutChart({ data, colorScheme = 'default' }: DonutChartProps) {
 
   const renderLegend = (props: any) => {
     const { payload } = props;
+    const sortedPayload = [...payload].sort((a, b) => b.payload.value - a.payload.value);
     
     return (
       <ul className="flex flex-col gap-2.5 m-0 p-0 pl-2 list-none text-xs text-[var(--color-brand-navy)] w-full">
-        {payload.map((entry: any, index: number) => {
+        {sortedPayload.map((entry: any, index: number) => {
           const percentage = total > 0 ? ((entry.payload.value / total) * 100).toFixed(1) : 0;
           return (
             <li key={`item-${index}`} className="flex items-center justify-between gap-2">
