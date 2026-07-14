@@ -262,7 +262,7 @@ export async function getUpcomingCatalysts(filters?: Record<string, string>, lim
 
   let query = supabase.from('upcoming_events')
     .select('*, drugs(drug_name, development_phase, companies(company_name), drug_indications(indication))')
-    .order('expected_date', { ascending: true })
+    .order('expected_date', { ascending: false })
     .limit(limit);
 
   if (filters && Object.keys(filters).length > 0 && validDrugIds.length > 0) {
