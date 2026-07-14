@@ -46,7 +46,7 @@ async function DashboardMetrics({ filters }: { filters: Record<string, string> }
         title="Late Stage" 
         value={summary.late_stage} 
         icon={<Clock size={20} />} 
-        insight="Phase III trials nearing regulatory submission."
+        insight="Phase III trials and Filed drugs nearing regulatory decisions."
       />
       <MetricCard 
         title="Approved" 
