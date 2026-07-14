@@ -5,7 +5,7 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Company Profile | Drugscape',
+  title: 'Company Profile | DRUGSCAPE',
 };
 
 type PageProps = {

@@ -6,7 +6,7 @@ import { DashboardFilterProvider } from '@/context/DashboardFilterContext';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 
 export const metadata: Metadata = {
-  title: 'Drugscape',
+  title: 'DRUGSCAPE',
   description: 'Interactive dashboard for tracking pharmaceutical pipeline drugs and clinical trials',
 };
 

@@ -111,20 +111,59 @@ export function HorizontalBarChart({ data, height, filterKey, tooltipIcon }: Hor
           />
           <Bar 
             dataKey="value" 
-            radius={[0, 4, 4, 0]} 
             barSize={16}
             onClick={handleBarClick}
             style={{ cursor: filterKey ? 'pointer' : 'default' }}
             isAnimationActive={true}
+            shape={(props: any) => {
+              const { x, y, width, height, payload } = props;
+              const details = payload.details;
+              
+              const isOtherSelected = currentSelection && currentSelection !== payload.name;
+              const fillOpacity = isOtherSelected ? 0.35 : 1;
+              const clipId = `clip-${payload.name?.replace(/\\W/g, '') || 'bar'}`;
+
+              if (!details || !details.phaseDistribution || details.phaseDistribution.length === 0) {
+                return (
+                  <path 
+                    d={`M${x},${y} L${x + width - 4},${y} Q${x + width},${y} ${x + width},${y + 4} L${x + width},${y + height - 4} Q${x + width},${y + height} ${x + width - 4},${y + height} L${x},${y + height} Z`}
+                    fill={barColor}
+                    fillOpacity={fillOpacity}
+                    style={{ transition: 'fill-opacity 0.3s ease' }}
+                  />
+                );
+              }
+
+              const total = payload.value;
+              let currentX = x;
+
+              return (
+                <g style={{ transition: 'opacity 0.3s ease', opacity: fillOpacity }}>
+                  <clipPath id={clipId}>
+                    <path d={`M${x},${y} L${x + width - 4},${y} Q${x + width},${y} ${x + width},${y + 4} L${x + width},${y + height - 4} Q${x + width},${y + height} ${x + width - 4},${y + height} L${x},${y + height} Z`} />
+                  </clipPath>
+                  <g clipPath={`url(#${clipId})`}>
+                    {details.phaseDistribution.map((item: any, index: number) => {
+                      const segmentWidth = (item.count / total) * width;
+                      const color = baseColors[index % baseColors.length];
+                      const rect = (
+                        <rect
+                          key={item.phase}
+                          x={currentX}
+                          y={y}
+                          width={segmentWidth}
+                          height={height}
+                          fill={color}
+                        />
+                      );
+                      currentX += segmentWidth;
+                      return rect;
+                    })}
+                  </g>
+                </g>
+              );
+            }}
           >
-            {displayData.map((entry) => (
-              <Cell 
-                key={`cell-${entry.name}`} 
-                fill={barColor}
-                fillOpacity={currentSelection && currentSelection !== entry.name ? 0.35 : 1}
-                style={{ transition: 'fill-opacity 0.3s ease' }}
-              />
-            ))}
             <LabelList dataKey="value" position="right" fill="var(--color-brand-navy)" fontSize={12} fontWeight={600} />
           </Bar>
         </BarChart>

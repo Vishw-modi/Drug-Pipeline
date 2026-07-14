@@ -1,6 +1,7 @@
 import React from 'react';
 import { Drug } from '@/types/drug';
 import { CheckCircle2, XCircle } from 'lucide-react';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 
 interface ComparisonGridProps {
   drugs: Drug[];
@@ -50,9 +51,7 @@ export function ComparisonGrid({ drugs }: ComparisonGridProps) {
               <td className="px-6 py-4 font-medium text-brand-navy border-r border-border bg-surface sticky left-0 z-10 [box-shadow:inset_-1px_0_0_0_var(--color-border)]">Development Phase</td>
               {drugs.map(drug => (
                 <td key={drug.id} className="px-6 py-4 text-brand-navy/90 border-r border-border last:border-r-0">
-                  <span className={`px-2.5 py-1 rounded-full text-xs font-medium bg-brand-primary/10 text-brand-primary border border-brand-primary/20`}>
-                    {drug.development_phase}
-                  </span>
+                  <StatusBadge status={drug.development_phase} />
                 </td>
               ))}
             </tr>

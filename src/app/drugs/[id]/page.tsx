@@ -21,15 +21,15 @@ export default async function DrugDetailsPage({ params }: { params: { id: string
   }
 
   const renderDesignation = (label: string, value: boolean | null | undefined) => (
-    <div className={`flex items-center justify-between p-2.5 rounded-lg border ${value ? 'bg-emerald-50/50 border-emerald-100 dark:bg-emerald-500/10 dark:border-emerald-500/20' : 'bg-[var(--color-surface)] border-[var(--color-border)]'}`}>
-      <span className={`text-xs font-medium ${value ? 'text-emerald-700 dark:text-emerald-400' : 'text-[var(--color-muted)]'}`}>
+    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border ${value ? 'bg-[var(--color-brand-primary)]/10 border-[var(--color-brand-primary)]/20' : 'bg-[var(--color-surface)] border-[var(--color-border)]'}`}>
+      {value ? (
+        <CheckCircle2 size={14} className="text-[var(--color-brand-primary)]" />
+      ) : (
+        <XCircle size={14} className="text-[var(--color-muted)] opacity-50" />
+      )}
+      <span className={`text-xs font-medium ${value ? 'text-[var(--color-brand-primary)]' : 'text-[var(--color-muted)]'}`}>
         {label}
       </span>
-      {value ? (
-        <CheckCircle2 size={16} className="text-emerald-500" />
-      ) : (
-        <XCircle size={16} className="text-slate-300 dark:text-slate-600" />
-      )}
     </div>
   );
 
@@ -160,7 +160,7 @@ export default async function DrugDetailsPage({ params }: { params: { id: string
               </CardTitle>
             </div>
             <CardContent className="p-5">
-              <div className="space-y-2">
+              <div className="flex flex-wrap gap-2">
                 {renderDesignation('First in Class', drug.first_in_class)}
                 {renderDesignation('Orphan Designation', drug.orphan_designation)}
                 {renderDesignation('Fast Track', drug.fast_track)}

@@ -53,7 +53,7 @@ export async function getDashboardSummary(filters?: Record<string, string>): Pro
 
 export async function getPipelineByPhase(filters?: Record<string, string>): Promise<ChartDataCount[]> {
   const supabase = await createServerClient();
-  const { data: rawDrugs } = await buildDrugQuery(supabase, filters, 'developmentPhase');
+  const { data: rawDrugs } = await buildDrugQuery(supabase, filters);
   if (!rawDrugs) return [];
 
   const drugs = deduplicateDrugs(rawDrugs);
@@ -68,7 +68,7 @@ export async function getPipelineByPhase(filters?: Record<string, string>): Prom
 
 export async function getPipelineByCancerType(filters?: Record<string, string>): Promise<ChartDataCount[]> {
   const supabase = await createServerClient();
-  const { data: rawDrugs } = await buildDrugQuery(supabase, filters, 'cancerType');
+  const { data: rawDrugs } = await buildDrugQuery(supabase, filters);
   if (!rawDrugs) return [];
 
   const cancerData: Record<string, {
@@ -151,7 +151,7 @@ export async function getPipelineByCancerType(filters?: Record<string, string>):
 
 export async function getPipelineByMoleculeType(filters?: Record<string, string>): Promise<ChartDataCount[]> {
   const supabase = await createServerClient();
-  const { data: rawDrugs } = await buildDrugQuery(supabase, filters, 'moleculeType');
+  const { data: rawDrugs } = await buildDrugQuery(supabase, filters);
   if (!rawDrugs) return [];
 
   const drugs = deduplicateDrugs(rawDrugs);
@@ -166,7 +166,7 @@ export async function getPipelineByMoleculeType(filters?: Record<string, string>
 
 export async function getPipelineBySponsor(filters?: Record<string, string>): Promise<ChartDataCount[]> {
   const supabase = await createServerClient();
-  const { data: rawDrugs } = await buildDrugQuery(supabase, filters, 'sponsor');
+  const { data: rawDrugs } = await buildDrugQuery(supabase, filters);
   if (!rawDrugs) return [];
 
   const drugs = deduplicateDrugs(rawDrugs);

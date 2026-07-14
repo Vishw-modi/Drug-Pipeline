@@ -2,7 +2,7 @@ import { getCompaniesWithStats } from '@/services/companies.service';
 import { CompaniesDirectory } from '@/components/companies/CompaniesDirectory';
 
 export const metadata = {
-  title: 'Companies Directory | Drugscape',
+  title: 'Companies Directory | DRUGSCAPE',
   description: 'Explore pharmaceutical companies and their drug portfolios',
 };
 
