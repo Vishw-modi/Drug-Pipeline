@@ -265,7 +265,8 @@ export async function getUpcomingCatalysts(filters?: Record<string, string>, lim
     .order('expected_date', { ascending: false })
     .limit(limit);
 
-  if (filters && Object.keys(filters).length > 0 && validDrugIds.length > 0) {
+  if (filters && Object.keys(filters).length > 0) {
+    if (validDrugIds.length === 0) return [];
     query = query.in('drug_id', validDrugIds);
   }
 
@@ -291,7 +292,8 @@ export async function getRecentUpdates(filters?: Record<string, string>): Promis
     .order('update_date', { ascending: false })
     .limit(10);
 
-  if (filters && Object.keys(filters).length > 0 && validDrugIds.length > 0) {
+  if (filters && Object.keys(filters).length > 0) {
+    if (validDrugIds.length === 0) return [];
     query = query.in('drug_id', validDrugIds);
   }
 

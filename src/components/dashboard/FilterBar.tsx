@@ -15,29 +15,33 @@ interface FilterOptions {
 
 interface FilterBarProps {
   options: FilterOptions;
+  hideFilters?: string[];
 }
 
-export function FilterBar({ options }: FilterBarProps) {
+export function FilterBar({ options, hideFilters = [] }: FilterBarProps) {
   const { filters, setFilter, resetFilters, isPending } = useDashboardFilter();
 
-  const SelectGroup = ({ label, value, onChange, items }: { label: string, value: string, onChange: (v: string) => void, items: string[] }) => (
-    <div className={`flex flex-col gap-1 w-full sm:w-auto flex-1 min-w-[140px] ${isPending ? 'opacity-70 pointer-events-none' : ''}`}>
-      <label className="text-xs font-semibold text-slate-600 px-1">{label}</label>
-      <select 
-        suppressHydrationWarning
-        className="w-full bg-[var(--color-surface)] border border-slate-200 rounded-lg px-3 py-2 text-sm text-[var(--color-brand-navy)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] appearance-none cursor-pointer"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        disabled={isPending}
-        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', backgroundSize: '1.2em' }}
-      >
-        <option value="All">All</option>
-        {items.map(item => (
-          <option key={item} value={item}>{item}</option>
-        ))}
-      </select>
-    </div>
-  );
+  const SelectGroup = ({ label, value, onChange, items }: { label: string, value: string, onChange: (v: string) => void, items: string[] }) => {
+    if (hideFilters.includes(label)) return null;
+    return (
+      <div className={`flex flex-col gap-1 w-full sm:w-auto flex-1 min-w-[140px] ${isPending ? 'opacity-70 pointer-events-none' : ''}`}>
+        <label className="text-xs font-semibold text-slate-600 px-1">{label}</label>
+        <select 
+          suppressHydrationWarning
+          className="w-full bg-[var(--color-surface)] border border-slate-200 rounded-lg px-3 py-2 text-sm text-[var(--color-brand-navy)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] appearance-none cursor-pointer"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={isPending}
+          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', backgroundSize: '1.2em' }}
+        >
+          <option value="All">All</option>
+          {items.map(item => (
+            <option key={item} value={item}>{item}</option>
+          ))}
+        </select>
+      </div>
+    );
+  };
 
   return (
     <div className="flex flex-wrap items-end gap-4 p-4 bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] mb-6 relative">
