@@ -332,3 +332,423 @@ INSERT INTO drug_indications (drug_id, therapeutic_area, cancer_type, indication
 -- TUSAMITAMAB RAVTANSINE (40) -----------------------------------------------
 (40, 'Oncology', 'Non-Small Cell Lung Cancer', 'CEACAM5-high non-squamous NSCLC, after platinum-based chemo and anti-PD-1/L1', 'CEACAM5 H-score ≥150', '2L+', 'Phase III', 'Investigational', 'High', TRUE, 'CARMEN-LC04 Phase III vs. docetaxel; CEACAM5-selected population'),
 (40, 'Oncology', 'Colorectal Cancer', 'CEACAM5-positive advanced CRC, after standard therapies', 'CEACAM5 expression', '3L+', 'Phase II', 'Investigational', 'Medium', FALSE, 'CARMEN-CRC01 Phase II basket study');
+
+
+
+
+-- ============================================================
+-- 08_patch_2025_2026_approvals.sql
+-- KMK Pipeline Intelligence Platform — Data Patch
+-- Source: FDA Oncology Approvals, retrieved live July 15, 2026
+-- URL: https://www.fda.gov/drugs/resources-information-approved-drugs/oncology-cancerhematologic-malignancies-approval-notifications
+--
+-- NO hardcoded IDs — all foreign keys resolved by name lookup.
+-- Safe to run on any Supabase instance regardless of sequence state.
+-- Run AFTER the original 6 seed files (02 through 07).
+-- ============================================================
+
+
+-- ============================================================
+-- SECTION 1: UPDATE existing drugs whose status changed
+-- ============================================================
+
+UPDATE drugs
+SET development_phase = 'Approved',
+    approval_status   = 'Approved',
+    description       = 'Datroway (co-developed/commercialised with AstraZeneca); FDA approved January 17 2025 for HR+/HER2- metastatic breast cancer (TROPION-Breast01) and June 23 2025 for EGFR-mutated NSCLC post-EGFR TKI + platinum (accelerated; TROPION-Lung08 combination data).',
+    updated_at        = NOW()
+WHERE drug_name = 'Datopotamab Deruxtecan';
+
+UPDATE drugs
+SET development_phase = 'Approved',
+    approval_status   = 'Approved',
+    description       = 'Inluriyo; FDA approved September 25 2025 for ER+/HER2-negative, ESR1-mutated locally advanced or metastatic breast cancer after endocrine therapy and CDK4/6 inhibitor. Based on EMBER-3 Phase III. First oral SERD with traditional FDA approval.',
+    updated_at        = NOW()
+WHERE drug_name = 'Imlunestrant';
+
+UPDATE drugs
+SET description  = 'Imdelltra; converted from accelerated (May 2024) to traditional FDA approval November 19 2025 for relapsed/refractory ES-SCLC after platinum-based chemotherapy, based on confirmatory OS data from DeLLphi-301. DeLLphi-304 Phase III in 1L SCLC ongoing.',
+    updated_at   = NOW()
+WHERE drug_name = 'Tarlatamab';
+
+UPDATE drugs
+SET description  = 'Enhertu (co-developed/commercialised with AstraZeneca); approved in HER2+ BC (DESTINY-Breast03), HER2-low BC (DESTINY-Breast04), HER2-ultralow BC (DESTINY-Breast06, Jan 27 2025), HER2-mutated NSCLC (DESTINY-Lung02), and HER2+ gastric cancer (DESTINY-Gastric01). Broadest HER2-targeting ADC approval landscape.',
+    updated_at   = NOW()
+WHERE drug_name = 'Trastuzumab Deruxtecan';
+
+UPDATE drugs
+SET description  = 'Lumakras; first approved KRAS G12C inhibitor. Full approvals: NSCLC 2L (CodeBreaK 200) and KRAS G12C CRC with panitumumab (CodeBreaK 300, full approval Jan 16 2025, converting Jan 2024 accelerated approval).',
+    updated_at   = NOW()
+WHERE drug_name = 'Sotorasib';
+
+
+-- ============================================================
+-- SECTION 2: UPDATE drug_indications for existing drugs
+-- ============================================================
+
+UPDATE drug_indications
+SET development_phase = 'Approved',
+    approval_status   = 'Approved',
+    notes             = 'TROPION-Breast01 Phase III; FDA approved January 17 2025 — first global Dato-DXd approval',
+    updated_at        = NOW()
+WHERE drug_id = (SELECT id FROM drugs WHERE drug_name = 'Datopotamab Deruxtecan')
+  AND cancer_type = 'Breast Cancer';
+
+UPDATE drug_indications
+SET indication        = 'EGFR-mutated metastatic non-squamous NSCLC, after prior EGFR-directed therapy and platinum-based chemotherapy',
+    biomarker         = 'EGFR mutation',
+    line_of_therapy   = '3L+',
+    development_phase = 'Approved',
+    approval_status   = 'Approved',
+    notes             = 'FDA accelerated approval June 23 2025 for EGFR-mutated NSCLC; TROPION-Lung08 (with pembrolizumab) supporting data',
+    updated_at        = NOW()
+WHERE drug_id = (SELECT id FROM drugs WHERE drug_name = 'Datopotamab Deruxtecan')
+  AND cancer_type = 'Non-Small Cell Lung Cancer';
+
+UPDATE drug_indications
+SET development_phase = 'Approved',
+    approval_status   = 'Approved',
+    notes             = 'EMBER-3 Phase III; FDA approved September 25 2025; brand name Inluriyo',
+    updated_at        = NOW()
+WHERE drug_id = (SELECT id FROM drugs WHERE drug_name = 'Imlunestrant')
+  AND biomarker = 'ESR1 mutation';
+
+UPDATE drug_indications
+SET indication  = 'HER2-low (IHC1+ or IHC2+/ISH-) and HER2-ultralow (IHC0 with incomplete membrane staining) unresectable or metastatic breast cancer, after prior chemotherapy',
+    biomarker   = 'HER2-low / HER2-ultralow',
+    notes       = 'DESTINY-Breast04 (HER2-low, Aug 2022) + DESTINY-Breast06 (HER2-ultralow, Jan 27 2025); expands actionable HER2 to broadest ever population',
+    updated_at  = NOW()
+WHERE drug_id = (SELECT id FROM drugs WHERE drug_name = 'Trastuzumab Deruxtecan')
+  AND biomarker = 'HER2-low';
+
+UPDATE drug_indications
+SET development_phase = 'Approved',
+    approval_status   = 'Approved',
+    notes             = 'CodeBreaK 300 Phase III; accelerated approval Jan 2024; full approval Jan 16 2025',
+    updated_at        = NOW()
+WHERE drug_id = (SELECT id FROM drugs WHERE drug_name = 'Sotorasib')
+  AND cancer_type = 'Colorectal Cancer';
+
+UPDATE drug_indications
+SET line_of_therapy   = '1L',
+    development_phase = 'Approved',
+    approval_status   = 'Approved',
+    indication        = 'Unresectable or metastatic MSI-H/dMMR colorectal cancer, first-line, with ipilimumab',
+    notes             = 'CheckMate 8HW Phase III April 8 2025 FDA approval; superior PFS vs. chemotherapy',
+    updated_at        = NOW()
+WHERE drug_id = (SELECT id FROM drugs WHERE drug_name = 'Nivolumab')
+  AND cancer_type = 'Colorectal Cancer';
+
+
+-- ============================================================
+-- SECTION 3: UPDATE upcoming_events — mark completed ones
+-- ============================================================
+
+UPDATE upcoming_events
+SET status      = 'Completed',
+    actual_date = '2025-01-17',
+    updated_at  = NOW()
+WHERE drug_id = (SELECT id FROM drugs WHERE drug_name = 'Datopotamab Deruxtecan')
+  AND event_type = 'FDA Submission';
+
+UPDATE upcoming_events
+SET status      = 'Completed',
+    actual_date = '2025-09-25',
+    updated_at  = NOW()
+WHERE drug_id = (SELECT id FROM drugs WHERE drug_name = 'Imlunestrant')
+  AND event_type = 'FDA Submission';
+
+UPDATE upcoming_events
+SET status      = 'Completed',
+    actual_date = '2025-01-27',
+    updated_at  = NOW()
+WHERE drug_id = (SELECT id FROM drugs WHERE drug_name = 'Trastuzumab Deruxtecan')
+  AND event_name LIKE '%Breast06%';
+
+
+-- ============================================================
+-- SECTION 4: NEW COMPANIES
+-- Uses ON CONFLICT DO NOTHING — safe to re-run
+-- ============================================================
+
+INSERT INTO companies (company_name, company_type, headquarters, website, description)
+VALUES
+('Boehringer Ingelheim', 'Large Pharma', 'Ingelheim am Rhein, Germany', 'https://www.boehringer-ingelheim.com',
+ 'Family-owned global pharmaceutical company; zongertinib (Hernexeos) is the first HER2-selective (EGFR-sparing) TKI approved for HER2 TKD-mutated non-squamous NSCLC (August 2025).'),
+('Arvinas', 'Biotech', 'New Haven, CT, USA', 'https://www.arvinas.com',
+ 'Pioneer in PROTAC targeted protein degradation technology; vepdegestrant (Veppanu) became the first FDA-approved PROTAC drug for any oncology indication (May 2026), targeting ESR1-mutated HR+ breast cancer.'),
+('Celcuity', 'Biotech', 'Minneapolis, MN, USA', 'https://www.celcuity.com',
+ 'Oncology biotech developing gedatolisib (Revtorpyk), a pan-PI3K/mTOR inhibitor approved July 14 2026 with fulvestrant +/- palbociclib for HR+/HER2- breast cancer without PIK3CA mutation.'),
+('Jazz Pharmaceuticals', 'Large Pharma', 'Dublin, Ireland', 'https://www.jazzpharma.com',
+ 'Specialty pharmaceutical with oncology assets including lurbinectedin (Zepzelca) now approved in combination with atezolizumab for extensive-stage SCLC (October 2025) and dordaviprone (Modeyso) for diffuse midline glioma (August 2025).'),
+('Syndax Pharmaceuticals', 'Biotech', 'Waltham, MA, USA', 'https://www.syndax.com',
+ 'Clinical-stage haematology-focused biopharmaceutical; revumenib (Revuforj) approved October 24 2025 for relapsed/refractory AML with NPM1 mutations; menin inhibitor class pioneer.'),
+('Kura Oncology', 'Biotech', 'San Diego, CA, USA', 'https://www.kuraoncology.com',
+ 'Oncology biotech with ziftomenib (Komzifti) approved November 13 2025 for relapsed/refractory AML with NPM1 mutations; farnesyl transferase inhibitor programme in haematologic malignancies.'),
+('Bayer', 'Large Pharma', 'Leverkusen, Germany', 'https://www.bayer.com',
+ 'Global life sciences company with oncology assets including darolutamide (Nubeqa) approved for mCSPC (June 2025) and sevabertinib (Hyrnuo) approved for HER2 TKD-mutated NSCLC (November 2025).')
+ON CONFLICT (company_name) DO NOTHING;
+
+
+-- ============================================================
+-- SECTION 5: NEW DRUGS
+-- company_id resolved by name — no hardcoded IDs
+-- ============================================================
+
+INSERT INTO drugs (company_id, drug_name, internal_code, generic_name, molecule_type, target, mechanism_of_action, development_phase, approval_status, first_in_class, orphan_designation, fast_track, breakthrough_designation, description)
+VALUES
+
+((SELECT id FROM companies WHERE company_name = 'Boehringer Ingelheim'),
+ 'Zongertinib', 'BI 1810631', 'Zongertinib', 'Small Molecule', 'HER2 TKD',
+ 'Oral irreversible HER2-selective TKI that potently inhibits HER2 TKD activating mutations while sparing EGFR, markedly reducing rash and GI toxicity vs. non-selective HER2 TKIs',
+ 'Approved', 'Approved', TRUE, FALSE, TRUE, TRUE,
+ 'Hernexeos; FDA accelerated approval August 8 2025 for non-squamous NSCLC with HER2 TKD activating mutations after prior platinum-based chemotherapy. First HER2-selective (EGFR-sparing) TKI approved.'),
+
+((SELECT id FROM companies WHERE company_name = 'AbbVie'),
+ 'Telisotuzumab Vedotin', 'ABBV-399', 'Telisotuzumab Vedotin-tllv', 'ADC', 'c-Met',
+ 'Anti-c-Met ADC conjugated to MMAE via protease-cleavable linker; c-Met overexpression drives tumour growth in a subset of EGFR wild-type non-squamous NSCLC',
+ 'Approved', 'Approved', TRUE, FALSE, TRUE, TRUE,
+ 'Emrelis; FDA accelerated approval May 14 2025 for previously treated non-squamous NSCLC with high c-Met protein overexpression (IHC 3+) and no sensitising EGFR mutation. First approved c-Met-targeting ADC. LUMINOSITY Phase II ORR 35.3%.'),
+
+((SELECT id FROM companies WHERE company_name = 'Regeneron'),
+ 'Linvoseltamab', 'REGN5458', 'Linvoseltamab-gcpt', 'Bispecific', 'BCMA/CD3',
+ 'BCMA x CD3 bispecific antibody redirecting cytotoxic T cells to BCMA-expressing myeloma cells; IV administration with step-up dosing to mitigate CRS',
+ 'Approved', 'Approved', FALSE, TRUE, TRUE, TRUE,
+ 'Lynozyfic; FDA accelerated approval July 2 2025 for relapsed or refractory multiple myeloma after 3+ prior lines (PI, IMiD, anti-CD38 mAb). LINKER-MM1 Phase I/II: ORR 71%, CRR 50%. Competes with elranatamab and teclistamab in BCMA/CD3 bispecific class.'),
+
+((SELECT id FROM companies WHERE company_name = 'Arvinas'),
+ 'Vepdegestrant', 'ARV-471', 'Vepdegestrant', 'Small Molecule', 'ER/ESR1',
+ 'First-in-class oral PROTAC ER degrader recruiting cereblon E3 ligase to ubiquitinate and degrade both wild-type and ESR1-mutant oestrogen receptor; mechanism distinct from SERDs',
+ 'Approved', 'Approved', TRUE, FALSE, TRUE, TRUE,
+ 'Veppanu; FDA approved May 1 2026 for ER+/HER2-negative, ESR1-mutated locally advanced or metastatic breast cancer after endocrine therapy and CDK4/6 inhibitor. VERITAC-2 Phase III. First approved PROTAC drug for any oncology indication globally.'),
+
+((SELECT id FROM companies WHERE company_name = 'Celcuity'),
+ 'Gedatolisib', 'PF-05212384', 'Gedatolisib', 'Small Molecule', 'PI3K/mTOR',
+ 'Pan-class I PI3K and mTOR dual inhibitor active across PIK3CA-wildtype tumours where PTEN loss or other PI3K pathway alterations drive resistance to endocrine therapy',
+ 'Approved', 'Approved', FALSE, FALSE, TRUE, TRUE,
+ 'Revtorpyk; FDA approved July 14 2026 with fulvestrant +/- palbociclib for HR+/HER2- locally advanced or metastatic breast cancer without PIK3CA mutation, after 1+ endocrine therapy. VIKTORIA-1 Phase III. Complements inavolisib (PIK3CA-mutated) to cover both PI3K subgroups in HR+ BC.'),
+
+((SELECT id FROM companies WHERE company_name = 'Jazz Pharmaceuticals'),
+ 'Lurbinectedin', 'PM01183', 'Lurbinectedin', 'Small Molecule', 'RNA Pol II',
+ 'Selective inhibitor of oncogenic transcription; covalently binds RNA polymerase II in tumour cells and tumour-associated macrophages, with particular activity in transcription-dependent cancers including SCLC',
+ 'Approved', 'Approved', FALSE, TRUE, FALSE, FALSE,
+ 'Zepzelca; originally approved 2020 as 2L+ SCLC monotherapy. New FDA approval October 2 2025 in combination with atezolizumab for extensive-stage SCLC. Expands lurbinectedin from salvage to 1L combination setting.'),
+
+((SELECT id FROM companies WHERE company_name = 'BeiGene'),
+ 'Sonrotoclax', 'BGB-11417', 'Sonrotoclax', 'Small Molecule', 'BCL-2',
+ 'Next-generation oral highly selective BCL-2 inhibitor with significantly higher BCL-2 binding affinity than venetoclax; designed to overcome venetoclax-resistance mutations in the BCL-2 BH3 binding groove',
+ 'Approved', 'Approved', FALSE, TRUE, TRUE, TRUE,
+ 'Beqalzi; FDA accelerated approval May 13 2026 for relapsed or refractory mantle cell lymphoma after 2+ prior lines. Developed by BeiGene (now BeOne Medicines). Next-generation BCL-2 inhibition with potential activity in venetoclax-resistant patients.'),
+
+((SELECT id FROM companies WHERE company_name = 'Bayer'),
+ 'Darolutamide', 'ODM-201', 'Darolutamide', 'Small Molecule', 'AR',
+ 'Oral non-steroidal androgen receptor inhibitor with structurally unique design providing minimal CNS penetration, reducing CNS adverse effects vs. enzalutamide and apalutamide',
+ 'Approved', 'Approved', FALSE, FALSE, FALSE, FALSE,
+ 'Nubeqa; approved June 3 2025 for metastatic castration-sensitive prostate cancer (mCSPC) with ADT based on ARANZO Phase III. Prior approvals in nmCRPC (2019) and mCRPC (2022). CNS safety advantage differentiates it in the AR inhibitor class.'),
+
+((SELECT id FROM companies WHERE company_name = 'Akeso'),
+ 'Penpulimab', 'AK105', 'Penpulimab-kcqx', 'Monoclonal Antibody', 'PD-1',
+ 'Humanised IgG1 anti-PD-1 monoclonal antibody with Fc-engineered framework reducing FcgR binding to minimise antibody-dependent cellular phagocytosis of T cells',
+ 'Approved', 'Approved', FALSE, FALSE, FALSE, FALSE,
+ 'FDA approved April 23 2025 for non-keratinizing nasopharyngeal carcinoma (NPC) after platinum-based chemotherapy. First Akeso drug to receive FDA approval for the US market.'),
+
+((SELECT id FROM companies WHERE company_name = 'Bayer'),
+ 'Sevabertinib', 'BAY 2927088', 'Sevabertinib', 'Small Molecule', 'HER2 TKD',
+ 'Oral potent HER2-selective TKI targeting HER2 TKD activating mutations in non-squamous NSCLC; high selectivity to spare EGFR and reduce rash and GI toxicity',
+ 'Approved', 'Approved', FALSE, FALSE, TRUE, FALSE,
+ 'Hyrnuo; FDA accelerated approval November 19 2025 for non-squamous NSCLC with HER2 TKD activating mutations after prior platinum-based chemotherapy. Second HER2-selective TKI approved for this indication after zongertinib (August 2025).');
+
+
+-- ============================================================
+-- SECTION 6: NEW DRUG INDICATIONS
+-- drug_id resolved by drug_name — no hardcoded IDs
+-- ============================================================
+
+INSERT INTO drug_indications (drug_id, therapeutic_area, cancer_type, indication, biomarker, line_of_therapy, development_phase, approval_status, market_priority, is_primary, notes)
+VALUES
+
+((SELECT id FROM drugs WHERE drug_name = 'Zongertinib'),
+ 'Oncology', 'Non-Small Cell Lung Cancer',
+ 'Previously treated non-squamous NSCLC with HER2 TKD activating mutations, after prior platinum-based chemotherapy',
+ 'HER2 TKD mutation', '2L+', 'Approved', 'Approved', 'High', TRUE,
+ 'FDA accelerated approval August 8 2025; BEAMION LUNG-1 Phase Ib/II; first HER2-selective TKI — EGFR-sparing design reduces rash and diarrhoea vs. non-selective HER2 inhibitors'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Telisotuzumab Vedotin'),
+ 'Oncology', 'Non-Small Cell Lung Cancer',
+ 'Previously treated non-squamous NSCLC with high c-Met protein overexpression (IHC 3+), EGFR wild-type, after prior platinum-based chemotherapy',
+ 'c-Met overexpression (IHC 3+)', '2L+', 'Approved', 'Approved', 'High', TRUE,
+ 'FDA accelerated approval May 14 2025; LUMINOSITY Phase II ORR 35.3% in IHC3+ EGFR wt NSCLC; c-Met IHC companion diagnostic required for patient selection'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Linvoseltamab'),
+ 'Oncology', 'Multiple Myeloma',
+ 'Relapsed or refractory multiple myeloma after 3 or more prior lines including a proteasome inhibitor, an immunomodulatory agent, and an anti-CD38 monoclonal antibody',
+ NULL, '4L+', 'Approved', 'Approved', 'High', TRUE,
+ 'FDA accelerated approval July 2 2025; LINKER-MM1 Phase I/II: ORR 71%, CRR 50%, mDOR not reached; IV step-up dosing schedule'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Vepdegestrant'),
+ 'Oncology', 'Breast Cancer',
+ 'ER-positive, HER2-negative, ESR1-mutated locally advanced or metastatic breast cancer, after prior endocrine therapy and CDK4/6 inhibitor',
+ 'ESR1 mutation', '3L+', 'Approved', 'Approved', 'High', TRUE,
+ 'FDA approved May 1 2026; VERITAC-2 Phase III superior PFS vs. fulvestrant in ESR1-mutated population; first approved PROTAC drug; direct competitor to imlunestrant (Inluriyo, Lilly)'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Gedatolisib'),
+ 'Oncology', 'Breast Cancer',
+ 'HR-positive, HER2-negative locally advanced or metastatic breast cancer without PIK3CA mutation, after 1 or more lines of endocrine therapy in metastatic setting, with fulvestrant with or without palbociclib',
+ 'PIK3CA wild-type', '2L+', 'Approved', 'Approved', 'High', TRUE,
+ 'FDA approved July 14 2026; VIKTORIA-1 Phase III; approved specifically for PIK3CA wild-type tumours — complementary to inavolisib covering PIK3CA-mutated HR+ BC'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Lurbinectedin'),
+ 'Oncology', 'Small Cell Lung Cancer',
+ 'Extensive-stage SCLC, in combination with atezolizumab after platinum-etoposide induction',
+ NULL, '1L', 'Approved', 'Approved', 'High', TRUE,
+ 'FDA approved October 2 2025; expands lurbinectedin from 2L+ monotherapy to 1L combination setting; competitive with durvalumab and atezolizumab in SCLC'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Sonrotoclax'),
+ 'Oncology', 'Mantle Cell Lymphoma',
+ 'Relapsed or refractory mantle cell lymphoma after 2 or more prior lines of therapy',
+ NULL, '3L+', 'Approved', 'Approved', 'High', TRUE,
+ 'FDA accelerated approval May 13 2026; next-generation BCL-2 inhibitor with potential activity in venetoclax-resistant settings; BeiGene first BCL-2 inhibitor approval'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Darolutamide'),
+ 'Oncology', 'Prostate Cancer',
+ 'Metastatic castration-sensitive prostate cancer (mCSPC), with androgen deprivation therapy',
+ NULL, '1L', 'Approved', 'Approved', 'High', TRUE,
+ 'FDA approved June 3 2025; ARANZO Phase III; expands Nubeqa from nmCRPC and mCRPC to mCSPC — full pan-disease prostate cancer label coverage'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Penpulimab'),
+ 'Oncology', 'Nasopharyngeal Carcinoma',
+ 'Non-keratinizing nasopharyngeal carcinoma (NPC), relapsed or metastatic, after platinum-based chemotherapy',
+ NULL, '2L+', 'Approved', 'Approved', 'Medium', TRUE,
+ 'FDA approved April 23 2025; first Akeso drug approved by FDA; NPC is an area of unmet need particularly prevalent in Asian populations'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Sevabertinib'),
+ 'Oncology', 'Non-Small Cell Lung Cancer',
+ 'Previously treated non-squamous NSCLC with HER2 TKD activating mutations, after prior platinum-based chemotherapy',
+ 'HER2 TKD mutation', '2L+', 'Approved', 'Approved', 'High', TRUE,
+ 'FDA accelerated approval November 19 2025; second approved HER2-selective TKI in NSCLC after zongertinib; validates HER2 TKD selectivity as a clinically meaningful class strategy');
+
+
+-- ============================================================
+-- SECTION 7: DRUG UPDATES — all key 2025-2026 FDA approvals
+-- drug_id resolved by drug_name — no hardcoded IDs
+-- ============================================================
+
+INSERT INTO drug_updates (drug_id, update_title, update_summary, update_type, source, source_url, update_date)
+VALUES
+
+((SELECT id FROM drugs WHERE drug_name = 'Datopotamab Deruxtecan'),
+ 'Datopotamab Deruxtecan (Datroway) FDA Approved for HR+/HER2- Breast Cancer',
+ 'FDA approved datopotamab deruxtecan-dlnk (Datroway, Daiichi Sankyo/AstraZeneca) for unresectable or metastatic HR+/HER2-negative breast cancer after prior endocrine-based therapy and chemotherapy. TROPION-Breast01 Phase III (PFS HR 0.63 vs. chemotherapy). First regulatory approval for Dato-DXd anywhere globally.',
+ 'FDA Approval', 'FDA.gov',
+ 'https://www.fda.gov/drugs/resources-information-approved-drugs/fda-approves-datopotamab-deruxtecan-dlnk-unresectable-or-metastatic-hr-positive-her2-negative-breast',
+ '2025-01-17'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Datopotamab Deruxtecan'),
+ 'Datopotamab Deruxtecan (Datroway) FDA Accelerated Approval for EGFR-Mutated NSCLC',
+ 'FDA granted accelerated approval to datopotamab deruxtecan-dlnk for adults with EGFR-mutated unresectable or metastatic NSCLC after prior EGFR-directed therapy and platinum-based chemotherapy. Second Dato-DXd FDA approval within 6 months of the breast cancer approval.',
+ 'FDA Approval', 'FDA.gov',
+ 'https://www.fda.gov/drugs/resources-information-approved-drugs/fda-grants-accelerated-approval-datopotamab-deruxtecan-dlnk-egfr-mutated-non-small-cell-lung-cancer',
+ '2025-06-23'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Imlunestrant'),
+ 'Imlunestrant (Inluriyo) FDA Approved for ESR1-Mutated HR+/HER2- Breast Cancer',
+ 'FDA approved imlunestrant (Inluriyo, Eli Lilly) for ER+/HER2-negative, ESR1-mutated locally advanced or metastatic breast cancer after endocrine therapy and a CDK4/6 inhibitor. Based on EMBER-3 Phase III. First oral SERD with traditional FDA approval.',
+ 'FDA Approval', 'FDA.gov',
+ 'https://www.fda.gov/drugs/resources-information-approved-drugs/fda-approves-imlunestrant-er-positive-her2-negative-esr1-mutated-advanced-or-metastatic-breast-cancer',
+ '2025-09-25'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Trastuzumab Deruxtecan'),
+ 'T-DXd (Enhertu) FDA Approved for HER2-Ultralow Breast Cancer — Extends HER2 Paradigm',
+ 'FDA approved fam-trastuzumab deruxtecan-nxki for HR+/HER2-low and HER2-ultralow unresectable or metastatic breast cancer after prior endocrine therapy. DESTINY-Breast06 Phase III. Extends HER2-directed ADC therapy to HER2-ultralow (IHC0 with faint/incomplete staining), a newly defined population.',
+ 'FDA Approval', 'FDA.gov',
+ 'https://www.fda.gov/drugs/resources-information-approved-drugs/fda-approves-fam-trastuzumab-deruxtecan-nxki-unresectable-or-metastatic-hr-positive-her2-low-or-her2',
+ '2025-01-27'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Sotorasib'),
+ 'Sotorasib + Panitumumab Full FDA Approval for KRAS G12C Colorectal Cancer',
+ 'FDA granted full traditional approval to sotorasib (Lumakras, Amgen) with panitumumab for KRAS G12C-mutated CRC after prior chemotherapy, converting the January 2024 accelerated approval. Based on confirmatory CodeBreaK 300 Phase III overall survival data.',
+ 'FDA Approval', 'FDA.gov',
+ 'https://www.fda.gov/drugs/resources-information-approved-drugs/fda-approves-sotorasib-panitumumab-kras-g12c-mutated-colorectal-cancer',
+ '2025-01-16'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Tarlatamab'),
+ 'Tarlatamab (Imdelltra) Converts to Traditional FDA Approval for Relapsed/Refractory SCLC',
+ 'FDA granted traditional approval to tarlatamab-dlle (Imdelltra, Amgen), converting the May 2024 accelerated approval for ES-SCLC after platinum-based chemotherapy. Based on confirmatory DeLLphi-301 overall survival data. DeLLphi-304 Phase III in 1L SCLC ongoing.',
+ 'FDA Approval', 'FDA.gov', NULL, '2025-11-19'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Durvalumab'),
+ 'Durvalumab (Imfinzi) FDA Approved for Resectable Gastric/GEJ Adenocarcinoma',
+ 'FDA approved durvalumab (Imfinzi, AstraZeneca) for adults with resectable gastric or gastroesophageal junction adenocarcinoma as part of a perioperative chemotherapy regimen. Expands Imfinzi beyond NSCLC, SCLC, and bladder cancer into upper GI oncology.',
+ 'FDA Approval', 'FDA.gov', NULL, '2025-11-25'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Nivolumab'),
+ 'Nivolumab + Ipilimumab FDA Approved for First-Line MSI-H/dMMR Metastatic CRC',
+ 'FDA approved nivolumab (Opdivo, BMS) with ipilimumab for first-line unresectable or metastatic MSI-H or dMMR CRC. CheckMate 8HW Phase III demonstrated superior PFS vs. chemotherapy. Challenges pembrolizumab as preferred IO option in MSI-H/dMMR CRC.',
+ 'FDA Approval', 'FDA.gov', NULL, '2025-04-08'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Nivolumab'),
+ 'Nivolumab + Ipilimumab FDA Approved for First-Line Unresectable/Metastatic HCC',
+ 'FDA approved nivolumab (Opdivo, BMS) with ipilimumab for first-line unresectable or metastatic hepatocellular carcinoma. CheckMate 9DH Phase III demonstrated superior OS vs. sorafenib or lenvatinib.',
+ 'FDA Approval', 'FDA.gov', NULL, '2025-04-11'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Sacituzumab Govitecan'),
+ 'Sacituzumab Govitecan + Pembrolizumab FDA Approved for First-Line TNBC',
+ 'FDA approved sacituzumab govitecan-hziy (Trodelvy, Gilead) as monotherapy and in combination with pembrolizumab for first-line unresectable locally advanced or metastatic TNBC. ASCENT-04/KEYNOTE-D19 Phase III data. Moves SG from 2L+ (ASCENT) to 1L and adds IO combination, significantly expanding the commercial opportunity.',
+ 'FDA Approval', 'FDA.gov', NULL, '2026-06-24'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Belzutifan'),
+ 'Belzutifan + Pembrolizumab FDA Approved as Adjuvant Therapy for High-Risk Clear-Cell RCC',
+ 'FDA approved belzutifan (Welireg, Merck) in combination with pembrolizumab for adjuvant treatment of adults with ccRCC at intermediate-high or high risk of recurrence following nephrectomy. LITESPARK-022 Phase III. First HIF-2alpha inhibitor approved in the adjuvant oncology setting.',
+ 'FDA Approval', 'FDA.gov', NULL, '2026-06-12'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Cabozantinib'),
+ 'Cabozantinib (Cabometyx) Label Expanded to Pediatric Patients 12 Years and Older with RCC',
+ 'FDA expanded the cabozantinib (Cabometyx, Exelixis) label to include pediatric patients 12 years of age and older with previously treated advanced renal cell carcinoma, in addition to the existing adult indication.',
+ 'Label Expansion', 'FDA.gov', NULL, '2025-03-26'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Zongertinib'),
+ 'Zongertinib (Hernexeos) First HER2-Selective TKI FDA Approved for HER2 TKD-Mutated NSCLC',
+ 'FDA granted accelerated approval to zongertinib (Hernexeos, Boehringer Ingelheim) for adults with previously treated non-squamous NSCLC with HER2 TKD activating mutations. First HER2 TKI with true selectivity for HER2 over EGFR, dramatically improving the tolerability profile. BEAMION LUNG-1 Phase Ib/II supporting data.',
+ 'FDA Approval', 'FDA.gov', NULL, '2025-08-08'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Telisotuzumab Vedotin'),
+ 'Telisotuzumab Vedotin (Emrelis) FDA Approved — First c-Met ADC in NSCLC',
+ 'FDA granted accelerated approval to telisotuzumab vedotin-tllv (Emrelis, AbbVie) for previously treated non-squamous NSCLC with high c-Met protein overexpression (IHC 3+) and no sensitising EGFR mutation. First ADC approved targeting c-Met. LUMINOSITY Phase II: ORR 35.3% in c-Met high EGFR wt population.',
+ 'FDA Approval', 'FDA.gov', NULL, '2025-05-14'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Linvoseltamab'),
+ 'Linvoseltamab (Lynozyfic) FDA Accelerated Approval for Triple-Class Exposed Multiple Myeloma',
+ 'FDA granted accelerated approval to linvoseltamab-gcpt (Lynozyfic, Regeneron) for relapsed or refractory multiple myeloma after 3+ prior lines including PI, IMiD, and anti-CD38 mAb. LINKER-MM1 Phase I/II: ORR 71%, CRR 50%. Enters BCMA x CD3 bispecific class alongside elranatamab and teclistamab.',
+ 'FDA Approval', 'FDA.gov', NULL, '2025-07-02'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Vepdegestrant'),
+ 'Vepdegestrant (Veppanu) FDA Approved — World First PROTAC Drug Approval in Oncology',
+ 'FDA approved vepdegestrant (Veppanu, Arvinas) for ER+/HER2-negative, ESR1-mutated locally advanced or metastatic breast cancer after endocrine therapy and CDK4/6 inhibitor. VERITAC-2 Phase III: superior PFS vs. fulvestrant in ESR1-mutated population. First PROTAC drug to receive FDA approval for any oncology indication globally.',
+ 'FDA Approval', 'FDA.gov', NULL, '2026-05-01'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Gedatolisib'),
+ 'Gedatolisib (Revtorpyk) FDA Approved for PIK3CA Wild-Type HR+/HER2- Breast Cancer',
+ 'FDA approved gedatolisib (Revtorpyk, Celcuity) with fulvestrant +/- palbociclib for HR+/HER2- locally advanced or metastatic breast cancer without PIK3CA mutation, after 1+ endocrine therapy. VIKTORIA-1 Phase III. Complements inavolisib (Itovebi) for PIK3CA-mutated patients, creating full PI3K pathway coverage in HR+ BC.',
+ 'FDA Approval', 'FDA.gov',
+ 'https://www.fda.gov/drugs/resources-information-approved-drugs/fda-approves-gedatolisib-fulvestrant-or-without-palbociclib-hr-positive-her2-negative-locally',
+ '2026-07-14'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Lurbinectedin'),
+ 'Lurbinectedin + Atezolizumab FDA Approved for Extensive-Stage SCLC',
+ 'FDA approved lurbinectedin (Zepzelca, Jazz Pharmaceuticals) in combination with atezolizumab for extensive-stage SCLC. Expands lurbinectedin from 2L+ monotherapy into the 1L combination setting, adding a chemotherapy-free combination IO regimen alongside durvalumab and atezolizumab plus chemotherapy options.',
+ 'FDA Approval', 'FDA.gov', NULL, '2025-10-02'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Sonrotoclax'),
+ 'Sonrotoclax (Beqalzi) FDA Accelerated Approval for Relapsed/Refractory Mantle Cell Lymphoma',
+ 'FDA granted accelerated approval to sonrotoclax (Beqalzi, BeiGene/BeOne Medicines) for adults with relapsed or refractory mantle cell lymphoma after 2+ prior lines. Next-generation BCL-2 inhibitor with higher binding affinity than venetoclax, offering potential for patients who progressed on or are intolerant of venetoclax-based therapy.',
+ 'FDA Approval', 'FDA.gov', NULL, '2026-05-13'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Darolutamide'),
+ 'Darolutamide (Nubeqa) FDA Approved for Metastatic Castration-Sensitive Prostate Cancer',
+ 'FDA approved darolutamide (Nubeqa, Bayer) for mCSPC in combination with ADT. ARANZO Phase III demonstrated superior OS and rPFS vs. ADT alone. Expands Nubeqa from nmCRPC and mCRPC to mCSPC, completing full prostate cancer disease spectrum coverage. CNS safety advantage (minimal blood-brain barrier penetration) is key differentiator.',
+ 'FDA Approval', 'FDA.gov', NULL, '2025-06-03'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Sevabertinib'),
+ 'Sevabertinib (Hyrnuo) FDA Approved as Second HER2-Selective TKI for HER2-Mutated NSCLC',
+ 'FDA granted accelerated approval to sevabertinib (Hyrnuo, Bayer) for previously treated non-squamous NSCLC with HER2 TKD activating mutations after prior platinum-based chemotherapy. Second HER2-selective TKI approved for this indication after zongertinib (August 2025), validating the HER2 TKD selectivity approach as a class strategy in NSCLC.',
+ 'FDA Approval', 'FDA.gov', NULL, '2025-11-19');
