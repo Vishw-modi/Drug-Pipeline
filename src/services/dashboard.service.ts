@@ -266,8 +266,18 @@ export async function getUpcomingCatalysts(filters?: Record<string, string>, lim
     .limit(limit);
 
   if (filters && Object.keys(filters).length > 0) {
-    if (validDrugIds.length === 0) return [];
-    query = query.in('drug_id', validDrugIds);
+    if (validDrugIds.length === 0 && Object.keys(filters).some(k => k !== 'catalystType' && k !== 'targetMonths')) {
+      return [];
+    }
+    
+    // Only filter by drug_id if validDrugIds is populated and a drug-related filter exists
+    if (Object.keys(filters).some(k => k !== 'catalystType' && k !== 'targetMonths')) {
+      query = query.in('drug_id', validDrugIds);
+    }
+  }
+
+  if (filters?.catalystType && filters.catalystType !== 'All') {
+    query = query.eq('event_type', filters.catalystType);
   }
 
   const { data, error } = await query;

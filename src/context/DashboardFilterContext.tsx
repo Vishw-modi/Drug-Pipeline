@@ -11,6 +11,8 @@ export interface FilterState {
   developmentPhase: string;
   moleculeType: string;
   sponsor: string;
+  catalystType: string;
+  targetMonths: string; // Comma separated YYYY-MM
 }
 
 export const defaultFilters: FilterState = {
@@ -21,6 +23,8 @@ export const defaultFilters: FilterState = {
   developmentPhase: 'All',
   moleculeType: 'All',
   sponsor: 'All',
+  catalystType: 'All',
+  targetMonths: '',
 };
 
 interface FilterContextType {
@@ -48,6 +52,8 @@ function FilterProviderInner({ children }: { children: ReactNode }) {
       developmentPhase: searchParams.get('developmentPhase') || defaultFilters.developmentPhase,
       moleculeType: searchParams.get('moleculeType') || defaultFilters.moleculeType,
       sponsor: searchParams.get('sponsor') || defaultFilters.sponsor,
+      catalystType: searchParams.get('catalystType') || defaultFilters.catalystType,
+      targetMonths: searchParams.get('targetMonths') || defaultFilters.targetMonths,
     };
   });
 
@@ -61,6 +67,8 @@ function FilterProviderInner({ children }: { children: ReactNode }) {
       developmentPhase: searchParams.get('developmentPhase') || defaultFilters.developmentPhase,
       moleculeType: searchParams.get('moleculeType') || defaultFilters.moleculeType,
       sponsor: searchParams.get('sponsor') || defaultFilters.sponsor,
+      catalystType: searchParams.get('catalystType') || defaultFilters.catalystType,
+      targetMonths: searchParams.get('targetMonths') || defaultFilters.targetMonths,
     });
   }, [searchParams]);
 

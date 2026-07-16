@@ -61,6 +61,7 @@ export const getCatalystFilterOptions = unstable_cache(
       developmentPhases: extractDistinct(data, item => item.drugs?.development_phase),
       moleculeTypes: extractDistinct(data, item => item.drugs?.molecule_type),
       sponsors: extractDistinct(data, item => item.drugs?.companies?.company_name),
+      catalystTypes: extractDistinct(data, item => item.event_type),
     };
   },
   ['catalyst-filter-options'],

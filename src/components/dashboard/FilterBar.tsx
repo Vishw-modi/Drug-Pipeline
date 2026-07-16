@@ -11,6 +11,7 @@ interface FilterOptions {
   developmentPhases: string[];
   moleculeTypes: string[];
   sponsors: string[];
+  catalystTypes?: string[];
 }
 
 interface FilterBarProps {
@@ -52,6 +53,9 @@ export function FilterBar({ options, hideFilters = [] }: FilterBarProps) {
       <SelectGroup label="Development Phase" value={filters.developmentPhase} onChange={(v) => setFilter('developmentPhase', v)} items={options.developmentPhases} />
       <SelectGroup label="Molecule Type" value={filters.moleculeType} onChange={(v) => setFilter('moleculeType', v)} items={options.moleculeTypes} />
       <SelectGroup label="Company" value={filters.sponsor} onChange={(v) => setFilter('sponsor', v)} items={options.sponsors} />
+      {options.catalystTypes && (
+        <SelectGroup label="Catalyst Type" value={filters.catalystType} onChange={(v) => setFilter('catalystType', v)} items={options.catalystTypes} />
+      )}
       
       <button 
         suppressHydrationWarning

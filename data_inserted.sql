@@ -752,3 +752,286 @@ VALUES
  'Sevabertinib (Hyrnuo) FDA Approved as Second HER2-Selective TKI for HER2-Mutated NSCLC',
  'FDA granted accelerated approval to sevabertinib (Hyrnuo, Bayer) for previously treated non-squamous NSCLC with HER2 TKD activating mutations after prior platinum-based chemotherapy. Second HER2-selective TKI approved for this indication after zongertinib (August 2025), validating the HER2 TKD selectivity approach as a class strategy in NSCLC.',
  'FDA Approval', 'FDA.gov', NULL, '2025-11-19');
+
+
+
+ -- ============================================================
+-- 09_patch_upcoming_events.sql
+-- KMK Pipeline Intelligence Platform — Upcoming Events Patch
+-- Sources:
+--   AstraZeneca pipeline page (live, as of 29 April 2026)
+--   BeOne Medicines pipeline page (live, updated May 2026)
+--   Known FDA approvals and regulatory filings through July 2026
+--
+-- Run AFTER the original 6 seed files AND 08_patch_2025_2026_approvals.sql
+-- NO hardcoded IDs — all FKs resolved by drug/trial name lookup.
+-- ============================================================
+
+
+-- ============================================================
+-- SECTION 1: MARK EVENTS NOW COMPLETED
+-- Events in the original 06_seed file that have since resolved
+-- ============================================================
+
+-- Dato-DXd HR+/HER2- FDA submission → Approved Jan 17, 2025
+UPDATE upcoming_events
+SET status      = 'Completed',
+    actual_date = '2025-01-17',
+    updated_at  = NOW()
+WHERE drug_id = (SELECT id FROM drugs WHERE drug_name = 'Datopotamab Deruxtecan')
+  AND event_type = 'FDA Submission'
+  AND event_name LIKE '%HR+%';
+
+-- T-DXd DESTINY-Breast06 FDA submission → HER2-ultralow approved Jan 27, 2025
+UPDATE upcoming_events
+SET status      = 'Completed',
+    actual_date = '2025-01-27',
+    updated_at  = NOW()
+WHERE drug_id = (SELECT id FROM drugs WHERE drug_name = 'Trastuzumab Deruxtecan')
+  AND event_type = 'FDA Submission'
+  AND event_name LIKE '%Breast06%';
+
+-- Imlunestrant NDA submission → Approved Sep 25, 2025
+UPDATE upcoming_events
+SET status      = 'Completed',
+    actual_date = '2025-09-25',
+    updated_at  = NOW()
+WHERE drug_id = (SELECT id FROM drugs WHERE drug_name = 'Imlunestrant')
+  AND event_type = 'FDA Submission';
+
+-- Zanidatamab PDUFA biliary tract cancer → Approved (Ziihera), convert to Completed
+-- FDA approved zanidatamab (Ziihera) for HER2+ BTC in Nov 2023; PDUFA event completed
+UPDATE upcoming_events
+SET status      = 'Completed',
+    actual_date = '2023-11-08',
+    updated_at  = NOW()
+WHERE drug_id = (SELECT id FROM drugs WHERE drug_name = 'Zanidatamab')
+  AND event_type = 'PDUFA Date';
+
+
+-- ============================================================
+-- SECTION 2: NEW UPCOMING EVENTS
+-- Sourced live from company pipeline pages, April–July 2026
+-- ============================================================
+
+INSERT INTO upcoming_events (drug_id, trial_id, event_name, event_type, expected_date, actual_date, status, importance, description)
+VALUES
+
+-- ── TRASTUZUMAB DERUXTECAN (T-DXd / Enhertu) ─────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Trastuzumab Deruxtecan'), NULL,
+ 'DESTINY-Breast05 FDA Regulatory Decision — Post-Neoadjuvant HER2+ Early BC',
+ 'PDUFA Date', '2025-10-01', NULL, 'Upcoming', 'High',
+ 'AstraZeneca/Daiichi Sankyo submitted BLA for T-DXd in high-risk HER2+ early breast cancer with residual disease after neoadjuvant therapy. AZ pipeline shows status "Submitted". If approved, expands Enhertu into the earlier adjuvant/post-neoadjuvant setting, competing with T-DM1 (Kadcyla). DESTINY-Breast05 Phase III basis.'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Trastuzumab Deruxtecan'), NULL,
+ 'DESTINY-Lung04 Phase III Interim Analysis — 1L HER2-Mutated NSCLC',
+ 'Interim Analysis', '2026-12-01', NULL, 'Upcoming', 'High',
+ 'DESTINY-Lung04 is a Phase III trial of T-DXd as first-line treatment for HER2 TKD-mutated non-squamous NSCLC vs. standard of care. Pre-specified interim PFS analysis expected H2 2026. If positive, would expand T-DXd from 2L+ (DESTINY-Lung02) to 1L in HER2-mutated NSCLC — a much larger commercial opportunity.'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Trastuzumab Deruxtecan'), NULL,
+ 'DESTINY-Breast09 FDA Approval — 1L HER2+ Breast Cancer (T-DXd + Pertuzumab)',
+ 'FDA Approval', '2025-05-01', '2025-05-28', 'Completed', 'High',
+ 'FDA approved T-DXd + pertuzumab as 1L treatment for HER2+ metastatic breast cancer (DESTINY-Breast09 Phase III). AZ pipeline marks this as "Launched". Represents first ADC-based first-line regimen in HER2+ BC, challenging trastuzumab + pertuzumab + docetaxel standard.'),
+
+-- ── DATOPOTAMAB DERUXTECAN (Dato-DXd / Datroway) ─────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Datopotamab Deruxtecan'), NULL,
+ 'TROPION-Breast02 FDA Regulatory Decision — 1L TNBC (Not Candidates for IO)',
+ 'PDUFA Date', '2026-02-01', NULL, 'Upcoming', 'High',
+ 'AstraZeneca/Daiichi Sankyo submitted Dato-DXd for 1L TNBC in patients who are not candidates for PD-L1-based immunotherapy (TROPION-Breast02 Phase III). AZ pipeline shows status "Submitted" as of April 2026. If approved, expands Datroway into 1L TNBC — a high-volume, high-unmet-need setting where sacituzumab govitecan is current standard.'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Datopotamab Deruxtecan'), NULL,
+ 'TROPION-Lung07 Phase III Interim Analysis — 1L PD-L1 <50% NSCLC + Pembrolizumab',
+ 'Interim Analysis', '2027-06-01', NULL, 'Upcoming', 'High',
+ 'TROPION-Lung07 is a Phase III trial of Dato-DXd + pembrolizumab in 1L non-squamous NSCLC with PD-L1 TPS <50% (the majority of patients). This is arguably the largest commercial opportunity in the Dato-DXd programme; PFS primary endpoint readout expected 2027. Competitive with sacituzumab govitecan + pembrolizumab (ASCENT-04) and carboplatin-pembro combinations.'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Datopotamab Deruxtecan'), NULL,
+ 'TROPION-Lung08 Full Phase III Readout — 1L PD-L1 ≥50% NSCLC + Pembrolizumab',
+ 'Topline Results', '2026-09-01', NULL, 'Upcoming', 'High',
+ 'TROPION-Lung08 Phase III (Dato-DXd + pembrolizumab vs. pembrolizumab alone in 1L PD-L1 TPS ≥50% NSQ NSCLC). The June 2025 accelerated approval was based on combination data; full OS readout from confirmatory trial expected ESMO 2026. Competes directly with pembrolizumab monotherapy (KEYNOTE-024 SoC).'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Datopotamab Deruxtecan'), NULL,
+ 'TROPION-Lung14 Phase III Primary Analysis — 1L EGFRm NSCLC + Osimertinib',
+ 'Topline Results', '2027-06-01', NULL, 'Upcoming', 'High',
+ 'TROPION-Lung14 is a Phase III trial of Dato-DXd + osimertinib vs. osimertinib alone in 1L EGFRm NSCLC (FLAURA3). Phase II TROPION-Lung12 data presented at ASCO 2025 showed promising PFS benefit (HR ~0.51). This Phase III readout is a major catalyst that could redefine 1L EGFRm NSCLC standard of care if confirmed.'),
+
+-- ── RILVEGOSTOMIG (ARTEMIDE program) ─────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Rilvegostomig'), NULL,
+ 'ARTEMIDE-Lung02 Phase III Primary PFS Readout — 1L Squamous NSCLC',
+ 'Topline Results', '2026-09-01', NULL, 'Upcoming', 'High',
+ 'ARTEMIDE-Lung02: rilvegostomig + chemotherapy vs. pembrolizumab + chemotherapy in 1L PD-L1 TC ≥1% squamous NSCLC. The most advanced rilvegostomig Phase III. AZ pipeline as of April 2026 confirms Phase III status. Positive readout would be first demonstration that PD-1/TIGIT bispecific + chemo beats pembrolizumab + chemo in SQ NSCLC. Market at stake: $3B+ annually.'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Rilvegostomig'), NULL,
+ 'ARTEMIDE-Lung03 Phase III Interim — 1L Non-Squamous NSCLC',
+ 'Interim Analysis', '2027-03-01', NULL, 'Upcoming', 'High',
+ 'ARTEMIDE-Lung03: rilvegostomig (monotherapy, no chemo) vs. pembrolizumab in 1L PD-L1 TC ≥1% non-squamous NSCLC. Represents the IO-only head-to-head trial. Pre-specified interim expected early 2027. Complements ARTEMIDE-Lung02 (chemo combination) and -Lung04 (PD-L1 ≥50% enriched).'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Rilvegostomig'), NULL,
+ 'ARTEMIDE-Lung04 Phase III Interim — 1L PD-L1 ≥50% NSCLC',
+ 'Interim Analysis', '2027-06-01', NULL, 'Upcoming', 'Medium',
+ 'ARTEMIDE-Lung04: rilvegostomig monotherapy vs. pembrolizumab in 1L PD-L1 ≥50% NSCLC (all histologies). Directly targets pembrolizumab''s strongest indication. AZ pipeline confirms Phase III. If positive alongside -Lung03, would generate the broadest IO label for a PD-1/TIGIT bispecific.'),
+
+-- ── VOLRUSTOMIG (eVOLVE program) ─────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Volrustomig'), NULL,
+ 'eVOLVE-Lung02 Phase III Primary Readout — 1L Metastatic NSCLC',
+ 'Topline Results', '2027-06-01', NULL, 'Upcoming', 'High',
+ 'eVOLVE-Lung02: volrustomig (PD-1/CTLA-4 bispecific) vs. pembrolizumab in 1L metastatic NSCLC (all-comer). AZ pipeline as of April 2026 confirms Phase III. Positions AZ with both a PD-1/TIGIT (rilvegostomig) and a PD-1/CTLA-4 (volrustomig) bispecific in Phase III in NSCLC. Positive readout would challenge Opdualag (nivolumab + relatlimab) and ipilimumab + nivolumab combinations.'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Volrustomig'), NULL,
+ 'eVOLVE-HNSCC Phase III Interim — Locally Advanced Head & Neck Cancer',
+ 'Interim Analysis', '2027-06-01', NULL, 'Upcoming', 'Medium',
+ 'eVOLVE-HNSCC: volrustomig in unresected locally advanced head and neck squamous cell carcinoma. AZ pipeline confirms Phase III. Represents volrustomig expansion beyond NSCLC into HNSCC — a growing IO market with limited approved options post-pembrolizumab.'),
+
+-- ── TARLATAMAB (DeLLphi program) ──────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Tarlatamab'), NULL,
+ 'DeLLphi-305 Phase III Primary Analysis — 1L ES-SCLC Maintenance + Durvalumab',
+ 'Topline Results', '2027-03-01', NULL, 'Upcoming', 'High',
+ 'DeLLphi-305: tarlatamab + durvalumab as maintenance after 1L chemo-IO in extensive-stage SCLC. Confirmed Phase III by BeOne Medicines (May 2026). This is Amgen''s first 1L SCLC Phase III for tarlatamab — an enormous market given SCLC''s poor outcomes and limited post-IO options. Positive result would dramatically expand the tarlatamab commercial opportunity beyond 2L+.'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Tarlatamab'), NULL,
+ 'DeLLphi-312 Phase III Primary Analysis — 1L ES-SCLC Induction + Maintenance (Full Combo)',
+ 'Topline Results', '2027-09-01', NULL, 'Upcoming', 'High',
+ 'DeLLphi-312: tarlatamab + durvalumab induction then maintenance vs. chemo + durvalumab in 1L ES-SCLC. Confirmed Phase III by BeOne Medicines (May 2026). The most aggressive 1L expansion for tarlatamab — replacing chemotherapy induction entirely. Complements DeLLphi-305 (maintenance only design).'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Tarlatamab'), NULL,
+ 'DeLLphi-306 Phase III Primary Analysis — Limited-Stage SCLC',
+ 'Topline Results', '2028-01-01', NULL, 'Upcoming', 'Medium',
+ 'DeLLphi-306: tarlatamab in limited-stage SCLC — a curative-intent setting. Confirmed Phase III by BeOne Medicines (May 2026). If successful, would be the first DLL3-directed therapy in LS-SCLC where cure rates remain poor (~15–25%). Longer timelines given adjuvant/curative-intent design requiring OS endpoint.'),
+
+-- ── DURVALUMAB (Imfinzi) ──────────────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Durvalumab'), NULL,
+ 'POTOMAC Phase III FDA Regulatory Decision — Non-Muscle Invasive Bladder Cancer',
+ 'PDUFA Date', '2026-06-01', NULL, 'Upcoming', 'High',
+ 'AstraZeneca submitted durvalumab + BCG for non-muscle invasive bladder cancer (NMIBC) based on POTOMAC Phase III. AZ pipeline marks status as "Submitted" as of April 2026. If approved, would be the first IO + BCG combination in NMIBC — a large market with unmet need in BCG-refractory patients.'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Durvalumab'), NULL,
+ 'KUNLUN Phase III Primary Analysis — Locally Advanced ESCC + Chemoradiotherapy',
+ 'Topline Results', '2026-12-01', NULL, 'Upcoming', 'Medium',
+ 'KUNLUN: durvalumab + concurrent chemoradiotherapy (CRT) in locally advanced esophageal squamous cell carcinoma (ESCC). AZ pipeline confirms Phase III. Analogous to the PACIFIC trial design (durvalumab consolidation after CRT) applied to ESCC. If positive, mirrors osimertinib''s LAURA success in NSCLC but in ESCC.'),
+
+-- ── OSIMERTINIB (Tagrisso) ────────────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Osimertinib'), NULL,
+ 'NeoADAURA Phase III Primary Readout — Neoadjuvant Stage II/III EGFRm NSCLC',
+ 'Topline Results', '2026-06-01', NULL, 'Upcoming', 'High',
+ 'NeoADAURA: osimertinib +/- chemotherapy as neoadjuvant treatment in resectable Stage II/III EGFRm NSCLC. AZ pipeline confirms Phase III. Primary pCR/EFS endpoint readout expected 2026. If positive, expands Tagrisso from the adjuvant setting (ADAURA) into neoadjuvant — capturing the perioperative window and potentially increasing patients receiving osimertinib from ~12 to 24+ months total.'),
+
+-- ── ZANIDATAMAB ──────────────────────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Zanidatamab'), NULL,
+ 'HERIZON-BTC-302 Phase III Primary Analysis — 1L HER2+ BTC + Chemo + PD-1/L1i',
+ 'Topline Results', '2027-06-01', NULL, 'Upcoming', 'High',
+ 'HERIZON-BTC-302: zanidatamab + chemotherapy + PD-1/L1 inhibitor in 1L HER2-amplified biliary tract cancer. Confirmed Phase III Confirmatory trial per BeOne pipeline (May 2026). The 2L approval (Ziihera, HERIZON-BTC-01) already achieved; this moves to 1L and adds IO combination — a transformative opportunity if positive given the limited 1L options in HER2+ BTC.'),
+
+-- ── ZANUBRUTINIB ──────────────────────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Zanubrutinib'), NULL,
+ 'MANGROVE Phase III Primary Readout — Treatment-Naive Mantle Cell Lymphoma',
+ 'Topline Results', '2026-09-01', NULL, 'Upcoming', 'High',
+ 'MANGROVE: zanubrutinib as first-line treatment for mantle cell lymphoma (TN MCL). BeOne pipeline (May 2026) confirms Phase III. The existing MCL approval is for R/R disease; 1L MCL approval based on MANGROVE would be highly commercially significant — MCL patients could start Brukinsa at diagnosis rather than after relapse. Phase III vs. BR (bendamustine + rituximab).'),
+
+-- ── SONROTOCLAX ───────────────────────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Sonrotoclax'), NULL,
+ 'CELESTIAL-TNCLL Phase III Primary Readout — 1L CLL (+ Zanubrutinib vs Venetoclax + Obi)',
+ 'Topline Results', '2027-06-01', NULL, 'Upcoming', 'High',
+ 'CELESTIAL-TNCLL: sonrotoclax + zanubrutinib vs. venetoclax + obinutuzumab in treatment-naive CLL. BeOne pipeline (May 2026) confirms Phase III. If positive, this would establish next-generation BCL-2 inhibition as the backbone for all-oral BTK + BCL-2 doublet in 1L CLL — a massive commercial shift away from venetoclax + obinutuzumab standard of care.'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Sonrotoclax'), NULL,
+ 'CELESTIAL-RRCLL Phase III Primary Readout — R/R CLL (+ Zanubrutinib vs Venetoclax)',
+ 'Topline Results', '2027-09-01', NULL, 'Upcoming', 'High',
+ 'CELESTIAL-RRCLL: sonrotoclax + zanubrutinib vs. venetoclax + rituximab in relapsed/refractory CLL. BeOne pipeline (May 2026) confirms Phase III. This trial specifically addresses whether next-gen BCL-2 can outperform venetoclax in patients who need it most — R/R CLL where venetoclax resistance is an emerging clinical problem.'),
+
+-- ── IVONESCIMAB ───────────────────────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Ivonescimab'), NULL,
+ 'HARMONi-3 US Phase III Enrollment Completion — Ivonescimab vs Pembrolizumab (1L PD-L1 ≥50% NSCLC)',
+ 'Phase III Initiation', '2026-12-01', NULL, 'Upcoming', 'High',
+ 'Summit Therapeutics launched HARMONi-3, the US global Phase III registration trial comparing ivonescimab vs. pembrolizumab in 1L PD-L1 ≥50% NSCLC. This is the trial the FDA will require for US approval. HARMONi-2 (China data, ESMO 2024: HR 0.51 PFS) cannot support US approval alone. Enrollment completion milestone expected late 2026; primary PFS readout targeted 2028.'),
+
+-- ── SACITUZUMAB GOVITECAN ─────────────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Sacituzumab Govitecan'), NULL,
+ 'ASCENT-04 / KEYNOTE-D19 Phase III OS Readout — 1L TNBC + Pembrolizumab Confirmatory OS',
+ 'Topline Results', '2027-03-01', NULL, 'Upcoming', 'High',
+ 'ASCENT-04/KEYNOTE-D19: sacituzumab govitecan + pembrolizumab in 1L TNBC. FDA approved June 24, 2026. Confirmatory OS readout from Phase III will convert to traditional approval and validate the combination''s survival benefit. OS data expected 2027 at ASH or ESMO. Competitive with Dato-DXd + pembrolizumab (TROPION-Breast05, 1L TNBC) in the same indication.'),
+
+-- ── BELZUTIFAN ────────────────────────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Belzutifan'), NULL,
+ 'LITESPARK-022 Phase III OS Readout — Adjuvant Belzutifan + Pembrolizumab in ccRCC',
+ 'Topline Results', '2027-09-01', NULL, 'Upcoming', 'High',
+ 'LITESPARK-022: belzutifan + pembrolizumab as adjuvant therapy after nephrectomy for high-risk ccRCC. FDA approved June 12, 2026. Confirmatory OS data from Phase III expected 2027. First HIF-2alpha inhibitor in adjuvant setting; Merck needs OS data to convert to traditional approval. Could also inform future adjuvant combinations with pembrolizumab + Welireg.'),
+
+-- ── SELPERCATINIB ─────────────────────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Selpercatinib'), NULL,
+ 'LIBRETTO-431 Phase III OS Final Analysis — 1L RET-Mutated NSCLC',
+ 'Topline Results', '2026-09-01', NULL, 'Upcoming', 'Medium',
+ 'LIBRETTO-431 Phase III (selpercatinib vs. platinum-pemetrexed +/- pembrolizumab in 1L RET-mutated NSCLC) already met PFS primary endpoint. OS final analysis is pending and expected at ESMO 2026. OS readout will support conversion to full traditional approval in 1L RET+ NSCLC and definitively establish selpercatinib over chemotherapy as the 1L standard.'),
+
+-- ── CABOZANTINIB ──────────────────────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Cabozantinib'), NULL,
+ 'STELLAR-303 Phase III Primary Readout — XL092 + Atezo vs Cabozantinib in 2L RCC',
+ 'Topline Results', '2026-12-01', NULL, 'Upcoming', 'High',
+ 'STELLAR-303 (Exelixis): XL092 + atezolizumab vs. cabozantinib in previously treated advanced RCC. BeOne/Exelixis Phase III. If XL092 combination shows superiority over cabozantinib monotherapy, it would cannibalize Cabometyx revenue (Exelixis'' own next-gen molecule vs. its current standard). This internal competition and readout timing is a key commercial intelligence data point.'),
+
+-- ── EPCORITAMAB ───────────────────────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Epcoritamab'), NULL,
+ 'EPCORE DLBCL-2 Phase III Primary Readout — 1L DLBCL + R-CHOP',
+ 'Topline Results', '2026-06-01', NULL, 'Upcoming', 'High',
+ 'EPCORE DLBCL-2: epcoritamab + R-CHOP vs. R-CHOP in 1L diffuse large B-cell lymphoma. Genmab/AbbVie Phase III. If positive, this would move epcoritamab from R/R DLBCL (current accelerated approval) into first-line — the highest-volume DLBCL treatment setting. Results expected ASCO or EHA 2026. Directly competes with mosunetuzumab and glofitamab combinations in this space.'),
+
+-- ── NAVITOCLAX ────────────────────────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Navitoclax'), NULL,
+ 'AbbVie Navitoclax + Ruxolitinib NDA FDA Decision — Myelofibrosis',
+ 'PDUFA Date', '2026-01-01', NULL, 'Upcoming', 'High',
+ 'AbbVie filed NDA for navitoclax + ruxolitinib for JAKi-naive myelofibrosis based on TRANSFORM-1 Phase III (SVR35 63.2% vs 31.5%; p<0.0001). PDUFA expected Q1 2026. If approved, navitoclax + ruxolitinib becomes first approved BCL-XL/BCL-2 inhibitor combination in myelofibrosis — potentially the new standard of care in JAKi-naive MF. AbbVie''s next major haematology approval after venetoclax.'),
+
+-- ── TUSAMITAMAB RAVTANSINE ────────────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Tusamitamab Ravtansine'), NULL,
+ 'CARMEN-LC04 Phase III OS Readout — CEACAM5+ Non-Squamous NSCLC',
+ 'Topline Results', '2026-12-01', NULL, 'Upcoming', 'High',
+ 'CARMEN-LC04: tusamitamab ravtansine vs. docetaxel in CEACAM5-high (IHC ≥2+, ≥50% cells) non-squamous NSCLC after platinum failure. Sanofi Phase III. Primary PFS readout expected mid-late 2026. If positive, would be the first CEA (CEACAM5)-targeting ADC approved in NSCLC — a large biomarker-selected population (~35% of NSQ NSCLC). Head-to-head vs. docetaxel sets a high bar.'),
+
+-- ── PATRITUMAB DERUXTECAN ─────────────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Patritumab Deruxtecan'), NULL,
+ 'HERTHENA-Lung02 Phase III Primary PFS Readout — 3L+ EGFRm NSCLC Post-Osimertinib + Platinum',
+ 'Topline Results', '2026-06-01', NULL, 'Upcoming', 'High',
+ 'HERTHENA-Lung02: patritumab deruxtecan (HER3-DXd) vs. platinum doublet chemotherapy in EGFRm NSCLC after osimertinib and platinum chemotherapy. Daiichi Sankyo Phase III. Phase II HERTHENA-Lung01 ORR was 29.8% — promising vs. chemo. Primary PFS data expected at ASCO 2026. If positive, this fills the urgent unmet need in 3L+ EGFRm NSCLC where no targeted option currently exists post-osimertinib + platinum.'),
+
+-- ── IFINATAMAB DERUXTECAN ─────────────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Ifinatamab Deruxtecan'), NULL,
+ 'IDeate-Lung01 Phase III Enrollment Initiation — 2L+ SCLC',
+ 'Phase III Initiation', '2026-03-01', NULL, 'Upcoming', 'High',
+ 'Based on IDeate-Lung01 Phase II pivotal data (ORR ~40% in R/R SCLC, presented ASCO 2025), Daiichi Sankyo is expected to initiate a confirmatory Phase III for ifinatamab deruxtecan (I-DXd, B7-H3-targeting ADC) in 2L+ SCLC. Enrollment initiation milestone expected 2026. I-DXd competes directly with tarlatamab (Imdelltra) in R/R SCLC — both targeting the same patient population.'),
+
+-- ── ADAGRASIB ─────────────────────────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Adagrasib'), NULL,
+ 'KRYSTAL-10 Phase III Primary OS Readout — 2L KRAS G12C CRC + Cetuximab',
+ 'Topline Results', '2026-03-01', NULL, 'Upcoming', 'High',
+ 'KRYSTAL-10: adagrasib + cetuximab vs. chemotherapy in 2L KRAS G12C-mutated CRC. Accelerated approval granted August 2024. Full OS data from Phase III expected Q1 2026 at ASCO GI or ESMO. If OS is statistically significant, achieves traditional approval. Competes with sotorasib + panitumumab (Lumakras, full approval Jan 2025) in the same KRAS G12C CRC indication. Whichever shows better OS data wins market share.'),
+
+-- ── AMIVANTAMAB ──────────────────────────────────────────────────────────
+
+((SELECT id FROM drugs WHERE drug_name = 'Amivantamab'), NULL,
+ 'PAPILLON Phase III OS Final Analysis — EGFR Exon 20 Insertion NSCLC',
+ 'Topline Results', '2026-06-01', NULL, 'Upcoming', 'Medium',
+ 'PAPILLON Phase III (amivantamab + chemotherapy in 1L EGFR Exon 20 insertion NSCLC) already met PFS primary endpoint. OS final analysis expected ASCO 2026. Full OS data will convert the current regulatory status to traditional approval and establish amivantamab + chemo as the definitive 1L standard in Ex20ins NSCLC — a mutation affecting ~3% of all NSCLC.'),
+
+((SELECT id FROM drugs WHERE drug_name = 'Amivantamab'), NULL,
+ 'MARIPOSA Phase III OS Final Analysis — 1L EGFR-Mutated NSCLC vs Osimertinib',
+ 'Topline Results', '2026-09-01', NULL, 'Upcoming', 'High',
+ 'MARIPOSA Phase III (amivantamab + lazertinib vs. osimertinib in 1L EGFRm NSCLC, ex19del/L858R) met PFS primary endpoint (HR 0.70); FDA approved August 2024. OS final data expected ESMO 2026. If OS favors amivantamab + lazertinib over osimertinib, this is a regime-changing result — replacing the world''s most prescribed NSCLC drug (Tagrisso) with a bispecific + TKI doublet at significant cost and convenience implications.');
