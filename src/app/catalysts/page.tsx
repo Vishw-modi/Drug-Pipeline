@@ -36,6 +36,7 @@ export default async function CatalystsPage({ searchParams }: PageProps) {
   let filteredCatalysts = allCatalysts;
   if (targetMonths.length > 0) {
     filteredCatalysts = allCatalysts.filter(c => {
+      if (!c.expected_date) return false;
       const cDate = new Date(c.expected_date);
       const mStr = `${cDate.getFullYear()}-${String(cDate.getMonth() + 1).padStart(2, '0')}`;
       return targetMonths.includes(mStr);

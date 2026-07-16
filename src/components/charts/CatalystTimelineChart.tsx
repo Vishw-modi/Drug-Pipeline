@@ -43,6 +43,7 @@ export function CatalystTimelineChart({ data }: CatalystTimelineChartProps) {
       
       // Filter catalysts for this month
       const monthCatalysts = data.filter(c => {
+        if (!c.expected_date) return false;
         const cDate = new Date(c.expected_date);
         return cDate.getFullYear() === d.getFullYear() && cDate.getMonth() === d.getMonth();
       });
@@ -220,7 +221,7 @@ export function CatalystTimelineChart({ data }: CatalystTimelineChartProps) {
                       {Object.entries(m.breakdown).map(([type, c]) => (
                         <li key={type} className="flex items-center gap-2">
                           <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-muted)] opacity-50"></span>
-                          <span className="font-medium text-[var(--color-brand-navy)]">{c}</span> {type}
+                          <span className="font-medium text-[var(--color-brand-navy)]">{String(c)}</span> {type}
                         </li>
                       ))}
                     </ul>
@@ -260,7 +261,7 @@ export function CatalystTimelineChart({ data }: CatalystTimelineChartProps) {
                   </div>
                   {Object.entries(mData.breakdown).slice(0, 5).map(([type, c]) => (
                     <div key={type} className="truncate" title={type}>
-                      <span className="font-medium text-[var(--color-brand-navy)]">{c}</span> {type}
+                      <span className="font-medium text-[var(--color-brand-navy)]">{String(c)}</span> {type}
                     </div>
                   ))}
                   {Object.keys(mData.breakdown).length > 5 && (
