@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { MessageSquare, X, Send, Bot, User, Sparkles } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 interface AIChatbotProps {
   entityType: 'drug' | 'company';
@@ -48,9 +49,12 @@ export function AIChatbot({ entityType, entityName, contextPayload }: AIChatbotP
   // Unified send handler
   const send = useCallback((text: string) => {
     if (!text.trim() || isBusy) return;
-    sendMessage({ text });
+    sendMessage(
+      { text },
+      { body: { entityType, contextPayload } }
+    );
     setInput('');
-  }, [isBusy, sendMessage]);
+  }, [isBusy, sendMessage, entityType, contextPayload]);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -135,10 +139,18 @@ export function AIChatbot({ entityType, entityName, contextPayload }: AIChatbotP
                       {msg.role === 'user' ? 'You' : 'AI Analyst'}
                     </span>
                   </div>
-                  <div className="whitespace-pre-wrap leading-relaxed">
-                    {msg.parts?.map((part: any, i: number) => 
-                      part.type === 'text' ? <span key={i}>{part.text}</span> : null
-                    )}
+                  <div className="leading-relaxed">
+                    {msg.parts?.map((part: any, i: number) => {
+                      if (part.type !== 'text') return null;
+                      if (msg.role === 'user') {
+                        return <span key={i} className="whitespace-pre-wrap">{part.text}</span>;
+                      }
+                      return (
+                        <div key={i} className="chatbot-markdown">
+                          <ReactMarkdown>{part.text}</ReactMarkdown>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
