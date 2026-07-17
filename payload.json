@@ -1,0 +1,63 @@
+{
+  "entityType": "drug",
+  "contextPayload": {
+    "id": 1,
+    "company_id": 1,
+    "drug_name": "Pembrolizumab",
+    "internal_code": "MK-3475",
+    "generic_name": "Pembrolizumab",
+    "molecule_type": "Monoclonal Antibody",
+    "target": "PD-1",
+    "mechanism_of_action": "Humanised IgG4 monoclonal antibody that blocks PD-1 receptor, restoring anti-tumour T-cell immunity",
+    "development_phase": "Approved",
+    "approval_status": "Approved",
+    "expected_launch_date": null,
+    "first_in_class": false,
+    "orphan_designation": false,
+    "fast_track": false,
+    "breakthrough_designation": false,
+    "description": "Keytruda; the world's best-selling oncology drug, approved across 40+ indications spanning NSCLC, melanoma, TNBC, CRC MSI-H, and many others.",
+    "extra_data": {},
+    "created_at": "2026-07-08T13:32:50.326968+00:00",
+    "updated_at": "2026-07-17T18:58:09.684205+00:00",
+    "j_code": "J9271",
+    "j_code_description": "Injection, pembrolizumab, 1 mg",
+    "ndc_code": "0006-3026-02",
+    "companies": {
+      "id": 1,
+      "website": "https://www.merck.com",
+      "logo_url": null,
+      "created_at": "2026-07-08T13:29:53.901313+00:00",
+      "updated_at": "2026-07-08T13:29:53.901313+00:00",
+      "description": "Global biopharmaceutical company and maker of Keytruda (pembrolizumab), the world's leading oncology immunotherapy by revenue.",
+      "company_name": "Merck & Co.",
+      "company_type": "Large Pharma",
+      "headquarters": "Rahway, NJ, USA"
+    },
+    "company": {
+      "id": 1,
+      "website": "https://www.merck.com",
+      "logo_url": null,
+      "created_at": "2026-07-08T13:29:53.901313+00:00",
+      "updated_at": "2026-07-08T13:29:53.901313+00:00",
+      "description": "Global biopharmaceutical company and maker of Keytruda (pembrolizumab), the world's leading oncology immunotherapy by revenue.",
+      "company_name": "Merck & Co.",
+      "company_type": "Large Pharma",
+      "headquarters": "Rahway, NJ, USA"
+    }
+  },
+  "id": "PKPOZmBENjYPnv3a",
+  "messages": [
+    {
+      "parts": [
+        {
+          "type": "text",
+          "text": "Summarize this drug"
+        }
+      ],
+      "id": "syt8rUbZRSggmwm7",
+      "role": "user"
+    }
+  ],
+  "trigger": "submit-message"
+}

@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
+import { AIChatbot } from '@/components/chat/AIChatbot';
 import { 
   ArrowLeft, Crosshair, FlaskConical, Hash, 
   CalendarClock, Activity, CheckCircle2, XCircle,
@@ -193,6 +194,7 @@ export default async function DrugDetailsPage({ params }: { params: { id: string
 
         </div>
       </div>
+      <AIChatbot entityType="drug" entityName={drug.drug_name} contextPayload={drug} />
     </div>
   );
 }

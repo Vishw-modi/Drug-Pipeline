@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { CompanyProfileDashboard } from '@/components/companies/CompanyProfileDashboard';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { AIChatbot } from '@/components/chat/AIChatbot';
 
 export const metadata = {
   title: 'Company Profile | DRUGSCAPE',
@@ -34,6 +35,7 @@ export default async function CompanyProfilePage({ params }: PageProps) {
           <CompanyProfileDashboard company={company} />
         </div>
       </div>
+      <AIChatbot entityType="company" entityName={company.company_name} contextPayload={company} />
     </div>
   );
 }
