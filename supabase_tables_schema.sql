@@ -104,9 +104,17 @@ CREATE TABLE drugs (
 
     extra_data JSONB DEFAULT '{}'::jsonb,
 
+    -- Billing / reimbursement codes
+    j_code              VARCHAR(10),          -- HCPCS Level II J-code (injectable drugs only)
+    
+    j_code_description  TEXT,                 -- CMS official description for the J-code
+    
+    ndc_code            TEXT,                 -- Representative NDC (11-digit, reference product)
+
     created_at TIMESTAMPTZ DEFAULT NOW(),
 
     updated_at TIMESTAMPTZ DEFAULT NOW(),
+    
 
     CONSTRAINT fk_company
         FOREIGN KEY(company_id)

@@ -1035,3 +1035,310 @@ VALUES
  'MARIPOSA Phase III OS Final Analysis — 1L EGFR-Mutated NSCLC vs Osimertinib',
  'Topline Results', '2026-09-01', NULL, 'Upcoming', 'High',
  'MARIPOSA Phase III (amivantamab + lazertinib vs. osimertinib in 1L EGFRm NSCLC, ex19del/L858R) met PFS primary endpoint (HR 0.70); FDA approved August 2024. OS final data expected ESMO 2026. If OS favors amivantamab + lazertinib over osimertinib, this is a regime-changing result — replacing the world''s most prescribed NSCLC drug (Tagrisso) with a bispecific + TKI doublet at significant cost and convenience implications.');
+
+ -- =============================================================================
+-- 13_patch_billing_codes.sql
+-- Corrected NDC codes and J-codes for the drugs table.
+--
+-- Sources (as required by leadership):
+--   NDC codes  — FDA NDC Directory Open API (api.fda.gov/drug/ndc.json)
+--                Verified July 2026. package_ndc field used throughout.
+--   J-codes    — CMS HCPCS Quarterly Application Summary PDFs (cms.gov)
+--                Effective dates noted per drug.
+--
+-- Prerequisites:
+--   11_alter_drugs_add_billing_codes.sql  — columns already added
+--   12_clear_billing_codes.sql            — all three columns NULLed
+--
+-- Rules applied:
+--   • Injectable / IV drugs billed under Medicare Part B → NDC + J-code
+--   • Oral drugs                                        → NDC only, J-code NULL
+--   • Investigational / pipeline drugs                  → both NULL
+-- =============================================================================
+
+BEGIN;
+
+-- ---------------------------------------------------------------------------
+-- SECTION 1: Injectable / infused approved drugs — NDC + J-code
+-- ---------------------------------------------------------------------------
+
+-- Pembrolizumab (Keytruda) — Merck
+-- NDC: FDA api.fda.gov, package_ndc 0006-3026-02 (100 mg/4 mL vial, Merck Sharp & Dohme)
+-- J9271: CMS HCPCS, effective Jan 2016
+UPDATE drugs SET
+  j_code             = 'J9271',
+  j_code_description = 'Injection, pembrolizumab, 1 mg',
+  ndc_code           = '0006-3026-02'
+WHERE LOWER(drug_name) LIKE '%pembrolizumab%';
+
+-- Nivolumab (Opdivo) — Bristol Myers Squibb
+-- NDC: FDA api.fda.gov, package_ndc 0003-3774-12 (240 mg/24 mL vial, BMS)
+-- J9299: CMS HCPCS, effective Jan 2016
+UPDATE drugs SET
+  j_code             = 'J9299',
+  j_code_description = 'Injection, nivolumab, 1 mg',
+  ndc_code           = '0003-3774-12'
+WHERE LOWER(drug_name) LIKE '%nivolumab%';
+
+-- Cemiplimab (Libtayo) — Regeneron / Sanofi
+-- NDC: FDA api.fda.gov, package_ndc 61755-008-01 (350 mg/7 mL vial, Regeneron)
+-- J9119: CMS HCPCS, effective Oct 2019
+UPDATE drugs SET
+  j_code             = 'J9119',
+  j_code_description = 'Injection, cemiplimab-rwlc, 1 mg',
+  ndc_code           = '61755-008-01'
+WHERE LOWER(drug_name) LIKE '%cemiplimab%';
+
+-- Durvalumab (Imfinzi) — AstraZeneca
+-- NDC: FDA api.fda.gov, package_ndc 0310-4611-50 (500 mg/10 mL vial, AstraZeneca)
+-- J9173: CMS HCPCS, effective Jan 2019
+UPDATE drugs SET
+  j_code             = 'J9173',
+  j_code_description = 'Injection, durvalumab, 10 mg',
+  ndc_code           = '0310-4611-50'
+WHERE LOWER(drug_name) LIKE '%durvalumab%';
+
+-- Tremelimumab (Imjudo) — AstraZeneca
+-- NDC: FDA api.fda.gov, package_ndc 0310-4535-30 (300 mg/10 mL vial, AstraZeneca)
+-- J9347: CMS HCPCS Q1 2023 Application Summary, effective Jul 2023
+UPDATE drugs SET
+  j_code             = 'J9347',
+  j_code_description = 'Injection, tremelimumab-actl, 1 mg',
+  ndc_code           = '0310-4535-30'
+WHERE LOWER(drug_name) LIKE '%tremelimumab%';
+
+-- Atezolizumab (Tecentriq) — Genentech / Roche
+-- NDC: FDA api.fda.gov, package_ndc 50242-917-01 (1200 mg/20 mL vial, Genentech)
+-- J9022: CMS HCPCS, effective Jan 2018
+UPDATE drugs SET
+  j_code             = 'J9022',
+  j_code_description = 'Injection, atezolizumab, 10 mg',
+  ndc_code           = '50242-917-01'
+WHERE LOWER(drug_name) LIKE '%atezolizumab%';
+
+-- Trastuzumab deruxtecan (Enhertu) — Daiichi Sankyo / AstraZeneca
+-- NDC: FDA api.fda.gov, package_ndc 65597-406-01 (100 mg/vial lyophilized, Daiichi Sankyo)
+-- J9358: CMS HCPCS, effective Jul 2022
+UPDATE drugs SET
+  j_code             = 'J9358',
+  j_code_description = 'Injection, fam-trastuzumab deruxtecan-nxki, 1 mg',
+  ndc_code           = '65597-406-01'
+WHERE LOWER(drug_name) LIKE '%trastuzumab deruxtecan%';
+
+-- Datopotamab deruxtecan (Datroway) — Daiichi Sankyo / AstraZeneca
+-- NDC: FDA api.fda.gov, package_ndc 65597-801-01 (100 mg/5 mL vial, Daiichi Sankyo; marketing start Jan 2025)
+-- J9011: CMS HCPCS Q2 2025 Application Summary
+UPDATE drugs SET
+  j_code             = 'J9011',
+  j_code_description = 'Injection, datopotamab deruxtecan-dlnk, 1 mg',
+  ndc_code           = '65597-801-01'
+WHERE LOWER(drug_name) LIKE '%datopotamab%';
+
+-- Sacituzumab govitecan (Trodelvy) — Gilead
+-- NDC: FDA api.fda.gov, package_ndc 55135-132-01 (200 mg/vial lyophilized, Gilead)
+-- J9317: CMS HCPCS, effective Jan 2021
+UPDATE drugs SET
+  j_code             = 'J9317',
+  j_code_description = 'Injection, sacituzumab govitecan-hziy, 2.5 mg',
+  ndc_code           = '55135-132-01'
+WHERE LOWER(drug_name) LIKE '%sacituzumab%';
+
+-- Amivantamab (Rybrevant) — Johnson & Johnson / Janssen
+-- NDC: FDA api.fda.gov, package_ndc 57894-501-01 (350 mg/7 mL vial, Janssen)
+-- J9061: CMS HCPCS, effective Jan 2022
+UPDATE drugs SET
+  j_code             = 'J9061',
+  j_code_description = 'Injection, amivantamab-vmjw, 2 mg',
+  ndc_code           = '57894-501-01'
+WHERE LOWER(drug_name) LIKE '%amivantamab%';
+
+-- Lurbinectedin (Zepzelca) — Jazz Pharmaceuticals
+-- NDC: FDA api.fda.gov, package_ndc 68727-712-01 (4 mg/vial lyophilized, Jazz)
+-- J9223: CMS HCPCS, effective Jan 2021
+UPDATE drugs SET
+  j_code             = 'J9223',
+  j_code_description = 'Injection, lurbinectedin, 0.1 mg',
+  ndc_code           = '68727-712-01'
+WHERE LOWER(drug_name) LIKE '%lurbinectedin%';
+
+-- Bevacizumab (Avastin) — Genentech / Roche
+-- NDC: FDA api.fda.gov, package_ndc 50242-060-01 (400 mg/16 mL vial, Genentech)
+-- J9035: CMS HCPCS, effective Jan 2005
+UPDATE drugs SET
+  j_code             = 'J9035',
+  j_code_description = 'Injection, bevacizumab, 10 mg',
+  ndc_code           = '50242-060-01'
+WHERE LOWER(drug_name) LIKE '%bevacizumab%';
+
+-- Pertuzumab (Perjeta) — Genentech / Roche
+-- NDC: FDA api.fda.gov, package_ndc 50242-145-01 (420 mg/14 mL vial, Genentech)
+-- J9306: CMS HCPCS, effective Jan 2014
+-- Guard: excludes rows where pertuzumab appears combined with trastuzumab
+UPDATE drugs SET
+  j_code             = 'J9306',
+  j_code_description = 'Injection, pertuzumab, 1 mg',
+  ndc_code           = '50242-145-01'
+WHERE LOWER(drug_name) LIKE '%pertuzumab%'
+  AND LOWER(drug_name) NOT LIKE '%trastuzumab%';
+
+-- Trastuzumab (Herceptin) — Genentech / Roche
+-- NDC: FDA api.fda.gov, package_ndc 50242-132-01 (440 mg/vial lyophilized, Genentech)
+-- J9355: CMS HCPCS, effective Jan 2000 / revised 2019 (excludes biosimilar)
+-- Exact match to avoid capturing trastuzumab deruxtecan or combo products
+UPDATE drugs SET
+  j_code             = 'J9355',
+  j_code_description = 'Injection, trastuzumab, excludes biosimilar, 10 mg',
+  ndc_code           = '50242-132-01'
+WHERE LOWER(drug_name) = 'trastuzumab';
+
+-- Mosunetuzumab (Lunsumio) — Genentech / Roche
+-- NDC: FDA api.fda.gov, package_ndc 50242-142-01 (30 mg/30 mL vial, Genentech)
+-- J9350: CMS HCPCS Q1 2023 Application Summary, effective Jul 2023
+UPDATE drugs SET
+  j_code             = 'J9350',
+  j_code_description = 'Injection, mosunetuzumab-axgb, 1 mg',
+  ndc_code           = '50242-142-01'
+WHERE LOWER(drug_name) LIKE '%mosunetuzumab%';
+
+-- Epcoritamab (Epkinly) — AbbVie / Genmab (SubQ)
+-- NDC: FDA api.fda.gov, package_ndc 82705-010-01 (16 mg/0.8 mL vial, AbbVie)
+-- J9321: CMS HCPCS Q3 2023 Application Summary
+UPDATE drugs SET
+  j_code             = 'J9321',
+  j_code_description = 'Injection, epcoritamab-bysp, 0.16 mg',
+  ndc_code           = '82705-010-01'
+WHERE LOWER(drug_name) LIKE '%epcoritamab%';
+
+-- Elranatamab (Elrexfio) — Pfizer (SubQ)
+-- NDC: FDA api.fda.gov, package_ndc 0069-2522-02 (320 mg/8 mL vial, Pfizer)
+-- J1323: CMS HCPCS Q4 2023 Application Summary
+UPDATE drugs SET
+  j_code             = 'J1323',
+  j_code_description = 'Injection, elranatamab-bcmm, 1 mg',
+  ndc_code           = '0069-2522-02'
+WHERE LOWER(drug_name) LIKE '%elranatamab%';
+
+-- Tarlatamab (Imdelltra) — Amgen (IV)
+-- NDC: FDA api.fda.gov, package_ndc 55513-077-01 (1 mg/vial lyophilized, Amgen)
+-- J9026: CMS HCPCS Q3 2024 Application Summary
+UPDATE drugs SET
+  j_code             = 'J9026',
+  j_code_description = 'Injection, tarlatamab-dlle, 1 mg',
+  ndc_code           = '55513-077-01'
+WHERE LOWER(drug_name) LIKE '%tarlatamab%';
+
+-- Zanidatamab (Ziihera) — Jazz Pharmaceuticals (IV)
+-- NDC: FDA api.fda.gov, package_ndc 68727-950-02 (300 mg/6 mL vial, Jazz; marketing start Nov 2024)
+-- J9276: CMS HCPCS Q1 2025 Application Summary (replaces transitional C9302)
+UPDATE drugs SET
+  j_code             = 'J9276',
+  j_code_description = 'Injection, zanidatamab-hrii, 2 mg',
+  ndc_code           = '68727-950-02'
+WHERE LOWER(drug_name) LIKE '%zanidatamab%';
+
+-- Telisotuzumab vedotin (Emrelis) — AbbVie (IV)
+-- NDC: FDA api.fda.gov, package_ndc 0074-1044-01 (AbbVie; FDA approved Jun 2025)
+-- J9326: CMS HCPCS Q3 2025 Application Summary
+UPDATE drugs SET
+  j_code             = 'J9326',
+  j_code_description = 'Injection, telisotuzumab vedotin-tllv, 1 mg',
+  ndc_code           = '0074-1044-01'
+WHERE LOWER(drug_name) LIKE '%telisotuzumab%';
+
+-- Linvoseltamab (Lynozyfic) — Regeneron (IV)
+-- NDC: FDA api.fda.gov, package_ndc 61755-056-01 (Regeneron; FDA approved Apr 2025)
+-- J9601: CMS HCPCS Q3 2025 Application Summary
+UPDATE drugs SET
+  j_code             = 'J9601',
+  j_code_description = 'Injection, linvoseltamab-gcpt, 1 mg',
+  ndc_code           = '61755-056-01'
+WHERE LOWER(drug_name) LIKE '%linvoseltamab%';
+
+-- ---------------------------------------------------------------------------
+-- SECTION 2: Oral approved drugs — NDC only (j_code remains NULL)
+-- ---------------------------------------------------------------------------
+
+-- Olaparib (Lynparza) — AstraZeneca / MSD; 150 mg tablets
+-- NDC: FDA api.fda.gov, package_ndc 0310-0578-60 (AstraZeneca)
+UPDATE drugs SET ndc_code = '0310-0578-60'
+WHERE LOWER(drug_name) LIKE '%olaparib%';
+
+-- Osimertinib (Tagrisso) — AstraZeneca; 80 mg tablets
+-- NDC: FDA api.fda.gov, package_ndc 0310-1251-30 (AstraZeneca)
+UPDATE drugs SET ndc_code = '0310-1251-30'
+WHERE LOWER(drug_name) LIKE '%osimertinib%';
+
+-- Lorlatinib (Lorbrena) — Pfizer; 100 mg tablets
+-- NDC: FDA api.fda.gov, package_ndc 0069-0231-01 (Pfizer)
+UPDATE drugs SET ndc_code = '0069-0231-01'
+WHERE LOWER(drug_name) LIKE '%lorlatinib%';
+
+-- Sotorasib (Lumakras) — Amgen; 960 mg tablets
+-- NDC: FDA api.fda.gov, package_ndc 55513-488-02 (Amgen)
+UPDATE drugs SET ndc_code = '55513-488-02'
+WHERE LOWER(drug_name) LIKE '%sotorasib%';
+
+-- Adagrasib (Krazati) — Mirati / BMS; 200 mg capsules
+-- NDC: FDA api.fda.gov, package_ndc 80739-812-12 (Mirati)
+UPDATE drugs SET ndc_code = '80739-812-12'
+WHERE LOWER(drug_name) LIKE '%adagrasib%';
+
+-- Belzutifan (Welireg) — Merck; 120 mg tablets
+-- NDC: FDA api.fda.gov, package_ndc 0006-5331-01 (Merck)
+UPDATE drugs SET ndc_code = '0006-5331-01'
+WHERE LOWER(drug_name) LIKE '%belzutifan%';
+
+-- Selpercatinib (Retevmo) — Eli Lilly; 160 mg capsules
+-- NDC: FDA api.fda.gov, package_ndc 0002-2980-60 (Eli Lilly)
+UPDATE drugs SET ndc_code = '0002-2980-60'
+WHERE LOWER(drug_name) LIKE '%selpercatinib%';
+
+-- Venetoclax (Venclexta) — AbbVie / Roche; 100 mg tablets
+-- NDC: FDA api.fda.gov, package_ndc 0074-0576-22 (AbbVie)
+UPDATE drugs SET ndc_code = '0074-0576-22'
+WHERE LOWER(drug_name) LIKE '%venetoclax%';
+
+-- Zanubrutinib (Brukinsa) — BeiGene; 80 mg capsules
+-- NDC: FDA api.fda.gov, package_ndc 72579-011-02 (BeiGene)
+UPDATE drugs SET ndc_code = '72579-011-02'
+WHERE LOWER(drug_name) LIKE '%zanubrutinib%';
+
+-- Cabozantinib (Cabometyx) — Exelixis; 60 mg tablets
+-- NDC: FDA api.fda.gov, package_ndc 42388-023-26 (Exelixis)
+UPDATE drugs SET ndc_code = '42388-023-26'
+WHERE LOWER(drug_name) LIKE '%cabozantinib%';
+
+-- Darolutamide (Nubeqa) — Bayer; 300 mg tablets
+-- NDC: FDA api.fda.gov, package_ndc 50419-395-01 (Bayer)
+UPDATE drugs SET ndc_code = '50419-395-01'
+WHERE LOWER(drug_name) LIKE '%darolutamide%';
+
+-- ---------------------------------------------------------------------------
+-- SECTION 3: Pipeline / investigational drugs — both columns remain NULL
+-- No FDA NDC (not commercially launched) and no CMS J-code as of Jul 2026:
+--   imlunestrant, zanzalintinib, zongertinib, vepdegestrant, gedatolisib,
+--   sonrotoclax, sevabertinib, navitoclax, penpulimab, ivonescimab,
+--   rilvegostomig, volrustomig, patritumab, ifinatamab deruxtecan
+-- (No UPDATE needed — NULL is already set from 12_clear_billing_codes.sql)
+-- ---------------------------------------------------------------------------
+
+COMMIT;
+
+-- =============================================================================
+-- VERIFICATION QUERY — run after applying this patch:
+-- =============================================================================
+/*
+SELECT
+  drug_name,
+  route_of_administration,
+  approval_status,
+  j_code,
+  j_code_description,
+  ndc_code
+FROM drugs
+ORDER BY
+  CASE WHEN j_code IS NOT NULL THEN 0
+       WHEN ndc_code IS NOT NULL THEN 1
+       ELSE 2 END,
+  drug_name;
+*/

@@ -18,6 +18,9 @@ export interface Drug {
   breakthrough_designation: boolean | null;
   description: string | null;
   extra_data: any;
+  j_code?: string | null;
+  j_code_description?: string | null;
+  ndc_code?: string | null;
   created_at: string;
   updated_at: string;
   
