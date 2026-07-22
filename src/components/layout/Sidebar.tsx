@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Beaker, Building2, FlaskConical, CalendarClock, 
-  Settings, FileText, Download, BookOpen, Activity, ChevronsLeft, ChevronsRight, LineChart 
+  Settings, FileText, Download, BookOpen, Activity, ChevronsLeft, ChevronsRight, LineChart, PieChart
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -71,7 +71,8 @@ export function Sidebar() {
               { route: '/companies', icon: Building2, label: 'Companies Directory' },
               { route: '/pipeline', icon: Beaker, label: 'Drug Database' },
               { route: '/compare', icon: LineChart, label: 'Comparative Analysis' },
-              { route: '/trials', icon: FlaskConical, label: 'Market Insights' },
+              { route: '/insights', icon: PieChart, label: 'Market Insights' },
+              { route: '/trials', icon: FlaskConical, label: 'Clinical Trials' },
               { route: '/catalysts', icon: CalendarClock, label: 'Upcoming Catalysts' }
             ].map(({ route, icon: Icon, label }) => (
               <Link 
