@@ -48,7 +48,14 @@ export default async function DrugDetailsPage({ params }: { params: { id: string
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
             <div>
               <div className="flex flex-wrap items-center gap-3 mb-1">
-                <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-brand-navy)]">{drug.drug_name}</h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-brand-navy)]">
+                  {drug.drug_name}
+                  {drug.brand_name && (
+                    <span className="text-lg md:text-xl font-medium text-[var(--color-muted)] ml-2">
+                      ({drug.brand_name})
+                    </span>
+                  )}
+                </h1>
                 <StatusBadge status={drug.development_phase} />
               </div>
               

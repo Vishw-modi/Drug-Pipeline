@@ -6,6 +6,18 @@ interface MarketLeadersProps {
   topDrugs: any[];
 }
 
+const DrugLink = ({ drug }: { drug: any }) => {
+  const name = drug.brand_name || drug.drug_name;
+  if (drug.drug_id) {
+    return (
+      <Link href={`/drugs/${drug.drug_id}`} className="text-brand-primary hover:underline font-medium">
+        {name}
+      </Link>
+    );
+  }
+  return <span className="font-medium text-brand-navy">{name}</span>;
+};
+
 export function MarketLeaders({ topDrugs }: MarketLeadersProps) {
   if (!topDrugs || topDrugs.length === 0) {
     return (
@@ -49,18 +61,6 @@ export function MarketLeaders({ topDrugs }: MarketLeadersProps) {
           </span>
         );
     }
-  };
-
-  const DrugLink = ({ drug }: { drug: any }) => {
-    const name = drug.brand_name || drug.drug_name;
-    if (drug.drug_id) {
-      return (
-        <Link href={`/drugs/${drug.drug_id}`} className="text-brand-primary hover:underline font-medium">
-          {name}
-        </Link>
-      );
-    }
-    return <span className="font-medium text-brand-navy">{name}</span>;
   };
 
   return (

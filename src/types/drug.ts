@@ -26,6 +26,7 @@ export interface Drug {
   
   // Joins
   company?: Company;
+  brand_name?: string | null;
 }
 
 export interface DrugIndication {
