@@ -33,10 +33,7 @@ export function AIChatbot({ entityType, entityName, contextPayload }: AIChatbotP
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const { messages, sendMessage, status } = useChat({
-    api: '/api/chat',
-    body: { entityType, contextPayload },
-  });
+  const { messages, sendMessage, status } = useChat();
 
   const isBusy = status === 'submitted' || status === 'streaming';
   const suggestions = entityType === 'drug' ? DRUG_SUGGESTIONS : COMPANY_SUGGESTIONS;
