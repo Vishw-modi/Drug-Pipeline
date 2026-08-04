@@ -4,7 +4,7 @@ import { getDashboardSummary, getPipelineByPhase, getPipelineByCancerType, getPi
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DonutChart } from '@/components/charts/DonutChart';
 import { HorizontalBarChart } from '@/components/charts/HorizontalBarChart';
-import { Pill, Activity, CheckCircle, Clock, ArrowRight, Building2, Stethoscope } from 'lucide-react';
+import { Pill, Activity, CheckCircle, Clock, ArrowRight, Building2, Stethoscope, AlertTriangle } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import { getDrugs } from '@/services/drugs.service';

@@ -89,9 +89,9 @@ export function MarketLeaders({ topDrugs }: MarketLeadersProps) {
                       <DrugLink drug={drug} />
                       <span className="text-brand-navy font-bold">{share.toFixed(1)}%</span>
                     </div>
-                    <div className="h-4 w-full bg-gray-100 rounded-sm overflow-hidden">
+                    <div className="h-4 w-full bg-[var(--color-bg)] rounded-sm overflow-hidden border border-[var(--color-border)]">
                       <div 
-                        className="h-full bg-brand-navy rounded-sm transition-all duration-1000" 
+                        className="h-full bg-[var(--color-brand-primary)] transition-all duration-1000" 
                         style={{ width: `${widthPct}%` }}
                       />
                     </div>
@@ -114,9 +114,9 @@ export function MarketLeaders({ topDrugs }: MarketLeadersProps) {
                       <DrugLink drug={drug} />
                       <span className="text-brand-navy font-bold">${revenue.toFixed(1)}B</span>
                     </div>
-                    <div className="h-4 w-full bg-gray-100 rounded-sm overflow-hidden">
+                    <div className="h-4 w-full bg-[var(--color-bg)] rounded-sm overflow-hidden border border-[var(--color-border)]">
                       <div 
-                        className="h-full bg-brand-primary rounded-sm transition-all duration-1000" 
+                        className="h-full bg-[var(--color-brand-primary)] transition-all duration-1000" 
                         style={{ width: `${widthPct}%` }}
                       />
                     </div>
@@ -134,12 +134,12 @@ export function MarketLeaders({ topDrugs }: MarketLeadersProps) {
             <table className="w-full text-sm text-left">
               <thead className="text-xs text-muted uppercase bg-[var(--color-surface-hover)] border-b border-border">
                 <tr>
-                  <th className="px-4 py-3 font-semibold text-center w-16">Rank</th>
-                  <th className="px-4 py-3 font-semibold">Drug</th>
-                  <th className="px-4 py-3 font-semibold">Company</th>
-                  <th className="px-4 py-3 font-semibold text-right">Revenue (24)</th>
-                  <th className="px-4 py-3 font-semibold text-right">Market Share</th>
-                  <th className="px-4 py-3 font-semibold text-center">Trend</th>
+                  <th className="px-4 py-3 font-semibold text-left w-16">Rank</th>
+                  <th className="px-4 py-3 font-semibold text-left">Drug</th>
+                  <th className="px-4 py-3 font-semibold text-left">Company</th>
+                  <th className="px-4 py-3 font-semibold text-left">Revenue (24)</th>
+                  <th className="px-4 py-3 font-semibold text-left">Market Share</th>
+                  <th className="px-4 py-3 font-semibold text-left">Trend</th>
                 </tr>
               </thead>
               <tbody>
@@ -148,8 +148,8 @@ export function MarketLeaders({ topDrugs }: MarketLeadersProps) {
                     key={drug.id} 
                     className={`border-b border-border hover:bg-[var(--color-surface-hover)]/50 transition-colors ${index === topDrugs.length - 1 ? 'border-b-0' : ''}`}
                   >
-                    <td className="px-4 py-3 text-center text-muted font-medium">{drug.rank}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 text-left text-muted font-medium">{drug.rank}</td>
+                    <td className="px-4 py-3 text-left">
                       <div className="font-medium text-brand-navy">
                         <DrugLink drug={drug} />
                       </div>
@@ -157,14 +157,14 @@ export function MarketLeaders({ topDrugs }: MarketLeadersProps) {
                         {drug.mechanism_of_action}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-brand-navy">{drug.company}</td>
-                    <td className="px-4 py-3 text-right font-medium text-brand-navy">
+                    <td className="px-4 py-3 text-left text-brand-navy">{drug.company}</td>
+                    <td className="px-4 py-3 text-left font-medium text-brand-navy">
                       ${Number(drug.global_revenue_2024_usd_b).toFixed(2)}B
                     </td>
-                    <td className="px-4 py-3 text-right font-medium text-brand-navy">
+                    <td className="px-4 py-3 text-left font-medium text-brand-navy">
                       {Number(drug.market_share_pct).toFixed(1)}%
                     </td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-4 py-3 text-left">
                       {renderTrendBadge(drug.revenue_trend)}
                     </td>
                   </tr>

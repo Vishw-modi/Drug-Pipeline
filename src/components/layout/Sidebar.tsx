@@ -97,7 +97,6 @@ export function Sidebar() {
           <div className="space-y-1">
             {[
               { route: '/reports', icon: FileText, label: 'Reports' },
-              { route: '/downloads', icon: Download, label: 'Downloads' },
               { route: '/glossary', icon: BookOpen, label: 'Glossary' }
             ].map(({ route, icon: Icon, label }) => (
               <Link 
@@ -117,19 +116,7 @@ export function Sidebar() {
         </div>
       </nav>
 
-      <div className="p-3 mt-auto space-y-1">
-        <Link 
-          href="/settings" 
-          title="Settings"
-          className={cn(
-            "flex items-center rounded-md transition-colors hover:bg-[var(--color-surface-hover)] hover:text-brand-navy",
-            isCollapsed ? "justify-center py-3" : "gap-3 px-3 py-2"
-          )}
-        >
-          <Settings size={isCollapsed ? 20 : 18} className="shrink-0" />
-          {!isCollapsed && <span className="text-sm">Settings</span>}
-        </Link>
-      </div>
     </aside>
   );
 }
+

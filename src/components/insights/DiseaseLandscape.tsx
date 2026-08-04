@@ -25,17 +25,17 @@ export function DiseaseLandscape({ overview }: DiseaseLandscapeProps) {
             <Microscope size={14} className="text-brand-primary" />
             <h4 className="text-xs font-semibold text-muted uppercase tracking-wider">Major Subtypes</h4>
             {subtypes.length > 0 && (
-              <span className="ml-auto text-xs font-medium text-muted bg-gray-100 px-2 py-0.5 rounded-full">
+              <span className="ml-auto text-xs font-medium text-[var(--color-muted)] bg-[var(--color-bg)] px-2 py-0.5 rounded-full border border-[var(--color-border)]">
                 {subtypes.length}
               </span>
             )}
           </div>
           {subtypes.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 mt-1">
               {subtypes.map((subtype: string) => (
                 <span 
                   key={subtype} 
-                  className="px-3 py-1.5 bg-brand-primary/10 text-brand-primary text-sm font-medium rounded-md border border-brand-primary/20"
+                  className="px-2.5 py-1 bg-brand-primary/5 text-brand-primary text-xs font-semibold tracking-wide rounded-sm"
                 >
                   {subtype}
                 </span>
@@ -52,17 +52,17 @@ export function DiseaseLandscape({ overview }: DiseaseLandscapeProps) {
             <Fingerprint size={14} className="text-purple-500" />
             <h4 className="text-xs font-semibold text-muted uppercase tracking-wider">Key Biomarkers</h4>
             {biomarkers.length > 0 && (
-              <span className="ml-auto text-xs font-medium text-muted bg-gray-100 px-2 py-0.5 rounded-full">
+              <span className="ml-auto text-xs font-medium text-[var(--color-muted)] bg-[var(--color-bg)] px-2 py-0.5 rounded-full border border-[var(--color-border)]">
                 {biomarkers.length}
               </span>
             )}
           </div>
           {biomarkers.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 mt-1">
               {biomarkers.map((biomarker: string) => (
                 <span 
                   key={biomarker} 
-                  className="px-3 py-1.5 bg-purple-50 text-purple-700 text-sm font-medium rounded-md border border-purple-200"
+                  className="px-2.5 py-1 bg-purple-500/10 text-purple-700 dark:text-purple-400 text-xs font-semibold tracking-wide rounded-sm"
                 >
                   {biomarker}
                 </span>
@@ -76,3 +76,4 @@ export function DiseaseLandscape({ overview }: DiseaseLandscapeProps) {
     </div>
   );
 }
+
