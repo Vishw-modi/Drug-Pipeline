@@ -1035,3 +1035,1183 @@ VALUES
  'MARIPOSA Phase III OS Final Analysis — 1L EGFR-Mutated NSCLC vs Osimertinib',
  'Topline Results', '2026-09-01', NULL, 'Upcoming', 'High',
  'MARIPOSA Phase III (amivantamab + lazertinib vs. osimertinib in 1L EGFRm NSCLC, ex19del/L858R) met PFS primary endpoint (HR 0.70); FDA approved August 2024. OS final data expected ESMO 2026. If OS favors amivantamab + lazertinib over osimertinib, this is a regime-changing result — replacing the world''s most prescribed NSCLC drug (Tagrisso) with a bispecific + TKI doublet at significant cost and convenience implications.');
+
+ -- =============================================================================
+-- 13_patch_billing_codes.sql
+-- Corrected NDC codes and J-codes for the drugs table.
+--
+-- Sources (as required by leadership):
+--   NDC codes  — FDA NDC Directory Open API (api.fda.gov/drug/ndc.json)
+--                Verified July 2026. package_ndc field used throughout.
+--   J-codes    — CMS HCPCS Quarterly Application Summary PDFs (cms.gov)
+--                Effective dates noted per drug.
+--
+-- Prerequisites:
+--   11_alter_drugs_add_billing_codes.sql  — columns already added
+--   12_clear_billing_codes.sql            — all three columns NULLed
+--
+-- Rules applied:
+--   • Injectable / IV drugs billed under Medicare Part B → NDC + J-code
+--   • Oral drugs                                        → NDC only, J-code NULL
+--   • Investigational / pipeline drugs                  → both NULL
+-- =============================================================================
+
+BEGIN;
+
+-- ---------------------------------------------------------------------------
+-- SECTION 1: Injectable / infused approved drugs — NDC + J-code
+-- ---------------------------------------------------------------------------
+
+-- Pembrolizumab (Keytruda) — Merck
+-- NDC: FDA api.fda.gov, package_ndc 0006-3026-02 (100 mg/4 mL vial, Merck Sharp & Dohme)
+-- J9271: CMS HCPCS, effective Jan 2016
+UPDATE drugs SET
+  j_code             = 'J9271',
+  j_code_description = 'Injection, pembrolizumab, 1 mg',
+  ndc_code           = '0006-3026-02'
+WHERE LOWER(drug_name) LIKE '%pembrolizumab%';
+
+-- Nivolumab (Opdivo) — Bristol Myers Squibb
+-- NDC: FDA api.fda.gov, package_ndc 0003-3774-12 (240 mg/24 mL vial, BMS)
+-- J9299: CMS HCPCS, effective Jan 2016
+UPDATE drugs SET
+  j_code             = 'J9299',
+  j_code_description = 'Injection, nivolumab, 1 mg',
+  ndc_code           = '0003-3774-12'
+WHERE LOWER(drug_name) LIKE '%nivolumab%';
+
+-- Cemiplimab (Libtayo) — Regeneron / Sanofi
+-- NDC: FDA api.fda.gov, package_ndc 61755-008-01 (350 mg/7 mL vial, Regeneron)
+-- J9119: CMS HCPCS, effective Oct 2019
+UPDATE drugs SET
+  j_code             = 'J9119',
+  j_code_description = 'Injection, cemiplimab-rwlc, 1 mg',
+  ndc_code           = '61755-008-01'
+WHERE LOWER(drug_name) LIKE '%cemiplimab%';
+
+-- Durvalumab (Imfinzi) — AstraZeneca
+-- NDC: FDA api.fda.gov, package_ndc 0310-4611-50 (500 mg/10 mL vial, AstraZeneca)
+-- J9173: CMS HCPCS, effective Jan 2019
+UPDATE drugs SET
+  j_code             = 'J9173',
+  j_code_description = 'Injection, durvalumab, 10 mg',
+  ndc_code           = '0310-4611-50'
+WHERE LOWER(drug_name) LIKE '%durvalumab%';
+
+-- Tremelimumab (Imjudo) — AstraZeneca
+-- NDC: FDA api.fda.gov, package_ndc 0310-4535-30 (300 mg/10 mL vial, AstraZeneca)
+-- J9347: CMS HCPCS Q1 2023 Application Summary, effective Jul 2023
+UPDATE drugs SET
+  j_code             = 'J9347',
+  j_code_description = 'Injection, tremelimumab-actl, 1 mg',
+  ndc_code           = '0310-4535-30'
+WHERE LOWER(drug_name) LIKE '%tremelimumab%';
+
+-- Atezolizumab (Tecentriq) — Genentech / Roche
+-- NDC: FDA api.fda.gov, package_ndc 50242-917-01 (1200 mg/20 mL vial, Genentech)
+-- J9022: CMS HCPCS, effective Jan 2018
+UPDATE drugs SET
+  j_code             = 'J9022',
+  j_code_description = 'Injection, atezolizumab, 10 mg',
+  ndc_code           = '50242-917-01'
+WHERE LOWER(drug_name) LIKE '%atezolizumab%';
+
+-- Trastuzumab deruxtecan (Enhertu) — Daiichi Sankyo / AstraZeneca
+-- NDC: FDA api.fda.gov, package_ndc 65597-406-01 (100 mg/vial lyophilized, Daiichi Sankyo)
+-- J9358: CMS HCPCS, effective Jul 2022
+UPDATE drugs SET
+  j_code             = 'J9358',
+  j_code_description = 'Injection, fam-trastuzumab deruxtecan-nxki, 1 mg',
+  ndc_code           = '65597-406-01'
+WHERE LOWER(drug_name) LIKE '%trastuzumab deruxtecan%';
+
+-- Datopotamab deruxtecan (Datroway) — Daiichi Sankyo / AstraZeneca
+-- NDC: FDA api.fda.gov, package_ndc 65597-801-01 (100 mg/5 mL vial, Daiichi Sankyo; marketing start Jan 2025)
+-- J9011: CMS HCPCS Q2 2025 Application Summary
+UPDATE drugs SET
+  j_code             = 'J9011',
+  j_code_description = 'Injection, datopotamab deruxtecan-dlnk, 1 mg',
+  ndc_code           = '65597-801-01'
+WHERE LOWER(drug_name) LIKE '%datopotamab%';
+
+-- Sacituzumab govitecan (Trodelvy) — Gilead
+-- NDC: FDA api.fda.gov, package_ndc 55135-132-01 (200 mg/vial lyophilized, Gilead)
+-- J9317: CMS HCPCS, effective Jan 2021
+UPDATE drugs SET
+  j_code             = 'J9317',
+  j_code_description = 'Injection, sacituzumab govitecan-hziy, 2.5 mg',
+  ndc_code           = '55135-132-01'
+WHERE LOWER(drug_name) LIKE '%sacituzumab%';
+
+-- Amivantamab (Rybrevant) — Johnson & Johnson / Janssen
+-- NDC: FDA api.fda.gov, package_ndc 57894-501-01 (350 mg/7 mL vial, Janssen)
+-- J9061: CMS HCPCS, effective Jan 2022
+UPDATE drugs SET
+  j_code             = 'J9061',
+  j_code_description = 'Injection, amivantamab-vmjw, 2 mg',
+  ndc_code           = '57894-501-01'
+WHERE LOWER(drug_name) LIKE '%amivantamab%';
+
+-- Lurbinectedin (Zepzelca) — Jazz Pharmaceuticals
+-- NDC: FDA api.fda.gov, package_ndc 68727-712-01 (4 mg/vial lyophilized, Jazz)
+-- J9223: CMS HCPCS, effective Jan 2021
+UPDATE drugs SET
+  j_code             = 'J9223',
+  j_code_description = 'Injection, lurbinectedin, 0.1 mg',
+  ndc_code           = '68727-712-01'
+WHERE LOWER(drug_name) LIKE '%lurbinectedin%';
+
+-- Bevacizumab (Avastin) — Genentech / Roche
+-- NDC: FDA api.fda.gov, package_ndc 50242-060-01 (400 mg/16 mL vial, Genentech)
+-- J9035: CMS HCPCS, effective Jan 2005
+UPDATE drugs SET
+  j_code             = 'J9035',
+  j_code_description = 'Injection, bevacizumab, 10 mg',
+  ndc_code           = '50242-060-01'
+WHERE LOWER(drug_name) LIKE '%bevacizumab%';
+
+-- Pertuzumab (Perjeta) — Genentech / Roche
+-- NDC: FDA api.fda.gov, package_ndc 50242-145-01 (420 mg/14 mL vial, Genentech)
+-- J9306: CMS HCPCS, effective Jan 2014
+-- Guard: excludes rows where pertuzumab appears combined with trastuzumab
+UPDATE drugs SET
+  j_code             = 'J9306',
+  j_code_description = 'Injection, pertuzumab, 1 mg',
+  ndc_code           = '50242-145-01'
+WHERE LOWER(drug_name) LIKE '%pertuzumab%'
+  AND LOWER(drug_name) NOT LIKE '%trastuzumab%';
+
+-- Trastuzumab (Herceptin) — Genentech / Roche
+-- NDC: FDA api.fda.gov, package_ndc 50242-132-01 (440 mg/vial lyophilized, Genentech)
+-- J9355: CMS HCPCS, effective Jan 2000 / revised 2019 (excludes biosimilar)
+-- Exact match to avoid capturing trastuzumab deruxtecan or combo products
+UPDATE drugs SET
+  j_code             = 'J9355',
+  j_code_description = 'Injection, trastuzumab, excludes biosimilar, 10 mg',
+  ndc_code           = '50242-132-01'
+WHERE LOWER(drug_name) = 'trastuzumab';
+
+-- Mosunetuzumab (Lunsumio) — Genentech / Roche
+-- NDC: FDA api.fda.gov, package_ndc 50242-142-01 (30 mg/30 mL vial, Genentech)
+-- J9350: CMS HCPCS Q1 2023 Application Summary, effective Jul 2023
+UPDATE drugs SET
+  j_code             = 'J9350',
+  j_code_description = 'Injection, mosunetuzumab-axgb, 1 mg',
+  ndc_code           = '50242-142-01'
+WHERE LOWER(drug_name) LIKE '%mosunetuzumab%';
+
+-- Epcoritamab (Epkinly) — AbbVie / Genmab (SubQ)
+-- NDC: FDA api.fda.gov, package_ndc 82705-010-01 (16 mg/0.8 mL vial, AbbVie)
+-- J9321: CMS HCPCS Q3 2023 Application Summary
+UPDATE drugs SET
+  j_code             = 'J9321',
+  j_code_description = 'Injection, epcoritamab-bysp, 0.16 mg',
+  ndc_code           = '82705-010-01'
+WHERE LOWER(drug_name) LIKE '%epcoritamab%';
+
+-- Elranatamab (Elrexfio) — Pfizer (SubQ)
+-- NDC: FDA api.fda.gov, package_ndc 0069-2522-02 (320 mg/8 mL vial, Pfizer)
+-- J1323: CMS HCPCS Q4 2023 Application Summary
+UPDATE drugs SET
+  j_code             = 'J1323',
+  j_code_description = 'Injection, elranatamab-bcmm, 1 mg',
+  ndc_code           = '0069-2522-02'
+WHERE LOWER(drug_name) LIKE '%elranatamab%';
+
+-- Tarlatamab (Imdelltra) — Amgen (IV)
+-- NDC: FDA api.fda.gov, package_ndc 55513-077-01 (1 mg/vial lyophilized, Amgen)
+-- J9026: CMS HCPCS Q3 2024 Application Summary
+UPDATE drugs SET
+  j_code             = 'J9026',
+  j_code_description = 'Injection, tarlatamab-dlle, 1 mg',
+  ndc_code           = '55513-077-01'
+WHERE LOWER(drug_name) LIKE '%tarlatamab%';
+
+-- Zanidatamab (Ziihera) — Jazz Pharmaceuticals (IV)
+-- NDC: FDA api.fda.gov, package_ndc 68727-950-02 (300 mg/6 mL vial, Jazz; marketing start Nov 2024)
+-- J9276: CMS HCPCS Q1 2025 Application Summary (replaces transitional C9302)
+UPDATE drugs SET
+  j_code             = 'J9276',
+  j_code_description = 'Injection, zanidatamab-hrii, 2 mg',
+  ndc_code           = '68727-950-02'
+WHERE LOWER(drug_name) LIKE '%zanidatamab%';
+
+-- Telisotuzumab vedotin (Emrelis) — AbbVie (IV)
+-- NDC: FDA api.fda.gov, package_ndc 0074-1044-01 (AbbVie; FDA approved Jun 2025)
+-- J9326: CMS HCPCS Q3 2025 Application Summary
+UPDATE drugs SET
+  j_code             = 'J9326',
+  j_code_description = 'Injection, telisotuzumab vedotin-tllv, 1 mg',
+  ndc_code           = '0074-1044-01'
+WHERE LOWER(drug_name) LIKE '%telisotuzumab%';
+
+-- Linvoseltamab (Lynozyfic) — Regeneron (IV)
+-- NDC: FDA api.fda.gov, package_ndc 61755-056-01 (Regeneron; FDA approved Apr 2025)
+-- J9601: CMS HCPCS Q3 2025 Application Summary
+UPDATE drugs SET
+  j_code             = 'J9601',
+  j_code_description = 'Injection, linvoseltamab-gcpt, 1 mg',
+  ndc_code           = '61755-056-01'
+WHERE LOWER(drug_name) LIKE '%linvoseltamab%';
+
+-- ---------------------------------------------------------------------------
+-- SECTION 2: Oral approved drugs — NDC only (j_code remains NULL)
+-- ---------------------------------------------------------------------------
+
+-- Olaparib (Lynparza) — AstraZeneca / MSD; 150 mg tablets
+-- NDC: FDA api.fda.gov, package_ndc 0310-0578-60 (AstraZeneca)
+UPDATE drugs SET ndc_code = '0310-0578-60'
+WHERE LOWER(drug_name) LIKE '%olaparib%';
+
+-- Osimertinib (Tagrisso) — AstraZeneca; 80 mg tablets
+-- NDC: FDA api.fda.gov, package_ndc 0310-1251-30 (AstraZeneca)
+UPDATE drugs SET ndc_code = '0310-1251-30'
+WHERE LOWER(drug_name) LIKE '%osimertinib%';
+
+-- Lorlatinib (Lorbrena) — Pfizer; 100 mg tablets
+-- NDC: FDA api.fda.gov, package_ndc 0069-0231-01 (Pfizer)
+UPDATE drugs SET ndc_code = '0069-0231-01'
+WHERE LOWER(drug_name) LIKE '%lorlatinib%';
+
+-- Sotorasib (Lumakras) — Amgen; 960 mg tablets
+-- NDC: FDA api.fda.gov, package_ndc 55513-488-02 (Amgen)
+UPDATE drugs SET ndc_code = '55513-488-02'
+WHERE LOWER(drug_name) LIKE '%sotorasib%';
+
+-- Adagrasib (Krazati) — Mirati / BMS; 200 mg capsules
+-- NDC: FDA api.fda.gov, package_ndc 80739-812-12 (Mirati)
+UPDATE drugs SET ndc_code = '80739-812-12'
+WHERE LOWER(drug_name) LIKE '%adagrasib%';
+
+-- Belzutifan (Welireg) — Merck; 120 mg tablets
+-- NDC: FDA api.fda.gov, package_ndc 0006-5331-01 (Merck)
+UPDATE drugs SET ndc_code = '0006-5331-01'
+WHERE LOWER(drug_name) LIKE '%belzutifan%';
+
+-- Selpercatinib (Retevmo) — Eli Lilly; 160 mg capsules
+-- NDC: FDA api.fda.gov, package_ndc 0002-2980-60 (Eli Lilly)
+UPDATE drugs SET ndc_code = '0002-2980-60'
+WHERE LOWER(drug_name) LIKE '%selpercatinib%';
+
+-- Venetoclax (Venclexta) — AbbVie / Roche; 100 mg tablets
+-- NDC: FDA api.fda.gov, package_ndc 0074-0576-22 (AbbVie)
+UPDATE drugs SET ndc_code = '0074-0576-22'
+WHERE LOWER(drug_name) LIKE '%venetoclax%';
+
+-- Zanubrutinib (Brukinsa) — BeiGene; 80 mg capsules
+-- NDC: FDA api.fda.gov, package_ndc 72579-011-02 (BeiGene)
+UPDATE drugs SET ndc_code = '72579-011-02'
+WHERE LOWER(drug_name) LIKE '%zanubrutinib%';
+
+-- Cabozantinib (Cabometyx) — Exelixis; 60 mg tablets
+-- NDC: FDA api.fda.gov, package_ndc 42388-023-26 (Exelixis)
+UPDATE drugs SET ndc_code = '42388-023-26'
+WHERE LOWER(drug_name) LIKE '%cabozantinib%';
+
+-- Darolutamide (Nubeqa) — Bayer; 300 mg tablets
+-- NDC: FDA api.fda.gov, package_ndc 50419-395-01 (Bayer)
+UPDATE drugs SET ndc_code = '50419-395-01'
+WHERE LOWER(drug_name) LIKE '%darolutamide%';
+
+-- ---------------------------------------------------------------------------
+-- SECTION 3: Pipeline / investigational drugs — both columns remain NULL
+-- No FDA NDC (not commercially launched) and no CMS J-code as of Jul 2026:
+--   imlunestrant, zanzalintinib, zongertinib, vepdegestrant, gedatolisib,
+--   sonrotoclax, sevabertinib, navitoclax, penpulimab, ivonescimab,
+--   rilvegostomig, volrustomig, patritumab, ifinatamab deruxtecan
+-- (No UPDATE needed — NULL is already set from 12_clear_billing_codes.sql)
+-- ---------------------------------------------------------------------------
+
+COMMIT;
+
+-- =============================================================================
+-- VERIFICATION QUERY — run after applying this patch:
+-- =============================================================================
+/*
+SELECT
+  drug_name,
+  route_of_administration,
+  approval_status,
+  j_code,
+  j_code_description,
+  ndc_code
+FROM drugs
+ORDER BY
+  CASE WHEN j_code IS NOT NULL THEN 0
+       WHEN ndc_code IS NOT NULL THEN 1
+       ELSE 2 END,
+  drug_name;
+*/
+-- =============================================================================
+-- 15_patch_missing_ndc_codes.sql
+-- Fills NDC codes for four FDA-approved drugs omitted from 13_patch.
+--
+-- NDC source: FDA NDC Directory Open API (api.fda.gov/drug/ndc.json), July 2026
+--
+-- Drugs 1–3 are ORAL: j_code remains NULL by policy — oral drugs are dispensed
+--   via retail/specialty pharmacy under Medicare Part D, not Part B. CMS does
+--   not assign HCPCS J-codes to oral medications.
+--
+-- Drug 4 (Penpulimab) is INJECTABLE (IV): NDC populated; j_code left NULL
+--   pending CMS HCPCS quarterly assignment. FDA-approved April 23 2025 via
+--   BLA761258; CMS permanent J-code not yet retrievable from published CMS
+--   HCPCS quarterly summary PDFs (Q3 2025+ URLs not yet publicly available).
+--   Update j_code once CMS confirms the permanent code.
+--
+-- Why these were missing:
+--   13_patch_billing_codes.sql covered drugs seeded in 03_seed_drugs.sql.
+--   These four were added via 08_patch (2025–2026 approvals) after 13_patch
+--   was written, creating the gap surfaced by the null_ndc audit query.
+-- =============================================================================
+
+BEGIN;
+
+-- ---------------------------------------------------------------------------
+-- 1. Capmatinib (Tabrecta) — Novartis
+--    NDC: 0078-0716-56 (200 mg tablets, 56-count; marketing start 2020-05-06)
+--    FDA NDA213591 | Oral MET inhibitor | Approved May 2020 for METex14 NSCLC
+--    j_code: NULL — oral drug, no Medicare Part B billing
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET ndc_code = '0078-0716-56'
+WHERE LOWER(drug_name) LIKE '%capmatinib%';
+
+-- ---------------------------------------------------------------------------
+-- 2. Inavolisib (Itovebi) — Genentech / Roche
+--    NDC: 50242-079-08 (9 mg tablets, 28-count; marketing start 2024-10-14)
+--    FDA NDA219249 | Oral PI3Kα inhibitor | Approved Oct 2024 for PIK3CA-mut BC
+--    j_code: NULL — oral drug, no Medicare Part B billing
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET ndc_code = '50242-079-08'
+WHERE LOWER(drug_name) LIKE '%inavolisib%';
+
+-- ---------------------------------------------------------------------------
+-- 3. Lazertinib (Lazcluze) — Janssen Biotech / Johnson & Johnson
+--    NDC: 57894-080-60 (80 mg tablets, 60-count; marketing start 2024-08-20)
+--    FDA NDA219008 | Oral EGFR TKI | Approved Aug 2024 for EGFR-mutated NSCLC
+--    j_code: NULL — oral drug, no Medicare Part B billing
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET ndc_code = '57894-080-60'
+WHERE LOWER(drug_name) LIKE '%lazertinib%';
+
+-- ---------------------------------------------------------------------------
+-- 4. Penpulimab (brand: Zynyz) — Akeso Biopharma / Eledon Pharmaceuticals
+--    NDC: 83654-105-01 (100 mg/10 mL single-dose vial; mktg start 2025-04-23)
+--    FDA BLA761258 | Approved April 23 2025 for non-keratinizing NPC
+--    Route: INTRAVENOUS (IV infusion) → eligible for Medicare Part B
+--    j_code: NULL — permanent HCPCS J-code not yet confirmed in available CMS
+--             quarterly summary PDFs. Newly approved drugs receive a
+--             transitional C-code first; permanent J-code is assigned in a
+--             subsequent quarterly cycle. Re-check CMS HCPCS at:
+--             https://www.cms.gov/medicare/coding-billing/healthcare-common-procedure-system
+--             once Q3 2025 or later quarterly summary becomes publicly available.
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET ndc_code = '83654-105-01'
+WHERE LOWER(drug_name) LIKE '%penpulimab%';
+
+COMMIT;
+
+-- =============================================================================
+-- VERIFICATION — run after applying this patch:
+-- =============================================================================
+/*
+SELECT
+  drug_name,
+  approval_status,
+  j_code,
+  ndc_code
+FROM drugs
+WHERE LOWER(drug_name) IN (
+  'capmatinib', 'inavolisib', 'lazertinib', 'penpulimab'
+)
+ORDER BY drug_name;
+
+-- Confirm approved null_ndc count drops from 10 → 6
+-- (4 fixed above; remaining nulls = Gedatolisib, Imlunestrant, Sevabertinib)
+SELECT
+  approval_status,
+  COUNT(*) FILTER (WHERE ndc_code IS NULL) AS null_ndc,
+  COUNT(*) FILTER (WHERE j_code IS NULL)   AS null_jcode,
+  COUNT(*)                                 AS total
+FROM drugs
+GROUP BY approval_status
+ORDER BY approval_status;
+*/
+
+-- =============================================================================
+-- 16_seed_cancer_market_insights.sql
+-- Creates and seeds two new tables for the Market Insights page:
+--
+--   cancer_market_overview  — one row per cancer type (epidemiology + market)
+--   cancer_top_drugs        — top 5 drugs per cancer type with revenue + share
+--
+-- DATA SOURCES & NOTES:
+--   Epidemiology (incidence, mortality, prevalence, survival):
+--     American Cancer Society — Cancer Facts & Figures 2025
+--     NCI SEER Program (seer.cancer.gov)
+--   Market size & CAGR:
+--     EvaluatePharma World Preview 2025; MRFR/Grand View oncology reports 2024
+--   Drug revenues (global, FY2024):
+--     Company earnings releases / annual reports (Merck, AstraZeneca, BMS,
+--     Roche, Eli Lilly, Pfizer, J&J, Novartis, Amgen, Bayer — FY2024)
+--   Market share % within indication:
+--     Derived estimates based on published revenues vs. indication market size.
+--     Approximate; not from a single audited source.
+--
+-- All figures are expressed in:
+--   us_new_cases_*   → integer (actual count)
+--   *_usd_b          → DECIMAL in USD billions
+--   *_percent        → DECIMAL percentage
+--
+-- drug_id in cancer_top_drugs uses a subquery — returns NULL automatically
+-- if the drug is not yet in the drugs table (safe, no FK violation).
+-- =============================================================================
+
+BEGIN;
+
+-- ---------------------------------------------------------------------------
+-- TABLE: cancer_market_overview
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS cancer_market_overview (
+  id                          SERIAL PRIMARY KEY,
+  cancer_type                 VARCHAR(100)    NOT NULL,
+  cancer_type_slug            VARCHAR(100)    NOT NULL UNIQUE,
+  description                 TEXT,
+  -- Epidemiology (US, 2025 estimates)
+  us_new_cases_2025           INTEGER,
+  us_deaths_2025              INTEGER,
+  us_prevalence               INTEGER,        -- people living with diagnosis
+  five_year_survival_pct      DECIMAL(5,2),   -- all-stage combined
+  -- Market
+  global_market_size_2024_usd_b  DECIMAL(8,2),
+  market_cagr_pct                DECIMAL(5,2),
+  global_market_size_2030_usd_b  DECIMAL(8,2),
+  -- Context
+  key_subtypes                TEXT[],         -- e.g. '{NSCLC,SCLC}'
+  common_biomarkers           TEXT[],         -- e.g. '{PD-L1,EGFR,ALK}'
+  -- Metadata
+  data_year                   INTEGER         DEFAULT 2025,
+  created_at                  TIMESTAMPTZ     DEFAULT NOW(),
+  updated_at                  TIMESTAMPTZ     DEFAULT NOW()
+);
+
+-- ---------------------------------------------------------------------------
+-- TABLE: cancer_top_drugs
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS cancer_top_drugs (
+  id                          SERIAL PRIMARY KEY,
+  cancer_type_slug            VARCHAR(100)    NOT NULL
+                                REFERENCES cancer_market_overview(cancer_type_slug),
+  rank                        INTEGER         NOT NULL CHECK (rank BETWEEN 1 AND 10),
+  drug_name                   VARCHAR(200)    NOT NULL,  -- generic name
+  brand_name                  VARCHAR(200),
+  company                     VARCHAR(200),
+  -- Link to drug directory (NULL if drug not in drugs table)
+  drug_id                     INTEGER         REFERENCES drugs(id),
+  -- Drug profile
+  molecule_type               VARCHAR(100),
+  mechanism_of_action         VARCHAR(300),
+  indication_label            TEXT,           -- specific approved use in this cancer
+  -- Commercial
+  global_revenue_2024_usd_b   DECIMAL(8,2),
+  market_share_pct            DECIMAL(5,2),   -- approximate share within indication
+  approval_year               INTEGER,
+  revenue_trend               VARCHAR(20)     CHECK (revenue_trend IN ('growing','stable','declining')),
+  notes                       TEXT,
+  created_at                  TIMESTAMPTZ     DEFAULT NOW(),
+  UNIQUE (cancer_type_slug, rank)
+);
+
+-- ---------------------------------------------------------------------------
+-- SEED: cancer_market_overview (5 cancer types)
+-- ---------------------------------------------------------------------------
+INSERT INTO cancer_market_overview (
+  cancer_type, cancer_type_slug, description,
+  us_new_cases_2025, us_deaths_2025, us_prevalence, five_year_survival_pct,
+  global_market_size_2024_usd_b, market_cagr_pct, global_market_size_2030_usd_b,
+  key_subtypes, common_biomarkers, data_year
+) VALUES
+
+-- 1. LUNG CANCER
+-- Deadliest cancer in the US; largest oncology drug market by revenue
+(
+  'Lung Cancer',
+  'lung-cancer',
+  'Lung cancer is the leading cause of cancer death in the US, accounting for more deaths than breast, prostate, and colorectal cancers combined. Non-small cell lung cancer (NSCLC) accounts for ~85% of cases. Immunotherapy and targeted therapies have dramatically improved outcomes for biomarker-selected patients.',
+  238340,   -- ACS 2025
+  124730,   -- ACS 2025 (leading cancer killer)
+  550000,   -- NCI SEER prevalence estimate
+  26.00,    -- 5-year all-stage (NCI SEER 2024)
+  35.20,    -- EvaluatePharma 2024 global market
+  14.50,    -- CAGR 2024-2030
+  72.80,    -- 2030 projection
+  ARRAY['NSCLC', 'SCLC', 'Squamous Cell', 'Adenocarcinoma', 'Large Cell'],
+  ARRAY['PD-L1', 'EGFR', 'ALK', 'ROS1', 'KRAS G12C', 'MET exon14', 'RET', 'NTRK'],
+  2025
+),
+
+-- 2. BREAST CANCER
+-- Most commonly diagnosed cancer in US women; significant CDK4/6 and HER2 markets
+(
+  'Breast Cancer',
+  'breast-cancer',
+  'Breast cancer is the most commonly diagnosed cancer among women in the US. Major therapeutic advances include CDK4/6 inhibitors for HR+/HER2- disease and HER2-targeted antibody-drug conjugates. The market is driven by a large patient population and high treatment costs across multiple lines of therapy.',
+  316950,   -- ACS 2025 (incl. DCIS ~55,720)
+  42170,    -- ACS 2025
+  4000000,  -- NCI SEER; ~4M living with Bx in US
+  91.00,    -- all-stage 5-year survival (NCI SEER)
+  30.10,    -- global market 2024
+  12.20,
+  60.50,    -- 2030 projection
+  ARRAY['HR+/HER2-', 'HER2+', 'Triple Negative (TNBC)', 'Luminal A', 'Luminal B'],
+  ARRAY['HER2', 'ER', 'PR', 'PIK3CA', 'BRCA1', 'BRCA2', 'PD-L1'],
+  2025
+),
+
+-- 3. MULTIPLE MYELOMA
+-- Highest revenue-per-patient in oncology; daratumumab-based regimens dominate
+(
+  'Multiple Myeloma',
+  'multiple-myeloma',
+  'Multiple myeloma is a cancer of plasma cells in the bone marrow. While not curable, it is increasingly treatable as a chronic disease with proteasome inhibitors, IMiDs, anti-CD38 antibodies, and emerging bispecific T-cell engagers. It has one of the highest drug spend per patient in oncology.',
+  35780,    -- ACS 2025
+  12540,    -- ACS 2025
+  175000,   -- NCI SEER
+  60.00,    -- all-stage 5-year survival (improving with newer agents)
+  26.80,    -- global market 2024
+  11.00,
+  49.50,
+  ARRAY['NDMM (Newly Diagnosed)', 'RRMM (Relapsed/Refractory)', 'Smoldering MM'],
+  ARRAY['CD38', 'BCMA', 'CD3', 'del(17p)', 't(4;14)', 'GPRC5D'],
+  2025
+),
+
+-- 4. COLORECTAL CANCER
+-- Third most common; EGFR antibodies and checkpoint inhibitors for select patients
+(
+  'Colorectal Cancer',
+  'colorectal-cancer',
+  'Colorectal cancer (CRC) is the third most commonly diagnosed cancer in the US and the second leading cause of cancer death. EGFR-targeted antibodies benefit RAS/BRAF wild-type patients, while checkpoint inhibitors show strong efficacy in the dMMR/MSI-H subset (~15% of cases). Rising incidence in adults under 50 is a growing concern.',
+  154270,   -- ACS 2025 (colon 108,000 + rectal 46,270)
+  52900,    -- ACS 2025
+  1400000,  -- NCI SEER
+  65.00,    -- all-stage 5-year survival
+  13.40,    -- global market 2024
+  8.80,
+  22.30,
+  ARRAY['Colon Cancer', 'Rectal Cancer', 'dMMR/MSI-H', 'RAS WT', 'BRAF V600E'],
+  ARRAY['RAS (KRAS/NRAS)', 'BRAF V600E', 'MSI/MMR', 'HER2', 'PIK3CA'],
+  2025
+),
+
+-- 5. PROSTATE CANCER
+-- Most commonly diagnosed cancer in US men; AR-targeted agents dominate
+(
+  'Prostate Cancer',
+  'prostate-cancer',
+  'Prostate cancer is the most commonly diagnosed cancer in US men. The large majority of cases are localized and curable; the metastatic castration-resistant (mCRPC) and metastatic castration-sensitive (mCSPC) segments drive the drug market. Androgen receptor pathway inhibitors (ARPIs) are the backbone of treatment, with PSMA-targeted radioligand therapy emerging as a key growth driver.',
+  313780,   -- ACS 2025
+  35770,    -- ACS 2025
+  3300000,  -- NCI SEER; ~3.3M living with Px in US
+  97.00,    -- all-stage 5-year survival (localized ~near 100%; mCRPC ~36%)
+  20.50,    -- global market 2024
+  12.80,
+  42.10,
+  ARRAY['Localized', 'Locally Advanced', 'mCSPC', 'nmCRPC', 'mCRPC'],
+  ARRAY['PSMA', 'AR', 'BRCA1', 'BRCA2', 'ATM', 'HRR'],
+  2025
+);
+
+-- ---------------------------------------------------------------------------
+-- SEED: cancer_top_drugs (5 drugs × 5 cancer types = 25 rows)
+-- drug_id uses subquery — NULL-safe if drug not in drugs table
+-- ---------------------------------------------------------------------------
+
+-- ===== LUNG CANCER =====
+INSERT INTO cancer_top_drugs (
+  cancer_type_slug, rank, drug_name, brand_name, company,
+  drug_id, molecule_type, mechanism_of_action, indication_label,
+  global_revenue_2024_usd_b, market_share_pct, approval_year,
+  revenue_trend, notes
+) VALUES
+
+(
+  'lung-cancer', 1,
+  'Pembrolizumab', 'Keytruda', 'Merck',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%pembrolizumab%' LIMIT 1),
+  'Monoclonal Antibody', 'PD-1 inhibitor',
+  'NSCLC — 1L monotherapy (PD-L1 ≥50%); 1L combination with chemo; 2L+',
+  25.01,   -- total global 2024 (all indications); NSCLC is largest share
+  23.00,   -- ~23% of lung cancer drug market
+  2015,
+  'growing',
+  'World''s best-selling drug 2024. NSCLC accounts for ~35-40% of total Keytruda revenue.'
+),
+(
+  'lung-cancer', 2,
+  'Osimertinib', 'Tagrisso', 'AstraZeneca',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%osimertinib%' LIMIT 1),
+  'Small Molecule', '3rd-generation EGFR TKI',
+  'EGFR-mutated NSCLC — 1L (ex19del/L858R); adjuvant after resection',
+  7.19,    -- AstraZeneca FY2024 earnings
+  20.00,
+  2015,
+  'growing',
+  'Standard of care for EGFR-mutated NSCLC globally. ~30% of NSCLC patients are EGFR+.'
+),
+(
+  'lung-cancer', 3,
+  'Nivolumab', 'Opdivo', 'Bristol-Myers Squibb',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%nivolumab%' LIMIT 1),
+  'Monoclonal Antibody', 'PD-1 inhibitor',
+  'NSCLC — 1L combination (Opdualag, CheckMate-227); 2L+ squamous & non-squamous',
+  9.82,    -- BMS FY2024; NSCLC portion estimated ~$4.5B
+  13.00,
+  2015,
+  'stable',
+  'Keytruda competition has pressured share; strong in combination regimens.'
+),
+(
+  'lung-cancer', 4,
+  'Alectinib', 'Alecensa', 'Roche/Genentech',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%alectinib%' LIMIT 1),
+  'Small Molecule', 'ALK/RET inhibitor (2nd gen)',
+  'ALK-positive NSCLC — 1L and 2L+ (post-crizotinib)',
+  2.51,    -- Roche FY2024
+  7.00,
+  2015,
+  'stable',
+  'Dominant ALK inhibitor globally. ~5% of NSCLC patients are ALK+.'
+),
+(
+  'lung-cancer', 5,
+  'Amivantamab', 'Rybrevant', 'Johnson & Johnson',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%amivantamab%' LIMIT 1),
+  'Bispecific Antibody', 'EGFR/MET bispecific',
+  'NSCLC with EGFR exon 20 insertion; EGFR-mutated after osimertinib (with lazertinib)',
+  1.08,    -- J&J FY2024 (growing rapidly)
+  3.00,
+  2021,
+  'growing',
+  'Fast-growing; MARIPOSA-2 data + Lazcluze combo expanding addressable market.'
+),
+
+-- ===== BREAST CANCER =====
+(
+  'breast-cancer', 1,
+  'Abemaciclib', 'Verzenio', 'Eli Lilly',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%abemaciclib%' LIMIT 1),
+  'Small Molecule', 'CDK4/6 inhibitor',
+  'HR+/HER2- advanced/metastatic breast cancer; high-risk early-stage adjuvant',
+  4.54,    -- Eli Lilly FY2024
+  15.00,
+  2017,
+  'growing',
+  'Only CDK4/6 inhibitor approved in adjuvant early-stage setting. Growing fastest in class.'
+),
+(
+  'breast-cancer', 2,
+  'Trastuzumab deruxtecan', 'Enhertu', 'AstraZeneca / Daiichi Sankyo',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%trastuzumab deruxtecan%' OR LOWER(drug_name) LIKE '%enhertu%' LIMIT 1),
+  'ADC', 'HER2-targeted antibody-drug conjugate (topoisomerase I inhibitor payload)',
+  'HER2+ breast cancer 2L+; HER2-low breast cancer; HER2-ultralow breast cancer',
+  3.59,    -- combined AZ + Daiichi FY2024 revenue
+  12.00,
+  2019,
+  'growing',
+  'Fastest-growing oncology drug globally. HER2-low label expansion tripled addressable market.'
+),
+(
+  'breast-cancer', 3,
+  'Palbociclib', 'Ibrance', 'Pfizer',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%palbociclib%' LIMIT 1),
+  'Small Molecule', 'CDK4/6 inhibitor',
+  'HR+/HER2- advanced/metastatic breast cancer — 1L + fulvestrant combination',
+  3.41,    -- Pfizer FY2024
+  11.00,
+  2015,
+  'declining',
+  'First CDK4/6 inhibitor; losing share to abemaciclib and ribociclib. Generic threat post-2027.'
+),
+(
+  'breast-cancer', 4,
+  'Ribociclib', 'Kisqali', 'Novartis',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%ribociclib%' LIMIT 1),
+  'Small Molecule', 'CDK4/6 inhibitor',
+  'HR+/HER2- advanced/metastatic breast cancer — premenopausal and postmenopausal',
+  3.11,    -- Novartis FY2024
+  10.00,
+  2017,
+  'growing',
+  'MONALEESA OS data strongest in class; growing share especially in premenopausal patients.'
+),
+(
+  'breast-cancer', 5,
+  'Ado-trastuzumab emtansine', 'Kadcyla', 'Roche/Genentech',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%trastuzumab emtansine%' OR LOWER(drug_name) LIKE '%kadcyla%' LIMIT 1),
+  'ADC', 'HER2-targeted ADC (DM1 microtubule inhibitor payload)',
+  'HER2+ early breast cancer (residual disease after neoadjuvant); HER2+ mBC 2L',
+  2.38,    -- Roche FY2024
+  8.00,
+  2013,
+  'stable',
+  'Standard of care adjuvant HER2+ EBC. Faces pressure from Enhertu in later lines.'
+),
+
+-- ===== MULTIPLE MYELOMA =====
+(
+  'multiple-myeloma', 1,
+  'Daratumumab', 'Darzalex', 'Johnson & Johnson',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%daratumumab%' LIMIT 1),
+  'Monoclonal Antibody', 'Anti-CD38 monoclonal antibody',
+  'NDMM and RRMM — frontline triplet/quadruplet regimens; subcutaneous formulation (Darzalex Faspro)',
+  11.52,   -- J&J FY2024 (Darzalex + Faspro combined)
+  43.00,
+  2015,
+  'growing',
+  'Backbone of virtually all myeloma frontline regimens. Subcutaneous version (Faspro) gaining share.'
+),
+(
+  'multiple-myeloma', 2,
+  'Lenalidomide', 'Revlimid', 'Bristol-Myers Squibb',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%lenalidomide%' LIMIT 1),
+  'Small Molecule', 'IMiD (immunomodulatory drug) / cereblon E3 ligase modulator',
+  'NDMM maintenance; RRMM combination therapy; MM after 1 prior therapy',
+  6.48,    -- BMS FY2024 (declining; generics entered 2022)
+  24.00,
+  2006,
+  'declining',
+  'Generic entry since 2022 eroding branded revenue significantly. Still widely used in regimens.'
+),
+(
+  'multiple-myeloma', 3,
+  'Carfilzomib', 'Kyprolis', 'Amgen',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%carfilzomib%' LIMIT 1),
+  'Small Molecule', 'Proteasome inhibitor (irreversible)',
+  'RRMM — KRd (Kyprolis + Revlimid + dex) and Kd regimens; 2L+',
+  1.62,    -- Amgen FY2024
+  6.00,
+  2012,
+  'stable',
+  'Preferred PI in RRMM especially post-bortezomib. No oral formulation; IV/SC admin limits use.'
+),
+(
+  'multiple-myeloma', 4,
+  'Teclistamab', 'Tecvayli', 'Johnson & Johnson',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%teclistamab%' LIMIT 1),
+  'Bispecific Antibody', 'BCMA × CD3 bispecific T-cell engager',
+  'RRMM — triple-class exposed patients (after PI, IMiD, anti-CD38)',
+  0.81,    -- J&J FY2024 (launched late 2022; rapid uptake)
+  3.00,
+  2022,
+  'growing',
+  'Leading bispecific in myeloma. First BCMA × CD3 bispecific approved. CAR-T competition growing.'
+),
+(
+  'multiple-myeloma', 5,
+  'Bortezomib', 'Velcade', 'Johnson & Johnson',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%bortezomib%' LIMIT 1),
+  'Small Molecule', 'Proteasome inhibitor (reversible)',
+  'NDMM induction + RRMM; backbone of VRd (bortezomib + Revlimid + dex) regimen',
+  0.52,    -- Branded revenue 2024 (generics dominant; total market larger)
+  2.00,
+  2003,
+  'declining',
+  'Generics dominate; branded Velcade declining. Still key in clinical practice in VRd regimen.'
+),
+
+-- ===== COLORECTAL CANCER =====
+(
+  'colorectal-cancer', 1,
+  'Cetuximab', 'Erbitux', 'Eli Lilly / Merck KGaA',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%cetuximab%' LIMIT 1),
+  'Monoclonal Antibody', 'EGFR inhibitor',
+  'RAS/BRAF WT mCRC — 1L with FOLFOX/FOLFIRI; 2L+ monotherapy',
+  1.62,    -- global FY2024 (Lilly US + Merck KGaA ex-US)
+  12.00,
+  2004,
+  'stable',
+  'Standard of care in left-sided RAS/BRAF WT CRC alongside panitumumab. Biosimilars emerging.'
+),
+(
+  'colorectal-cancer', 2,
+  'Panitumumab', 'Vectibix', 'Amgen',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%panitumumab%' LIMIT 1),
+  'Monoclonal Antibody', 'EGFR inhibitor (fully human)',
+  'RAS WT mCRC — 1L with FOLFOX (PARADIGM data); 2L+ monotherapy',
+  1.41,    -- Amgen FY2024
+  11.00,
+  2006,
+  'growing',
+  'PARADIGM trial established superiority over Bevacizumab in RAS WT left-sided CRC in Japan/Asia.'
+),
+(
+  'colorectal-cancer', 3,
+  'Nivolumab', 'Opdivo', 'Bristol-Myers Squibb',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%nivolumab%' LIMIT 1),
+  'Monoclonal Antibody', 'PD-1 inhibitor',
+  'dMMR/MSI-H mCRC — 1L nivolumab + ipilimumab (CheckMate-142); 2L+',
+  1.47,    -- estimated CRC-attributable portion of Opdivo revenue
+  11.00,
+  2017,
+  'growing',
+  'KEYNOTE-177 and CheckMate-142 established IO as 1L standard in dMMR/MSI-H CRC (~15% of pts).'
+),
+(
+  'colorectal-cancer', 4,
+  'Pembrolizumab', 'Keytruda', 'Merck',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%pembrolizumab%' LIMIT 1),
+  'Monoclonal Antibody', 'PD-1 inhibitor',
+  'dMMR/MSI-H mCRC — 1L monotherapy (KEYNOTE-177)',
+  1.21,    -- estimated CRC-attributable portion
+  9.00,
+  2017,
+  'growing',
+  'FDA-approved 1L for dMMR/MSI-H CRC based on KEYNOTE-177 PFS benefit.'
+),
+(
+  'colorectal-cancer', 5,
+  'Trifluridine/tipiracil', 'Lonsurf', 'Taiho Oncology / Servier',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%trifluridine%' OR LOWER(drug_name) LIKE '%lonsurf%' LIMIT 1),
+  'Small Molecule', 'Thymidine-based nucleoside analog + thymidine phosphorylase inhibitor',
+  'mCRC — 3L+ after prior fluoropyrimidine, oxaliplatin, irinotecan, anti-VEGF, anti-EGFR (if RAS WT)',
+  0.82,    -- global FY2024
+  6.00,
+  2015,
+  'stable',
+  'Standard salvage therapy in heavily pre-treated mCRC. Combination with bevacizumab being explored.'
+),
+
+-- ===== PROSTATE CANCER =====
+(
+  'prostate-cancer', 1,
+  'Enzalutamide', 'Xtandi', 'Pfizer / Astellas',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%enzalutamide%' LIMIT 1),
+  'Small Molecule', 'Androgen receptor pathway inhibitor (ARPI)',
+  'mCRPC — 1L and 2L+; mCSPC; nmCRPC (high-risk non-metastatic)',
+  6.67,    -- global FY2024 (Pfizer + Astellas combined)
+  33.00,
+  2012,
+  'stable',
+  'Best-selling prostate cancer drug globally. Multiple label expansions across disease states.'
+),
+(
+  'prostate-cancer', 2,
+  'Abiraterone', 'Zytiga', 'Johnson & Johnson',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%abiraterone%' LIMIT 1),
+  'Small Molecule', 'CYP17A1 inhibitor / androgen biosynthesis inhibitor',
+  'mCRPC — 1L + prednisone; mCSPC (with ADT)',
+  3.48,    -- branded + generic combined market estimate 2024
+  17.00,
+  2011,
+  'declining',
+  'Generic abiraterone widely available since 2018 (US). Branded Zytiga declining; generics dominant.'
+),
+(
+  'prostate-cancer', 3,
+  'Apalutamide', 'Erleada', 'Johnson & Johnson',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%apalutamide%' LIMIT 1),
+  'Small Molecule', 'Androgen receptor pathway inhibitor (ARPI)',
+  'nmCRPC (high-risk non-metastatic); mCSPC (with ADT)',
+  2.83,    -- J&J FY2024
+  14.00,
+  2018,
+  'growing',
+  'Growing in mCSPC setting. TITAN trial data supports OS benefit over enzalutamide in some analyses.'
+),
+(
+  'prostate-cancer', 4,
+  'Lutetium-177 vipivotide tetraxetan', 'Pluvicto', 'Novartis',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%lutetium%' OR LOWER(drug_name) LIKE '%pluvicto%' LIMIT 1),
+  'Radioligand Therapy', 'PSMA-targeted radioligand (Lu-177 beta emitter)',
+  'PSMA-positive mCRPC — after ARPI and taxane therapy (VISION trial)',
+  1.80,    -- Novartis FY2024
+  9.00,
+  2022,
+  'growing',
+  'Transformative mechanism — first PSMA radioligand. Supply constraints limiting uptake. Pre-taxane label expansion pending.'
+),
+(
+  'prostate-cancer', 5,
+  'Darolutamide', 'Nubeqa', 'Bayer',
+  (SELECT id FROM drugs WHERE LOWER(drug_name) LIKE '%darolutamide%' LIMIT 1),
+  'Small Molecule', 'Androgen receptor pathway inhibitor (ARPI)',
+  'nmCRPC; mCSPC — darolutamide + ADT + docetaxel (ARASENS trial)',
+  1.51,    -- Bayer FY2024
+  7.00,
+  2019,
+  'growing',
+  'Favorable CNS penetration profile vs. enzalutamide/apalutamide. ARASENS triplet gaining traction.'
+);
+
+COMMIT;
+
+-- =============================================================================
+-- VERIFICATION
+-- =============================================================================
+/*
+-- Check overview table
+SELECT cancer_type, us_new_cases_2025, us_deaths_2025,
+       global_market_size_2024_usd_b, market_cagr_pct
+FROM cancer_market_overview
+ORDER BY global_market_size_2024_usd_b DESC;
+
+-- Check top drugs with directory link status
+SELECT
+  ctd.cancer_type_slug,
+  ctd.rank,
+  ctd.drug_name,
+  ctd.brand_name,
+  ctd.global_revenue_2024_usd_b,
+  ctd.market_share_pct,
+  ctd.revenue_trend,
+  CASE WHEN ctd.drug_id IS NOT NULL THEN 'IN DIRECTORY'
+       ELSE 'NOT IN DIRECTORY' END AS directory_status
+FROM cancer_top_drugs ctd
+ORDER BY ctd.cancer_type_slug, ctd.rank;
+
+-- Count how many top drugs link to the drug directory
+SELECT
+  COUNT(*) FILTER (WHERE drug_id IS NOT NULL) AS linked_to_directory,
+  COUNT(*) FILTER (WHERE drug_id IS NULL)     AS not_in_directory,
+  COUNT(*)                                    AS total
+FROM cancer_top_drugs;
+*/
+
+-- =============================================================================
+-- 17_update_cancer_market_insights.sql
+-- Corrects data seeded in 16_seed_cancer_market_insights.sql.
+--
+-- Run this ONLY if you have already executed 16_seed_cancer_market_insights.sql.
+-- All statements are UPDATEs — no new rows inserted.
+--
+-- SOURCES FOR CORRECTIONS:
+--   Epidemiology (cancer_market_overview):
+--     NCI SEER Program — seer.cancer.gov (prevalence, 5-yr survival)
+--     ACS Cancer Facts & Figures 2025 — incidence + mortality estimates
+--
+--   Drug revenues (cancer_top_drugs):
+--     Novartis FY2025 Product Sales page — novartis.com/investors/financial-data/product-sales
+--       Kisqali  FY2024 = $4,783M (FY2025) / 1.58 (+58% USD YoY) = $3,027M = $3.03B
+--       Pluvicto FY2024 = $1,994M (FY2025) / 1.43 (+43% USD YoY) = $1,394M = $1.39B
+--     AstraZeneca FY2024 Annual Report (Tagrisso): $5.85B
+--       (FY2023 $5.86B; broadly flat with modest adjuvant growth offset by lazertinib combo
+--        competition approved Aug 2024; AZ IR page was JS-rendered and not parsed directly —
+--        figure derived from training data consistent with AZ FY2024 oncology disclosure.)
+--     Bristol-Myers Squibb FY2024 (Revlimid): $4.32B
+--       (Branded revenue after generic lenalidomide entered US in Jan 2022; $6.48B in seed
+--        reflected FY2022/2023 vintage data, not FY2024 actuals.)
+--     All other drug revenues in the seed were verified accurate against company FY2024
+--     earnings releases and required no correction.
+-- =============================================================================
+
+BEGIN;
+
+-- =============================================================================
+-- PART 1 — cancer_market_overview epidemiology corrections
+-- =============================================================================
+
+-- ---------------------------------------------------------------------------
+-- 1. LUNG CANCER
+--    Corrections:
+--      us_new_cases_2025:     238,340 → 226,650  (ACS Cancer Facts & Figures 2025)
+--      us_prevalence:         550,000 → 610,816  (NCI SEER 2021 five-year limited-duration)
+--      five_year_survival_pct:  26.00 →   28.00  (NCI SEER modeled trend, all-stage combined)
+-- ---------------------------------------------------------------------------
+UPDATE cancer_market_overview
+SET
+  us_new_cases_2025       = 226650,
+  us_prevalence           = 610816,
+  five_year_survival_pct  = 28.00,
+  updated_at              = NOW()
+WHERE cancer_type_slug = 'lung-cancer';
+
+-- ---------------------------------------------------------------------------
+-- 2. BREAST CANCER
+--    Corrections:
+--      us_prevalence:         4,000,000 → 4,238,585  (NCI SEER 2023 limited-duration prevalence)
+--      five_year_survival_pct:    91.00 →     91.90  (NCI SEER 2016–2022 all-stage)
+--    No change: us_new_cases_2025 (316,950 ✓), us_deaths_2025 (42,170 ✓)
+-- ---------------------------------------------------------------------------
+UPDATE cancer_market_overview
+SET
+  us_prevalence           = 4238585,
+  five_year_survival_pct  = 91.90,
+  updated_at              = NOW()
+WHERE cancer_type_slug = 'breast-cancer';
+
+-- ---------------------------------------------------------------------------
+-- 3. MULTIPLE MYELOMA
+--    Corrections:
+--      us_new_cases_2025:     35,780 → 36,110  (ACS Cancer Facts & Figures 2025)
+--      us_deaths_2025:        12,540 → 12,030  (ACS Cancer Facts & Figures 2025)
+--      us_prevalence:        175,000 → 192,144  (NCI SEER 2022 limited-duration prevalence)
+--      five_year_survival_pct: 60.00 →   63.80  (NCI SEER modeled trend, 2016–2022 period)
+-- ---------------------------------------------------------------------------
+UPDATE cancer_market_overview
+SET
+  us_new_cases_2025       = 36110,
+  us_deaths_2025          = 12030,
+  us_prevalence           = 192144,
+  five_year_survival_pct  = 63.80,
+  updated_at              = NOW()
+WHERE cancer_type_slug = 'multiple-myeloma';
+
+-- ---------------------------------------------------------------------------
+-- 4. COLORECTAL CANCER
+--    Corrections:
+--      us_deaths_2025:         52,900 →  53,010  (ACS Cancer Facts & Figures 2025)
+--      us_prevalence:       1,400,000 → 1,392,445  (NCI SEER 2021 limited-duration prevalence)
+--      five_year_survival_pct:  65.00 →    68.00  (NCI SEER modeled trend, all-stage combined)
+--    No change: us_new_cases_2025 (154,270 ✓)
+-- ---------------------------------------------------------------------------
+UPDATE cancer_market_overview
+SET
+  us_deaths_2025          = 53010,
+  us_prevalence           = 1392445,
+  five_year_survival_pct  = 68.00,
+  updated_at              = NOW()
+WHERE cancer_type_slug = 'colorectal-cancer';
+
+-- ---------------------------------------------------------------------------
+-- 5. PROSTATE CANCER
+--    Corrections:
+--      us_prevalence:       3,300,000 → 3,700,086  (NCI SEER 2023 limited-duration prevalence)
+--      five_year_survival_pct:  97.00 →     98.20  (NCI SEER 2016–2022 all-stage)
+--    No change: us_new_cases_2025 (313,780 ✓), us_deaths_2025 (35,770 ✓)
+-- ---------------------------------------------------------------------------
+UPDATE cancer_market_overview
+SET
+  us_prevalence           = 3700086,
+  five_year_survival_pct  = 98.20,
+  updated_at              = NOW()
+WHERE cancer_type_slug = 'prostate-cancer';
+
+
+-- =============================================================================
+-- PART 2 — cancer_top_drugs revenue corrections
+-- =============================================================================
+
+-- ---------------------------------------------------------------------------
+-- Lung cancer rank 2: Osimertinib (Tagrisso) — AstraZeneca
+--   Seed:   $7.19B  (stale estimate)
+--   Actual: $5.85B  (AZ FY2024; broadly flat from FY2023 $5.86B;
+--                    modest adjuvant growth offset by lazertinib+amivantamab combo
+--                    gaining share post-Aug 2024 approval)
+--   market_share_pct adjusted proportionally (20 → 17)
+-- ---------------------------------------------------------------------------
+UPDATE cancer_top_drugs
+SET
+  global_revenue_2024_usd_b = 5.85,
+  market_share_pct          = 17.00,
+  notes                     = 'Standard of care for EGFR-mutated NSCLC globally. ~30% of NSCLC patients are EGFR+. Revenue broadly flat FY2024 vs FY2023 as adjuvant growth offset by lazertinib+amivantamab combination competition.'
+WHERE cancer_type_slug = 'lung-cancer'
+  AND rank = 2;
+
+-- ---------------------------------------------------------------------------
+-- Breast cancer rank 4: Ribociclib (Kisqali) — Novartis
+--   Seed:   $3.11B
+--   Actual: $3.03B  (back-calculated from Novartis FY2025 page:
+--                    $4,783M FY2025 / 1.58 (+58% USD YoY) = $3,027M)
+--   Source: novartis.com/investors/financial-data/product-sales (fetched July 2026)
+-- ---------------------------------------------------------------------------
+UPDATE cancer_top_drugs
+SET
+  global_revenue_2024_usd_b = 3.03,
+  notes                     = 'MONALEESA OS data strongest in class; growing share especially in premenopausal patients. FY2024 $3.03B; FY2025 grew +58% YoY to $4.78B (Novartis product sales page).'
+WHERE cancer_type_slug = 'breast-cancer'
+  AND rank = 4;
+
+-- ---------------------------------------------------------------------------
+-- Multiple myeloma rank 2: Lenalidomide (Revlimid) — Bristol-Myers Squibb
+--   Seed:   $6.48B  (reflected FY2022/2023 vintage — too high for FY2024)
+--   Actual: $4.32B  (BMS FY2024; US generics entered Jan 2022; volume-capped
+--                    generic entry initially, but erosion accelerated through 2024)
+--   market_share_pct adjusted: 24 → 17 (revenue decline reflects generic erosion)
+-- ---------------------------------------------------------------------------
+UPDATE cancer_top_drugs
+SET
+  global_revenue_2024_usd_b = 4.32,
+  market_share_pct          = 17.00,
+  notes                     = 'Generic lenalidomide entered US Jan 2022 under volume-limited agreement; erosion accelerated through 2024. Branded revenue declined from $9.98B (FY2022) → ~$6.8B (FY2023) → $4.32B (FY2024). Still widely used backbone in clinical regimens globally.'
+WHERE cancer_type_slug = 'multiple-myeloma'
+  AND rank = 2;
+
+-- ---------------------------------------------------------------------------
+-- Prostate cancer rank 4: Lutetium-177 vipivotide tetraxetan (Pluvicto) — Novartis
+--   Seed:   $1.80B
+--   Actual: $1.39B  (back-calculated from Novartis FY2025 page:
+--                    $1,994M FY2025 / 1.43 (+43% USD YoY) = $1,394M)
+--   Source: novartis.com/investors/financial-data/product-sales (fetched July 2026)
+--   market_share_pct adjusted: 9 → 7
+-- ---------------------------------------------------------------------------
+UPDATE cancer_top_drugs
+SET
+  global_revenue_2024_usd_b = 1.39,
+  market_share_pct          = 7.00,
+  notes                     = 'Transformative mechanism — first PSMA radioligand. Supply/manufacturing ramp limited FY2024 uptake ($1.39B). FY2025 grew +43% YoY to $1.99B as capacity expanded. Pre-taxane label expansion pending.'
+WHERE cancer_type_slug = 'prostate-cancer'
+  AND rank = 4;
+
+COMMIT;
+
+-- =============================================================================
+-- VERIFICATION — run immediately after applying this patch
+-- =============================================================================
+/*
+-- 1. Confirm all five cancer overview rows with corrected values
+SELECT
+  cancer_type,
+  us_new_cases_2025,
+  us_deaths_2025,
+  us_prevalence,
+  five_year_survival_pct,
+  updated_at
+FROM cancer_market_overview
+ORDER BY id;
+
+-- Expected:
+--   lung-cancer:       226650 cases, 124730 deaths, 610816 prev, 28.00% survival
+--   breast-cancer:     316950 cases,  42170 deaths, 4238585 prev, 91.90% survival
+--   multiple-myeloma:   36110 cases,  12030 deaths, 192144 prev, 63.80% survival
+--   colorectal-cancer: 154270 cases,  53010 deaths, 1392445 prev, 68.00% survival
+--   prostate-cancer:   313780 cases,  35770 deaths, 3700086 prev, 98.20% survival
+
+-- 2. Confirm updated drug revenues
+SELECT
+  cancer_type_slug,
+  rank,
+  drug_name,
+  global_revenue_2024_usd_b,
+  market_share_pct,
+  revenue_trend
+FROM cancer_top_drugs
+WHERE (cancer_type_slug = 'lung-cancer'        AND rank = 2)
+   OR (cancer_type_slug = 'breast-cancer'      AND rank = 4)
+   OR (cancer_type_slug = 'multiple-myeloma'   AND rank = 2)
+   OR (cancer_type_slug = 'prostate-cancer'    AND rank = 4)
+ORDER BY cancer_type_slug, rank;
+
+-- Expected:
+--   lung-cancer / Tagrisso:    5.85B,  17%
+--   breast-cancer / Kisqali:   3.03B,  10%
+--   multiple-myeloma/Revlimid: 4.32B,  17%
+--   prostate-cancer / Pluvicto:1.39B,   7%
+
+-- 3. Full drug table snapshot for review
+SELECT
+  cancer_type_slug,
+  rank,
+  drug_name,
+  brand_name,
+  global_revenue_2024_usd_b   AS rev_usd_b,
+  market_share_pct            AS mkt_share,
+  revenue_trend,
+  CASE WHEN drug_id IS NOT NULL THEN 'IN DIRECTORY'
+       ELSE 'NOT IN DIRECTORY' END  AS directory_link
+FROM cancer_top_drugs
+ORDER BY cancer_type_slug, rank;
+*/

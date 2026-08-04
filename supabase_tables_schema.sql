@@ -104,9 +104,17 @@ CREATE TABLE drugs (
 
     extra_data JSONB DEFAULT '{}'::jsonb,
 
+    -- Billing / reimbursement codes
+    j_code              VARCHAR(10),          -- HCPCS Level II J-code (injectable drugs only)
+    
+    j_code_description  TEXT,                 -- CMS official description for the J-code
+    
+    ndc_code            TEXT,                 -- Representative NDC (11-digit, reference product)
+
     created_at TIMESTAMPTZ DEFAULT NOW(),
 
     updated_at TIMESTAMPTZ DEFAULT NOW(),
+    
 
     CONSTRAINT fk_company
         FOREIGN KEY(company_id)
@@ -507,3 +515,56 @@ ON drug_updates(update_type);
 
 CREATE INDEX idx_updates_source
 ON drug_updates(source);
+
+-- ---------------------------------------------------------------------------
+-- TABLE: cancer_market_overview
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS cancer_market_overview (
+  id                          SERIAL PRIMARY KEY,
+  cancer_type                 VARCHAR(100)    NOT NULL,
+  cancer_type_slug            VARCHAR(100)    NOT NULL UNIQUE,
+  description                 TEXT,
+  -- Epidemiology (US, 2025 estimates)
+  us_new_cases_2025           INTEGER,
+  us_deaths_2025              INTEGER,
+  us_prevalence               INTEGER,        -- people living with diagnosis
+  five_year_survival_pct      DECIMAL(5,2),   -- all-stage combined
+  -- Market
+  global_market_size_2024_usd_b  DECIMAL(8,2),
+  market_cagr_pct                DECIMAL(5,2),
+  global_market_size_2030_usd_b  DECIMAL(8,2),
+  -- Context
+  key_subtypes                TEXT[],         -- e.g. '{NSCLC,SCLC}'
+  common_biomarkers           TEXT[],         -- e.g. '{PD-L1,EGFR,ALK}'
+  -- Metadata
+  data_year                   INTEGER         DEFAULT 2025,
+  created_at                  TIMESTAMPTZ     DEFAULT NOW(),
+  updated_at                  TIMESTAMPTZ     DEFAULT NOW()
+);
+
+-- ---------------------------------------------------------------------------
+-- TABLE: cancer_top_drugs
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS cancer_top_drugs (
+  id                          SERIAL PRIMARY KEY,
+  cancer_type_slug            VARCHAR(100)    NOT NULL
+                                REFERENCES cancer_market_overview(cancer_type_slug),
+  rank                        INTEGER         NOT NULL CHECK (rank BETWEEN 1 AND 10),
+  drug_name                   VARCHAR(200)    NOT NULL,  -- generic name
+  brand_name                  VARCHAR(200),
+  company                     VARCHAR(200),
+  -- Link to drug directory (NULL if drug not in drugs table)
+  drug_id                     INTEGER         REFERENCES drugs(id),
+  -- Drug profile
+  molecule_type               VARCHAR(100),
+  mechanism_of_action         VARCHAR(300),
+  indication_label            TEXT,           -- specific approved use in this cancer
+  -- Commercial
+  global_revenue_2024_usd_b   DECIMAL(8,2),
+  market_share_pct            DECIMAL(5,2),   -- approximate share within indication
+  approval_year               INTEGER,
+  revenue_trend               VARCHAR(20)     CHECK (revenue_trend IN ('growing','stable','declining')),
+  notes                       TEXT,
+  created_at                  TIMESTAMPTZ     DEFAULT NOW(),
+  UNIQUE (cancer_type_slug, rank)
+);

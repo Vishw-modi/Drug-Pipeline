@@ -5,10 +5,11 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
+import { AIChatbot } from '@/components/chat/AIChatbot';
 import { 
   ArrowLeft, Crosshair, FlaskConical, Hash, 
   CalendarClock, Activity, CheckCircle2, XCircle,
-  Building2, Info
+  Building2, Info, Barcode, Tag
 } from 'lucide-react';
 
 export default async function DrugDetailsPage({ params }: { params: { id: string } }) {
@@ -47,7 +48,14 @@ export default async function DrugDetailsPage({ params }: { params: { id: string
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
             <div>
               <div className="flex flex-wrap items-center gap-3 mb-1">
-                <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-brand-navy)]">{drug.drug_name}</h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-brand-navy)]">
+                  {drug.drug_name}
+                  {drug.brand_name && (
+                    <span className="text-lg md:text-xl font-medium text-[var(--color-muted)] ml-2">
+                      ({drug.brand_name})
+                    </span>
+                  )}
+                </h1>
                 <StatusBadge status={drug.development_phase} />
               </div>
               
@@ -61,8 +69,29 @@ export default async function DrugDetailsPage({ params }: { params: { id: string
               )}
             </div>
             
-            <div className="flex flex-col gap-2 min-w-[160px]">
-              <div className="bg-[var(--color-bg)] rounded-lg p-2.5 border border-[var(--color-border)]">
+            <div className="flex flex-wrap gap-2 md:justify-end">
+              {drug.ndc_code && (
+                <div className="bg-[var(--color-bg)] rounded-lg p-2.5 border border-[var(--color-border)] min-w-[120px]">
+                  <p className="text-[10px] font-semibold text-[var(--color-muted)] uppercase tracking-wider mb-1">NDC Code</p>
+                  <p className="font-semibold text-sm text-[var(--color-brand-navy)]">{drug.ndc_code}</p>
+                </div>
+              )}
+              
+              {drug.j_code && (
+                <div className="bg-[var(--color-bg)] rounded-lg p-2.5 border border-[var(--color-border)] max-w-[400px] truncate" title={drug.j_code_description || ''}>
+                  <p className="text-[10px] font-semibold text-[var(--color-muted)] uppercase tracking-wider mb-1">J-Code</p>
+                  <p className="font-semibold text-sm text-[var(--color-brand-navy)] truncate">
+                    {drug.j_code}
+                    {drug.j_code_description && (
+                      <span className="font-normal text-[var(--color-muted)] ml-1.5">
+                        &bull; {drug.j_code_description}
+                      </span>
+                    )}
+                  </p>
+                </div>
+              )}
+
+              <div className="bg-[var(--color-bg)] rounded-lg p-2.5 border border-[var(--color-border)] min-w-[140px]">
                 <p className="text-[10px] font-semibold text-[var(--color-muted)] uppercase tracking-wider mb-1">Approval Status</p>
                 <p className="font-semibold text-sm text-[var(--color-brand-navy)]">{drug.approval_status || 'Investigational'}</p>
               </div>
@@ -168,8 +197,11 @@ export default async function DrugDetailsPage({ params }: { params: { id: string
               </div>
             </CardContent>
           </Card>
+
+
         </div>
       </div>
+      <AIChatbot entityType="drug" entityName={drug.drug_name} contextPayload={drug} />
     </div>
   );
 }

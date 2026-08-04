@@ -40,10 +40,19 @@ export async function getDrugById(id: string): Promise<Drug | null> {
     .single();
 
   if (error || !data) return null;
+
+  // Look up brand name from cancer_top_drugs (if this drug appears there)
+  const { data: topDrugMatch } = await supabase
+    .from('cancer_top_drugs')
+    .select('brand_name')
+    .eq('drug_id', id)
+    .limit(1)
+    .maybeSingle();
   
   return {
     ...data,
-    company: data.companies
+    company: data.companies,
+    brand_name: topDrugMatch?.brand_name || null
   };
 }
 
