@@ -45,7 +45,7 @@ export function FilterBar({ options, hideFilters = [] }: FilterBarProps) {
   };
 
   return (
-    <div className="flex flex-wrap items-end gap-4 p-4 bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] mb-6 relative">
+    <div className="flex flex-wrap items-end gap-3 sm:gap-4 p-3 sm:p-4 bg-[var(--color-surface)] rounded-xl border border-[var(--color-border)] mb-6 relative">
       <SelectGroup label="Therapeutic Area" value={filters.therapeuticArea} onChange={(v) => setFilter('therapeuticArea', v)} items={options.therapeuticAreas} />
       <SelectGroup label="Indication" value={filters.indication} onChange={(v) => setFilter('indication', v)} items={options.indications || []} />
       <SelectGroup label="Cancer Type" value={filters.cancerType} onChange={(v) => setFilter('cancerType', v)} items={options.cancerTypes} />

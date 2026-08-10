@@ -61,7 +61,7 @@ export function DataTable<TData, TValue>({
       </div>
       
       <div className="overflow-auto flex-1">
-        <table className="w-full text-sm text-left">
+        <table className="w-full text-sm text-left whitespace-nowrap">
           <thead className="bg-[var(--color-bg)] text-[var(--color-muted)] text-xs uppercase border-b border-[var(--color-border)] sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
