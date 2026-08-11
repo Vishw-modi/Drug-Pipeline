@@ -5,24 +5,50 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Beaker, Building2, FlaskConical, CalendarClock, 
-  Settings, FileText, Download, BookOpen, Activity, ChevronsLeft, ChevronsRight, LineChart, PieChart
+  Settings, FileText, Download, BookOpen, Activity, ChevronsLeft, ChevronsRight, LineChart, PieChart, Menu
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function Sidebar() {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const isRouteActive = (route: string) => pathname === route;
 
+  // Close mobile sidebar when clicking a link
+  const handleLinkClick = () => {
+    if (isMobileOpen) setIsMobileOpen(false);
+  };
+
   return (
-    <aside 
-      className={cn(
-        "bg-surface border-r border-border text-muted flex flex-col h-screen transition-all duration-300 ease-in-out shrink-0",
-        isCollapsed ? "w-16" : "w-56"
+    <>
+      {/* Mobile Menu Toggle Button */}
+      <button 
+        onClick={() => setIsMobileOpen(!isMobileOpen)}
+        className="md:hidden fixed top-3 left-4 z-[60] p-2 rounded-md bg-surface border border-border text-brand-navy shadow-sm"
+        title="Toggle Menu"
+      >
+        <Menu size={20} />
+      </button>
+
+      {/* Mobile Overlay */}
+      {isMobileOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[45]"
+          onClick={() => setIsMobileOpen(false)}
+        />
       )}
-    >
-      <div className={cn("p-4 flex items-center", isCollapsed ? "justify-center" : "justify-between")}>
+
+      <aside 
+        className={cn(
+          "bg-surface border-r border-border text-muted flex flex-col h-screen transition-all duration-300 ease-in-out shrink-0",
+          "fixed md:relative z-50 md:z-0", // Fixed on mobile, relative on desktop
+          isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
+          isCollapsed ? "w-16" : "w-56"
+        )}
+      >
+        <div className={cn("p-4 flex items-center h-16", isCollapsed ? "justify-center" : "justify-between")}>
         {!isCollapsed && (
           <Link href="/" className="text-lg font-bold text-brand-navy flex items-center gap-2 hover:opacity-80 transition-opacity">
             <img src="/Drugscrape.png" alt="Drugscape Logo" className="h-6 w-auto object-contain shrink-0" />
@@ -45,6 +71,7 @@ export function Sidebar() {
           <div className="space-y-1">
             <Link 
               href="/" 
+              onClick={handleLinkClick}
               title="Oncology"
               className={cn(
                 "flex items-center rounded-md transition-colors", 
@@ -79,6 +106,7 @@ export function Sidebar() {
                 key={route}
                 href={route} 
                 title={label}
+                onClick={handleLinkClick}
                 className={cn(
                   "flex items-center rounded-md transition-colors", 
                   isCollapsed ? "justify-center py-3" : "gap-3 px-3 py-2",
@@ -103,6 +131,7 @@ export function Sidebar() {
                 key={route}
                 href={route} 
                 title={label}
+                onClick={handleLinkClick}
                 className={cn(
                   "flex items-center rounded-md transition-colors hover:bg-[var(--color-surface-hover)] hover:text-brand-navy",
                   isCollapsed ? "justify-center py-3" : "gap-3 px-3 py-2"
@@ -116,7 +145,8 @@ export function Sidebar() {
         </div>
       </nav>
 
-    </aside>
+      </aside>
+    </>
   );
 }
 
