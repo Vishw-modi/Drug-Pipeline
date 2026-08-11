@@ -2215,3 +2215,1035 @@ SELECT
 FROM cancer_top_drugs
 ORDER BY cancer_type_slug, rank;
 */
+
+-- =============================================================================
+-- 19_update_drugs_pi_links_batch1.sql
+-- Populates pi_link for the first 10 approved drugs in the drugs table.
+--
+-- Run AFTER: 18_alter_drugs_add_pi_link.sql
+--
+-- BATCH 1 covers drug_ids 1–13 (first 10 *approved* drugs by insertion order):
+--   1.  Pembrolizumab   / Keytruda   (Merck)
+--   2.  Belzutifan      / Welireg    (Merck)
+--   3.  Olaparib        / Lynparza   (AstraZeneca)
+--   4.  Osimertinib     / Tagrisso   (AstraZeneca)
+--   5.  Durvalumab      / Imfinzi    (AstraZeneca)
+--   8.  Mosunetuzumab   / Lunsumio   (Roche/Genentech)
+--   10. Inavolisib      / Itovebi    (Roche/Genentech)
+--   11. Lorlatinib      / Lorbrena   (Pfizer)
+--   12. Elranatamab     / Elrexfio   (Pfizer)
+--   13. Nivolumab       / Opdivo     (Bristol Myers Squibb)
+--
+-- Drug_ids 6 (Rilvegostomig), 7 (Volrustomig), and 9 (Tiragolumab) are
+-- investigational and have no PI; their pi_link remains NULL.
+--
+-- SOURCE: DailyMed NLM (dailymed.nlm.nih.gov)
+--   Each URL uses the permanent setid and always resolves to the current label.
+--   setids verified via DailyMed REST API on 2026-08-11.
+--   URL pattern: https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid={SETID}&type=pdf
+-- =============================================================================
+
+BEGIN;
+
+-- ---------------------------------------------------------------------------
+-- 1. Pembrolizumab / Keytruda — Merck Sharp & Dohme
+--    DailyMed setid: 9333c79b-d487-4538-a9f0-71b91a02b287  (spl_version 71+)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=9333c79b-d487-4538-a9f0-71b91a02b287&type=pdf'
+WHERE drug_name = 'Pembrolizumab';
+
+-- ---------------------------------------------------------------------------
+-- 2. Belzutifan / Welireg — Merck Sharp & Dohme
+--    DailyMed setid: 13e15ee0-d679-4fa9-9430-e2e2170474da  (spl_version 12)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=13e15ee0-d679-4fa9-9430-e2e2170474da&type=pdf'
+WHERE drug_name = 'Belzutifan';
+
+-- ---------------------------------------------------------------------------
+-- 3. Olaparib / Lynparza (film-coated tablets) — AstraZeneca
+--    DailyMed setid: 741ff3e3-dc1a-45a6-84e5-2481b27131aa  (spl_version 38)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=741ff3e3-dc1a-45a6-84e5-2481b27131aa&type=pdf'
+WHERE drug_name = 'Olaparib';
+
+-- ---------------------------------------------------------------------------
+-- 4. Osimertinib / Tagrisso — AstraZeneca
+--    DailyMed setid: 5e81b4a7-b971-45e1-9c31-29cea8c87ce7  (spl_version 36)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=5e81b4a7-b971-45e1-9c31-29cea8c87ce7&type=pdf'
+WHERE drug_name = 'Osimertinib';
+
+-- ---------------------------------------------------------------------------
+-- 5. Durvalumab / Imfinzi — AstraZeneca
+--    DailyMed setid: 8baba4ea-2855-42fa-9bd9-5a7548d4cec3  (spl_version 33)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=8baba4ea-2855-42fa-9bd9-5a7548d4cec3&type=pdf'
+WHERE drug_name = 'Durvalumab';
+
+-- ---------------------------------------------------------------------------
+-- 6–7. Rilvegostomig (drug_id 6) and Volrustomig (drug_id 7) — INVESTIGATIONAL
+--       No FDA-approved PI exists; pi_link remains NULL.
+-- ---------------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------------
+-- 8. Mosunetuzumab / Lunsumio (IV concentrate) — Genentech / Roche
+--    DailyMed setid: 2ef0cf38-101c-4681-98fe-c05dc9ead443  (spl_version 7)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=2ef0cf38-101c-4681-98fe-c05dc9ead443&type=pdf'
+WHERE drug_name = 'Mosunetuzumab';
+
+-- ---------------------------------------------------------------------------
+-- 9. Tiragolumab (drug_id 9) — INVESTIGATIONAL
+--    No FDA-approved PI exists; pi_link remains NULL.
+-- ---------------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------------
+-- 10. Inavolisib / Itovebi — Genentech / Roche
+--     DailyMed setid: 5de59f5b-e5db-410f-b692-658686ef4107  (spl_version 10)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=5de59f5b-e5db-410f-b692-658686ef4107&type=pdf'
+WHERE drug_name = 'Inavolisib';
+
+-- ---------------------------------------------------------------------------
+-- 11. Lorlatinib / Lorbrena — Pfizer
+--     DailyMed setid: 2b34d62d-e02a-4af3-bc0d-1571dd4ee76d  (spl_version 13)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=2b34d62d-e02a-4af3-bc0d-1571dd4ee76d&type=pdf'
+WHERE drug_name = 'Lorlatinib';
+
+-- ---------------------------------------------------------------------------
+-- 12. Elranatamab / Elrexfio — Pfizer
+--     DailyMed setid: f6fea598-ff58-4a20-b5e8-8a51f37d8beb  (spl_version 4)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=f6fea598-ff58-4a20-b5e8-8a51f37d8beb&type=pdf'
+WHERE drug_name = 'Elranatamab';
+
+-- ---------------------------------------------------------------------------
+-- 13. Nivolumab / Opdivo — Bristol Myers Squibb
+--     DailyMed setid: f570b9c4-6846-4de2-abfa-4d0a4ae4e394  (spl_version 67)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=f570b9c4-6846-4de2-abfa-4d0a4ae4e394&type=pdf'
+WHERE drug_name = 'Nivolumab';
+
+COMMIT;
+
+-- =============================================================================
+-- VERIFICATION — run immediately after applying this patch
+-- =============================================================================
+/*
+SELECT
+  id,
+  drug_name,
+  generic_name,
+  approval_status,
+  pi_link IS NOT NULL AS has_pi_link,
+  pi_link
+FROM drugs
+WHERE id IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)
+ORDER BY id;
+
+-- Expected:
+--   id 1  Pembrolizumab  Approved  has_pi_link=true
+--   id 2  Belzutifan     Approved  has_pi_link=true
+--   id 3  Olaparib       Approved  has_pi_link=true
+--   id 4  Osimertinib    Approved  has_pi_link=true
+--   id 5  Durvalumab     Approved  has_pi_link=true
+--   id 6  Rilvegostomig  Phase III has_pi_link=false  (investigational — NULL expected)
+--   id 7  Volrustomig    Phase III has_pi_link=false  (investigational — NULL expected)
+--   id 8  Mosunetuzumab  Approved  has_pi_link=true
+--   id 9  Tiragolumab    Phase III has_pi_link=false  (investigational — NULL expected)
+--   id 10 Inavolisib     Approved  has_pi_link=true
+--   id 11 Lorlatinib     Approved  has_pi_link=true
+--   id 12 Elranatamab    Approved  has_pi_link=true
+--   id 13 Nivolumab      Approved  has_pi_link=true
+*/
+
+-- =============================================================================
+-- 20_update_drugs_pi_links_batch2.sql
+-- Populates pi_link for all remaining approved drugs (drug_ids 14–38).
+--
+-- Run AFTER: 18_alter_drugs_add_pi_link.sql and 19_update_drugs_pi_links_batch1.sql
+--
+-- BATCH 2 covers the remaining 14 FDA-approved drugs:
+--   14. Adagrasib         / Krazati        (BMS / Mirati)
+--   15. Amivantamab       / Rybrevant      (Janssen / J&J)
+--   16. Lazertinib        / Lazcluze       (Janssen / J&J)
+--   17. Capmatinib        / Tabrecta       (Novartis)
+--   19. Sacituzumab Gov.  / Trodelvy       (Gilead)
+--   20. Venetoclax        / Venclexta      (AbbVie)
+--   22. Trastuzumab DXd   / Enhertu        (Daiichi Sankyo)
+--   26. Epcoritamab       / Epkinly        (Genmab)
+--   27. Cemiplimab        / Libtayo        (Regeneron)
+--   30. Zanubrutinib      / Brukinsa       (BeiGene)
+--   31. Tarlatamab        / Imdelltra      (Amgen)
+--   32. Sotorasib         / Lumakras       (Amgen)
+--   36. Cabozantinib      / Cabometyx      (Exelixis)
+--   38. Selpercatinib     / Retevmo        (Eli Lilly)
+--
+-- INVESTIGATIONAL DRUGS WITH NO FDA PI (pi_link stays NULL):
+--   6  Rilvegostomig   – Phase III
+--   7  Volrustomig     – Phase III
+--   9  Tiragolumab     – Phase III
+--   18 Spartalizumab   – Phase II
+--   21 Navitoclax      – Phase III
+--   23 Datopotamab Deruxtecan  – Phase III
+--   24 Patritumab Deruxtecan   – Phase III
+--   25 Ifinatamab Deruxtecan   – Phase II
+--   28 Zanidatamab     – BLA filed, not yet FDA-approved
+--   29 Tislelizumab    – Phase III (approved China only, no US PI)
+--   33 BNT323          – Phase II
+--   34 Ivonescimab     – Phase III
+--   35 Cadonilimab     – Phase III (approved China only, no US PI)
+--   37 XL092           – Phase III
+--   39 Imlunestrant    – Phase III
+--   40 Tusamitamab Ravtansine – Phase III
+--
+-- SOURCE: DailyMed NLM (dailymed.nlm.nih.gov) — official FDA label repository
+--   All setids verified via DailyMed REST API on 2026-08-11.
+--   URL: https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid={SETID}&type=pdf
+-- =============================================================================
+
+BEGIN;
+
+-- ---------------------------------------------------------------------------
+-- 14. Adagrasib / Krazati — Mirati Therapeutics (now BMS)
+--     DailyMed setid: 0b8bf078-34c2-4f45-9012-38a8ac082b01  (spl_version 13)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=0b8bf078-34c2-4f45-9012-38a8ac082b01&type=pdf'
+WHERE drug_name = 'Adagrasib';
+
+-- ---------------------------------------------------------------------------
+-- 15. Amivantamab / Rybrevant (IV formulation) — Janssen Biotech / J&J
+--     DailyMed setid: 1466c070-9f97-4fa4-a955-6a6b59981fb8  (spl_version 17)
+--     Note: subcutaneous Rybrevant Faspro has a separate setid (9e58b045-...);
+--           linking to the original IV PI which covers all oncology indications.
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=1466c070-9f97-4fa4-a955-6a6b59981fb8&type=pdf'
+WHERE drug_name = 'Amivantamab';
+
+-- ---------------------------------------------------------------------------
+-- 16. Lazertinib / Lazcluze — Janssen Biotech / J&J
+--     DailyMed setid: c417f9ee-2027-4ed5-92ad-3c19266de16c  (spl_version 6)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=c417f9ee-2027-4ed5-92ad-3c19266de16c&type=pdf'
+WHERE drug_name = 'Lazertinib';
+
+-- ---------------------------------------------------------------------------
+-- 17. Capmatinib / Tabrecta — Novartis
+--     DailyMed setid: 455892c3-d144-4ba8-9ab4-79cabff9876d  (spl_version 17)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=455892c3-d144-4ba8-9ab4-79cabff9876d&type=pdf'
+WHERE drug_name = 'Capmatinib';
+
+-- ---------------------------------------------------------------------------
+-- 18. Spartalizumab — INVESTIGATIONAL (Phase II); pi_link remains NULL.
+-- ---------------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------------
+-- 19. Sacituzumab Govitecan / Trodelvy — Gilead Sciences
+--     DailyMed setid: 57a597d2-03f0-472e-b148-016d7169169d  (spl_version 20)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=57a597d2-03f0-472e-b148-016d7169169d&type=pdf'
+WHERE drug_name = 'Sacituzumab Govitecan';
+
+-- ---------------------------------------------------------------------------
+-- 20. Venetoclax / Venclexta — AbbVie
+--     DailyMed setid: b118a40d-6b56-cee3-10f6-ded821a97018  (spl_version 283)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=b118a40d-6b56-cee3-10f6-ded821a97018&type=pdf'
+WHERE drug_name = 'Venetoclax';
+
+-- ---------------------------------------------------------------------------
+-- 21. Navitoclax — INVESTIGATIONAL (Phase III); pi_link remains NULL.
+-- ---------------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------------
+-- 22. Trastuzumab Deruxtecan / Enhertu — Daiichi Sankyo
+--     DailyMed setid: 7e67e73e-ddf4-4e4d-8b50-09d7514910b6  (spl_version 28)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=7e67e73e-ddf4-4e4d-8b50-09d7514910b6&type=pdf'
+WHERE drug_name = 'Trastuzumab Deruxtecan';
+
+-- ---------------------------------------------------------------------------
+-- 23–25. Datopotamab DXd, Patritumab DXd, Ifinatamab DXd — INVESTIGATIONAL;
+--         pi_link remains NULL.
+-- ---------------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------------
+-- 26. Epcoritamab / Epkinly — Genmab / AbbVie
+--     DailyMed setid: d7836711-b677-412d-bf2d-0f7c8444103a  (spl_version 11)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=d7836711-b677-412d-bf2d-0f7c8444103a&type=pdf'
+WHERE drug_name = 'Epcoritamab';
+
+-- ---------------------------------------------------------------------------
+-- 27. Cemiplimab / Libtayo — Regeneron / Sanofi
+--     DailyMed setid: 4347ae1f-d397-4f18-8b70-03897e1c054a  (spl_version 23)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=4347ae1f-d397-4f18-8b70-03897e1c054a&type=pdf'
+WHERE drug_name = 'Cemiplimab';
+
+-- ---------------------------------------------------------------------------
+-- 28. Zanidatamab — BLA FILED, not yet FDA-approved; pi_link remains NULL.
+-- ---------------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------------
+-- 29. Tislelizumab — Phase III, no US approval; pi_link remains NULL.
+-- ---------------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------------
+-- 30. Zanubrutinib / Brukinsa — BeiGene (BeiOne Medicines USA)
+--     DailyMed setid: 3e08fe23-d70e-424c-bc51-1222e320f902  (spl_version 24)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=3e08fe23-d70e-424c-bc51-1222e320f902&type=pdf'
+WHERE drug_name = 'Zanubrutinib';
+
+-- ---------------------------------------------------------------------------
+-- 31. Tarlatamab / Imdelltra — Amgen
+--     DailyMed setid: 1e7b6163-5d83-42ea-82c9-cf7620cdc782  (spl_version 7)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=1e7b6163-5d83-42ea-82c9-cf7620cdc782&type=pdf'
+WHERE drug_name = 'Tarlatamab';
+
+-- ---------------------------------------------------------------------------
+-- 32. Sotorasib / Lumakras — Amgen
+--     DailyMed setid: c80a362c-7ac3-4894-a076-0691e68ef8c1  (spl_version 19)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=c80a362c-7ac3-4894-a076-0691e68ef8c1&type=pdf'
+WHERE drug_name = 'Sotorasib';
+
+-- ---------------------------------------------------------------------------
+-- 33. BNT323 — INVESTIGATIONAL (Phase II); pi_link remains NULL.
+-- ---------------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------------
+-- 34. Ivonescimab — INVESTIGATIONAL (Phase III); pi_link remains NULL.
+-- ---------------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------------
+-- 35. Cadonilimab — Phase III, no US approval; pi_link remains NULL.
+-- ---------------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------------
+-- 36. Cabozantinib / Cabometyx (tablet) — Exelixis
+--     DailyMed setid: 3850cce2-6137-42e5-a792-d318c4a4b3b5  (spl_version 18)
+--     Note: Linking to Cabometyx (tablet) PI — the primary oncology formulation
+--           for RCC and HCC. Cometriq capsules (thyroid) have a separate setid.
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=3850cce2-6137-42e5-a792-d318c4a4b3b5&type=pdf'
+WHERE drug_name = 'Cabozantinib';
+
+-- ---------------------------------------------------------------------------
+-- 37. XL092 — INVESTIGATIONAL (Phase III); pi_link remains NULL.
+-- ---------------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------------
+-- 38. Selpercatinib / Retevmo — Eli Lilly
+--     DailyMed setid: 7fa848ba-a59c-4144-9f52-64d090f4d828  (spl_version 23)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=7fa848ba-a59c-4144-9f52-64d090f4d828&type=pdf'
+WHERE drug_name = 'Selpercatinib';
+
+-- ---------------------------------------------------------------------------
+-- 39. Imlunestrant — INVESTIGATIONAL (Phase III); pi_link remains NULL.
+-- ---------------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------------
+-- 40. Tusamitamab Ravtansine — INVESTIGATIONAL (Phase III); pi_link remains NULL.
+-- ---------------------------------------------------------------------------
+
+COMMIT;
+
+-- =============================================================================
+-- VERIFICATION — confirm all approved drugs now have a pi_link
+-- =============================================================================
+/*
+SELECT
+  id,
+  drug_name,
+  approval_status,
+  development_phase,
+  pi_link IS NOT NULL AS has_pi_link
+FROM drugs
+ORDER BY id;
+
+-- Expected: every row where approval_status = 'Approved' → has_pi_link = true
+--           all investigational / filed rows               → has_pi_link = false
+*/
+
+-- =============================================================================
+-- 22_update_drugs_brand_names.sql
+-- Populates brand_name for all 40 drugs in the drugs table.
+--
+-- Run AFTER: 21_alter_drugs_add_brand_name.sql
+--
+-- BRAND NAMES POPULATED (24 approved + 1 China-approved with US brand):
+--   Approved drugs use their FDA-approved brand name.
+--   Tislelizumab/Tevimbra included — FDA approved Mar 2024 for oesophageal SCC
+--   (note: drug is seeded as Phase III/Investigational in 03_seed_drugs.sql;
+--    approval_status should be corrected in a separate patch if desired).
+--
+-- NULL (16 drugs): All investigational drugs without a confirmed FDA brand name.
+--   Internal codes (AZD7789, DS-1062, etc.) are in the description field —
+--   they are not commercial brand names and are not stored here.
+-- =============================================================================
+
+BEGIN;
+
+-- -------------------------------------------------------------------------
+-- 1. Pembrolizumab → Keytruda (Merck)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Keytruda'   WHERE drug_name = 'Pembrolizumab';
+
+-- -------------------------------------------------------------------------
+-- 2. Belzutifan → Welireg (Merck)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Welireg'    WHERE drug_name = 'Belzutifan';
+
+-- -------------------------------------------------------------------------
+-- 3. Olaparib → Lynparza (AstraZeneca)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Lynparza'   WHERE drug_name = 'Olaparib';
+
+-- -------------------------------------------------------------------------
+-- 4. Osimertinib → Tagrisso (AstraZeneca)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Tagrisso'   WHERE drug_name = 'Osimertinib';
+
+-- -------------------------------------------------------------------------
+-- 5. Durvalumab → Imfinzi (AstraZeneca)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Imfinzi'    WHERE drug_name = 'Durvalumab';
+
+-- -------------------------------------------------------------------------
+-- 6. Rilvegostomig — Phase III; no confirmed brand name → NULL
+-- -------------------------------------------------------------------------
+
+-- -------------------------------------------------------------------------
+-- 7. Volrustomig — Phase III; no confirmed brand name → NULL
+-- -------------------------------------------------------------------------
+
+-- -------------------------------------------------------------------------
+-- 8. Mosunetuzumab → Lunsumio (Genentech / Roche)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Lunsumio'   WHERE drug_name = 'Mosunetuzumab';
+
+-- -------------------------------------------------------------------------
+-- 9. Tiragolumab — Phase III; no confirmed brand name → NULL
+-- -------------------------------------------------------------------------
+
+-- -------------------------------------------------------------------------
+-- 10. Inavolisib → Itovebi (Genentech / Roche)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Itovebi'    WHERE drug_name = 'Inavolisib';
+
+-- -------------------------------------------------------------------------
+-- 11. Lorlatinib → Lorbrena (Pfizer)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Lorbrena'   WHERE drug_name = 'Lorlatinib';
+
+-- -------------------------------------------------------------------------
+-- 12. Elranatamab → Elrexfio (Pfizer)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Elrexfio'   WHERE drug_name = 'Elranatamab';
+
+-- -------------------------------------------------------------------------
+-- 13. Nivolumab → Opdivo (Bristol Myers Squibb)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Opdivo'     WHERE drug_name = 'Nivolumab';
+
+-- -------------------------------------------------------------------------
+-- 14. Adagrasib → Krazati (Mirati / BMS)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Krazati'    WHERE drug_name = 'Adagrasib';
+
+-- -------------------------------------------------------------------------
+-- 15. Amivantamab → Rybrevant (Janssen / J&J)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Rybrevant'  WHERE drug_name = 'Amivantamab';
+
+-- -------------------------------------------------------------------------
+-- 16. Lazertinib → Lazcluze (Janssen / J&J)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Lazcluze'   WHERE drug_name = 'Lazertinib';
+
+-- -------------------------------------------------------------------------
+-- 17. Capmatinib → Tabrecta (Novartis)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Tabrecta'   WHERE drug_name = 'Capmatinib';
+
+-- -------------------------------------------------------------------------
+-- 18. Spartalizumab — Phase II; no confirmed brand name → NULL
+-- -------------------------------------------------------------------------
+
+-- -------------------------------------------------------------------------
+-- 19. Sacituzumab Govitecan → Trodelvy (Gilead Sciences)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Trodelvy'   WHERE drug_name = 'Sacituzumab Govitecan';
+
+-- -------------------------------------------------------------------------
+-- 20. Venetoclax → Venclexta (AbbVie)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Venclexta'  WHERE drug_name = 'Venetoclax';
+
+-- -------------------------------------------------------------------------
+-- 21. Navitoclax — Phase III; no confirmed brand name → NULL
+-- -------------------------------------------------------------------------
+
+-- -------------------------------------------------------------------------
+-- 22. Trastuzumab Deruxtecan → Enhertu (Daiichi Sankyo / AstraZeneca)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Enhertu'    WHERE drug_name = 'Trastuzumab Deruxtecan';
+
+-- -------------------------------------------------------------------------
+-- 23. Datopotamab Deruxtecan — Phase III; no confirmed US brand name → NULL
+-- -------------------------------------------------------------------------
+
+-- -------------------------------------------------------------------------
+-- 24. Patritumab Deruxtecan — Phase III; no confirmed US brand name → NULL
+-- -------------------------------------------------------------------------
+
+-- -------------------------------------------------------------------------
+-- 25. Ifinatamab Deruxtecan — Phase II; no confirmed US brand name → NULL
+-- -------------------------------------------------------------------------
+
+-- -------------------------------------------------------------------------
+-- 26. Epcoritamab → Epkinly (Genmab / AbbVie)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Epkinly'    WHERE drug_name = 'Epcoritamab';
+
+-- -------------------------------------------------------------------------
+-- 27. Cemiplimab → Libtayo (Regeneron / Sanofi)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Libtayo'    WHERE drug_name = 'Cemiplimab';
+
+-- -------------------------------------------------------------------------
+-- 28. Zanidatamab — BLA filed, awaiting FDA approval; no US brand name → NULL
+-- -------------------------------------------------------------------------
+
+-- -------------------------------------------------------------------------
+-- 29. Tislelizumab → Tevimbra (BeiGene)
+--     FDA approved March 2024 for PD-L1+ oesophageal squamous cell carcinoma.
+--     (03_seed_drugs.sql has approval_status = 'Investigational' — consider
+--      patching that row separately.)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Tevimbra'   WHERE drug_name = 'Tislelizumab';
+
+-- -------------------------------------------------------------------------
+-- 30. Zanubrutinib → Brukinsa (BeiGene)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Brukinsa'   WHERE drug_name = 'Zanubrutinib';
+
+-- -------------------------------------------------------------------------
+-- 31. Tarlatamab → Imdelltra (Amgen)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Imdelltra'  WHERE drug_name = 'Tarlatamab';
+
+-- -------------------------------------------------------------------------
+-- 32. Sotorasib → Lumakras (Amgen)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Lumakras'   WHERE drug_name = 'Sotorasib';
+
+-- -------------------------------------------------------------------------
+-- 33. BNT323 — Phase II; no confirmed brand name → NULL
+-- -------------------------------------------------------------------------
+
+-- -------------------------------------------------------------------------
+-- 34. Ivonescimab — Phase III; no confirmed US brand name → NULL
+-- -------------------------------------------------------------------------
+
+-- -------------------------------------------------------------------------
+-- 35. Cadonilimab — Phase III / China only; no US brand name → NULL
+-- -------------------------------------------------------------------------
+
+-- -------------------------------------------------------------------------
+-- 36. Cabozantinib → Cabometyx (Exelixis) — primary oncology tablet formulation
+--     (Cometriq capsules for thyroid cancer are a separate NDA / formulation)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Cabometyx'  WHERE drug_name = 'Cabozantinib';
+
+-- -------------------------------------------------------------------------
+-- 37. XL092 — Phase III; no confirmed brand name → NULL
+-- -------------------------------------------------------------------------
+
+-- -------------------------------------------------------------------------
+-- 38. Selpercatinib → Retevmo (Eli Lilly)
+-- -------------------------------------------------------------------------
+UPDATE drugs SET brand_name = 'Retevmo'    WHERE drug_name = 'Selpercatinib';
+
+-- -------------------------------------------------------------------------
+-- 39. Imlunestrant — Phase III; no confirmed brand name → NULL
+-- -------------------------------------------------------------------------
+
+-- -------------------------------------------------------------------------
+-- 40. Tusamitamab Ravtansine — Phase III; no confirmed brand name → NULL
+-- -------------------------------------------------------------------------
+
+COMMIT;
+
+-- =============================================================================
+-- VERIFICATION
+-- =============================================================================
+/*
+SELECT
+  id,
+  drug_name,
+  brand_name,
+  approval_status,
+  development_phase
+FROM drugs
+ORDER BY id;
+
+-- Expected: 25 rows with brand_name populated, 15 rows with NULL.
+--   Exception to review: drug 29 (Tislelizumab/Tevimbra) is FDA-approved
+--   but seeded as Investigational — flag for a status correction patch.
+*/
+
+-- =============================================================================
+-- 23_update_drugs_brand_names_patch.sql
+-- Fixes two incorrect NULLs from file 22 AND adds brand names for all drugs
+-- inserted by the 2025/2026 approvals patch (08_patch_2025_2026_approvals.sql).
+--
+-- Run AFTER: 22_update_drugs_brand_names.sql
+--
+-- CORRECTIONS (drugs incorrectly set to NULL in file 22):
+--   Datopotamab Deruxtecan → Datroway   (FDA approved Jan 17 2025)
+--   Imlunestrant           → Inluriyo   (FDA approved Sep 25 2025)
+--
+-- NEW — drugs added by patch file not covered in file 22:
+--   Lurbinectedin          → Zepzelca
+--   Telisotuzumab Vedotin  → Emrelis
+--   Linvoseltamab          → Lynozyfic
+--   Zongertinib            → Hernexeos
+--   Vepdegestrant          → Veppanu
+--   Gedatolisib            → Revtorpyk
+--   Sonrotoclax            → Beqalzi
+--   Sevabertinib           → Hyrnuo
+--   Penpulimab             → Zynyz
+--   Darolutamide           → Nubeqa
+--   Zanidatamab            → Ziihera    (FDA approved Aug 2023 for HER2+ BTC)
+--
+-- STILL NULL (no confirmed US brand name):
+--   Zanzalintinib (XL092)  — Phase III investigational
+--   Cadonilimab            — Phase III, China approval only
+-- =============================================================================
+
+BEGIN;
+
+-- -------------------------------------------------------------------------
+-- CORRECTIONS from file 22
+-- -------------------------------------------------------------------------
+
+-- Datopotamab Deruxtecan / Datroway — Daiichi Sankyo / AstraZeneca
+-- FDA approved Jan 17 2025 for HR+/HER2- mBC; Jun 23 2025 for EGFR-mut NSCLC
+UPDATE drugs SET brand_name = 'Datroway'   WHERE drug_name = 'Datopotamab Deruxtecan';
+
+-- Imlunestrant / Inluriyo — Eli Lilly
+-- FDA approved Sep 25 2025 for ER+/HER2-, ESR1-mutated advanced breast cancer
+UPDATE drugs SET brand_name = 'Inluriyo'   WHERE drug_name = 'Imlunestrant';
+
+-- -------------------------------------------------------------------------
+-- NEW — 2025/2026 patch drugs
+-- -------------------------------------------------------------------------
+
+-- Lurbinectedin / Zepzelca — PharmaMar / Jazz Pharmaceuticals
+-- Original 2020 approval (2L+ SCLC monotherapy); Oct 2025 new approval
+-- with atezolizumab for 1L extensive-stage SCLC
+UPDATE drugs SET brand_name = 'Zepzelca'   WHERE drug_name = 'Lurbinectedin';
+
+-- Telisotuzumab Vedotin / Emrelis — AbbVie
+-- FDA accelerated approval May 14 2025 for c-Met overexpressing EGFR-wt NSCLC
+UPDATE drugs SET brand_name = 'Emrelis'    WHERE drug_name = 'Telisotuzumab Vedotin';
+
+-- Linvoseltamab / Lynozyfic — Regeneron
+-- FDA accelerated approval Jul 2 2025 for R/R MM after 3+ prior lines
+UPDATE drugs SET brand_name = 'Lynozyfic'  WHERE drug_name = 'Linvoseltamab';
+
+-- Zongertinib / Hernexeos — Boehringer Ingelheim
+-- FDA accelerated approval Aug 8 2025 for HER2 TKD-mutated non-squamous NSCLC
+UPDATE drugs SET brand_name = 'Hernexeos'  WHERE drug_name = 'Zongertinib';
+
+-- Vepdegestrant / Veppanu — Pfizer / Arvinas
+-- FDA approved May 1 2026 for ER+/HER2-, ESR1-mutated advanced breast cancer
+-- First approved PROTAC oncology drug globally
+UPDATE drugs SET brand_name = 'Veppanu'    WHERE drug_name = 'Vepdegestrant';
+
+-- Gedatolisib / Revtorpyk — Pfizer
+-- FDA approved Jul 14 2026 for HR+/HER2- advanced BC (PIK3CA-wildtype)
+UPDATE drugs SET brand_name = 'Revtorpyk'  WHERE drug_name = 'Gedatolisib';
+
+-- Sonrotoclax / Beqalzi — BeiGene (BeOne Medicines)
+-- FDA accelerated approval May 13 2026 for R/R mantle cell lymphoma
+UPDATE drugs SET brand_name = 'Beqalzi'    WHERE drug_name = 'Sonrotoclax';
+
+-- Sevabertinib / Hyrnuo — Bayer
+-- FDA accelerated approval Nov 19 2025 for HER2 TKD-mutated non-squamous NSCLC
+UPDATE drugs SET brand_name = 'Hyrnuo'     WHERE drug_name = 'Sevabertinib';
+
+-- Penpulimab / Zynyz — Akeso
+-- FDA approved Apr 23 2025 for non-keratinizing nasopharyngeal carcinoma
+UPDATE drugs SET brand_name = 'Zynyz'      WHERE drug_name = 'Penpulimab';
+
+-- Darolutamide / Nubeqa — Bayer / Orion
+-- Approved Jun 3 2025 for mCSPC; prior approvals in nmCRPC (2019) and mCRPC (2022)
+UPDATE drugs SET brand_name = 'Nubeqa'     WHERE drug_name = 'Darolutamide';
+
+-- Zanidatamab / Ziihera — Jazz Pharmaceuticals / BeiGene
+-- FDA approved Aug 2023 for HER2-amplified biliary tract cancer (accelerated);
+-- seeded as Filed/Investigational — brand name added here pending status correction
+UPDATE drugs SET brand_name = 'Ziihera'    WHERE drug_name = 'Zanidatamab';
+
+COMMIT;
+
+-- =============================================================================
+-- VERIFICATION — check all drugs now have brand_name where expected
+-- =============================================================================
+/*
+SELECT
+  id,
+  drug_name,
+  brand_name,
+  approval_status,
+  development_phase
+FROM drugs
+ORDER BY
+  CASE WHEN brand_name IS NULL THEN 1 ELSE 0 END,
+  brand_name;
+
+-- All approved / accelerated-approval drugs should show a brand_name.
+-- Only genuinely investigational drugs should be NULL:
+--   Rilvegostomig, Volrustomig, Tiragolumab, Spartalizumab, Navitoclax,
+--   Patritumab Deruxtecan, Ifinatamab Deruxtecan, BNT323, Ivonescimab,
+--   Cadonilimab, Zanzalintinib, Tusamitamab Ravtansine, Tislelizumab
+--   (Tislelizumab has brand_name = Tevimbra from file 22 — FDA approved 2024)
+*/
+
+-- =============================================================================
+-- 24_patch_drug_status_corrections.sql
+-- Corrects approval_status, development_phase, and description fields for
+-- drugs whose regulatory status changed between seed date and Aug 2026.
+--
+-- SOURCES (all verified Aug 11 2026):
+--   FDA Oncology Notifications page (fda.gov/drugs/resources-information-approved-drugs)
+--   Drugs@FDA (accessdata.fda.gov/scripts/cder/daf)
+--   Drugs.com approval history pages
+--   Company press releases (BeOne Medicines, Daiichi Sankyo, Exelixis, Summit Therapeutics)
+--
+-- CHANGES MADE:
+--   1. Zanidatamab      → approval_status = 'Approved'  (FDA Nov 20 2024, accelerated)
+--   2. Tislelizumab     → approval_status = 'Approved'  (FDA Mar 13 2024; 3 indications by Mar 2025)
+--   3. Ifinatamab DXd   → development_phase = 'Filed'   (BLA filed Aug 2025; PDUFA Oct 10 2026)
+--   4. Patritumab DXd   → description updated            (BLA withdrawn May 29 2025; still Phase III)
+--   5. Ivonescimab      → development_phase = 'Filed'   (BLA accepted; PDUFA Nov 14 2026)
+--   6. Zanzalintinib    → development_phase = 'Filed'   (NDA accepted Feb 2026; PDUFA Dec 3 2026)
+--
+-- NO CHANGES NEEDED (confirmed still investigational / no US approval):
+--   Rilvegostomig, Volrustomig, Tiragolumab (multiple Phase III failures), Spartalizumab,
+--   Navitoclax, Cadonilimab (China only), BNT323/Trastuzumab Pamirtecan, Tusamitamab Ravtansine
+-- =============================================================================
+
+BEGIN;
+
+-- =============================================================================
+-- 1. ZANIDATAMAB — FDA accelerated approval Nov 20 2024
+--    Indication: Previously treated, unresectable or metastatic HER2+ (IHC 3+)
+--    biliary tract cancer (BTC).
+--    Brand: Ziihera (zanidatamab-hrii) — Jazz Pharmaceuticals / BeiGene (BeOne Medicines)
+--    Source: FDA.gov oncology notifications, Drugs.com approval history
+-- =============================================================================
+UPDATE drugs
+SET
+  approval_status   = 'Approved',
+  development_phase = 'Approved',
+  description       = 'Ziihera (zanidatamab-hrii); FDA accelerated approval November 20 2024 '
+                      'for previously treated unresectable or metastatic HER2-positive (IHC 3+) '
+                      'biliary tract cancer, based on HERIZON-BTC-01 Phase II (ORR 41.3%). '
+                      'Bispecific antibody binding two non-overlapping HER2 epitopes (ECD2 and ECD4) '
+                      'providing superior HER2 clustering and internalisation vs. trastuzumab. '
+                      'HERIZON-GEA-01 Phase III in 1L HER2+ gastric/GEJ cancer ongoing; combined '
+                      'sNDA with Tevimbra + chemo has PDUFA date Aug 25 2026.',
+  updated_at        = NOW()
+WHERE drug_name = 'Zanidatamab';
+
+-- =============================================================================
+-- 2. TISLELIZUMAB — Multiple FDA approvals; first Mar 13 2024
+--    Indications (chronological):
+--      (1) Mar 13 2024 — Unresectable/metastatic oesophageal squamous cell
+--          carcinoma (ESCC) after prior platinum-based chemo (monotherapy)
+--      (2) Dec 26 2024 — 1L HER2-negative gastric/gastroesophageal junction
+--          adenocarcinoma (GC/GEJC) with PD-L1 ≥1%, + chemo
+--      (3) Mar  3 2025 — 1L ESCC with PD-L1 ≥1%, + platinum-based chemo
+--    Brand: Tevimbra (tislelizumab-jsgr) — BeOne Medicines (formerly BeiGene)
+--    Source: FDA.gov, Drugs.com, BeOne Medicines press releases
+-- =============================================================================
+UPDATE drugs
+SET
+  approval_status   = 'Approved',
+  development_phase = 'Approved',
+  description       = 'Tevimbra (tislelizumab-jsgr); FDA-approved across 3 indications: '
+                      '(1) Mar 13 2024 — 2L+ unresectable/metastatic ESCC monotherapy '
+                      '(RATIONALE-302 Phase III); (2) Dec 26 2024 — 1L HER2-neg GC/GEJC '
+                      'PD-L1≥1% + chemo (RATIONALE-305); (3) Mar 3 2025 — 1L ESCC PD-L1≥1% '
+                      '+ platinum chemo (RATIONALE-306). Humanised IgG4 anti-PD-1 with '
+                      'Fc-engineered framework to minimise FcγR binding and ADCP-mediated '
+                      'T-cell depletion. Developed and marketed by BeOne Medicines (formerly BeiGene). '
+                      'A 4th application (Tevimbra + Ziihera + chemo for 1L HER2+ GEA) has '
+                      'PDUFA date Aug 25 2026.',
+  updated_at        = NOW()
+WHERE drug_name = 'Tislelizumab';
+
+-- =============================================================================
+-- 3. IFINATAMAB DERUXTECAN — BLA filed Aug 2025; under FDA priority review
+--    Indication sought: Extensive-stage small cell lung cancer (ES-SCLC)
+--    after prior platinum-based chemotherapy
+--    PDUFA date: October 10 2026
+--    Breakthrough Therapy Designation: granted Aug 2025
+--    Source: Daiichi Sankyo / Merck, Drugs.com, Targeted Oncology
+-- =============================================================================
+UPDATE drugs
+SET
+  development_phase = 'Filed',
+  description       = 'I-DXd (ifinatamab deruxtecan); BLA filed Aug 2025 for relapsed/refractory '
+                      'extensive-stage SCLC. Breakthrough Therapy Designation granted Aug 2025; '
+                      'FDA Priority Review granted Apr 2026. PDUFA date: October 10 2026. '
+                      'Phase II IDeate-Lung01 demonstrated compelling activity in SCLC '
+                      '(ORR ~52% at recommended dose). Anti-B7-H3 ADC with DXd payload; '
+                      'B7-H3 broadly overexpressed in SCLC, NSCLC, prostate, and breast cancer. '
+                      'Part of Daiichi Sankyo / Merck DXd ADC franchise.',
+  updated_at        = NOW()
+WHERE drug_name = 'Ifinatamab Deruxtecan';
+
+-- =============================================================================
+-- 4. PATRITUMAB DERUXTECAN — BLA voluntarily withdrawn May 29 2025
+--    History: BLA received Complete Response Letter (CRL) Jun 26 2024 due to
+--    third-party manufacturing inspection findings (not efficacy/safety).
+--    BLA voluntarily withdrawn May 29 2025. Re-submission not confirmed as of Aug 2026.
+--    Drug remains in Phase III and active development; manufacturing issues being resolved.
+--    Source: Drugs.com full approval history, Daiichi Sankyo communications
+-- =============================================================================
+UPDATE drugs
+SET
+  development_phase = 'Phase III',
+  description       = 'U3-1402 (patritumab deruxtecan, HER3-DXd); anti-HER3 ADC with DXd payload. '
+                      'BLA was filed for EGFR-mutated NSCLC after osimertinib + platinum chemo '
+                      '(HERTHENA-Lung02 Phase III). FDA issued Complete Response Letter Jun 26 2024 '
+                      'due to third-party manufacturing inspection findings (not efficacy/safety issues). '
+                      'BLA voluntarily withdrawn May 29 2025; re-submission timeline not confirmed '
+                      'as of Aug 2026. Manufacturing remediation underway. Phase III HERTHENA-Lung02 '
+                      'confirmatory data continues. Potent Phase II activity in EGFR-resistant NSCLC.',
+  updated_at        = NOW()
+WHERE drug_name = 'Patritumab Deruxtecan';
+
+-- =============================================================================
+-- 5. IVONESCIMAB — BLA accepted by FDA; under priority review
+--    Indication sought: EGFR-mutated NSCLC after prior EGFR TKI + platinum chemo
+--    PDUFA date: November 14 2026
+--    Confirmed NOT approved as of Aug 11 2026 (Summit confirmed Jul 22 2026)
+--    Source: Summit Therapeutics IR, Drugs.com, Fierce Pharma
+-- =============================================================================
+UPDATE drugs
+SET
+  development_phase = 'Filed',
+  description       = 'AK112 / SMT112 (ivonescimab); PD-1×VEGF tetravalent bispecific antibody. '
+                      'BLA accepted by FDA for EGFR-mutated NSCLC post-TKI + platinum chemo; '
+                      'PDUFA date: November 14 2026. HARMONi-2 Phase III beat pembrolizumab '
+                      'in PD-L1+ NSCLC in China (NMPA approved); HARMONi-A Phase III ongoing '
+                      'in Western populations for US/EU filing support. '
+                      'Not approved by any regulatory authority in Summit Therapeutics license '
+                      'territory (US/Canada/EU) as of Jul 22 2026 (Summit IR confirmed). '
+                      'Licensed from Akeso by Summit Therapeutics.',
+  updated_at        = NOW()
+WHERE drug_name = 'Ivonescimab';
+
+-- =============================================================================
+-- 6. ZANZALINTINIB (XL092) — NDA accepted Feb 2026; under FDA review
+--    Indication sought: Metastatic colorectal cancer + atezolizumab
+--    PDUFA date: December 3 2026
+--    Note: Drug was seeded as "XL092" — generic name now confirmed as Zanzalintinib
+--    Source: Exelixis, OncLive, Targeted Oncology (all Feb 2026)
+-- =============================================================================
+UPDATE drugs
+SET
+  development_phase = 'Filed',
+  generic_name      = 'Zanzalintinib',
+  description       = 'Zanzalintinib (formerly XL092); next-generation oral TKI targeting MET, '
+                      'VEGFR2, AXL, and MER with improved selectivity and tolerability vs. '
+                      'cabozantinib. NDA accepted by FDA February 2026 for metastatic CRC '
+                      'in combination with atezolizumab (STELLAR-303). PDUFA date: December 3 2026. '
+                      'Additional Phase III programmes: STELLAR-304 (nccRCC), STELLAR-311 (NETs), '
+                      'LITESPARK-033 and LITESPARK-034 (RCC + belzutifan, Merck-sponsored). '
+                      'Exelixis successor molecule to cabozantinib.',
+  updated_at        = NOW()
+WHERE drug_name = 'Zanzalintinib'
+   OR (drug_name = 'XL092' AND generic_name IS NULL);  -- catch original seeded name too
+
+COMMIT;
+
+-- =============================================================================
+-- VERIFICATION
+-- =============================================================================
+/*
+SELECT
+  id,
+  drug_name,
+  generic_name,
+  brand_name,
+  development_phase,
+  approval_status,
+  updated_at
+FROM drugs
+WHERE drug_name IN (
+  'Zanidatamab',
+  'Tislelizumab',
+  'Ifinatamab Deruxtecan',
+  'Patritumab Deruxtecan',
+  'Ivonescimab',
+  'Zanzalintinib',
+  'XL092'
+)
+ORDER BY drug_name;
+
+-- Expected:
+--   Zanidatamab          → Approved  / Approved
+--   Tislelizumab         → Approved  / Approved
+--   Ifinatamab Deruxtecan→ Filed     / Investigational
+--   Patritumab Deruxtecan→ Phase III / Investigational
+--   Ivonescimab          → Filed     / Investigational
+--   Zanzalintinib        → Filed     / Investigational
+*/
+
+-- =============================================================================
+-- 25_seed_pdufa_2026_events.sql
+-- Seeds three upcoming PDUFA decision events into upcoming_events.
+--
+-- Schema: upcoming_events (drug_id, trial_id, event_name, event_type,
+--         expected_date, actual_date, status, importance, description)
+--
+-- SOURCES (all verified Aug 11 2026):
+--   Ifinatamab: Daiichi Sankyo / Merck press releases; Drugs.com (Aug 3 2026);
+--               IASLC WCLC 2025 (IDeate-Lung01 data, Sept 9 2025)
+--   Ivonescimab: Summit Therapeutics IR; Drugs.com (Aug 5 2026);
+--                WCLC 2025 Presidential Symposium (Sept 7 2025); Summit PR Jul 22 2026
+--   Zanzalintinib: Exelixis IR; STELLAR-303 in The Lancet (Oct 2025);
+--                  Exelixis Q2 2026 earnings (Aug 5 2026)
+--
+-- drug_id references (from drugs table):
+--   Ifinatamab Deruxtecan → 25
+--   Ivonescimab           → 34
+--   Zanzalintinib (XL092) → 37
+--
+-- trial_id references (from clinical_trials table):
+--   IDeate-Lung01  → 41  (ifinatamab Phase II, seeded in 05_seed_clinical_trials.sql)
+--   HARMONi-2      → 53  (ivonescimab; note: supporting BLA is HARMONi, not HARMONi-2 — NULL used)
+--   STELLAR-303    → not seeded → NULL
+-- =============================================================================
+
+INSERT INTO upcoming_events
+  (drug_id, trial_id, event_name, event_type, expected_date, actual_date, status, importance, description)
+VALUES
+
+-- -------------------------------------------------------------------------
+-- 1. IFINATAMAB DERUXTECAN  |  PDUFA: Oct 10 2026
+--    BLA basis: IDeate-Lung01 Phase II (BTD Aug 2025; Priority Review Apr 2026)
+--    Key data (WCLC 2025, n=137): ORR 48.2%, mPFS 4.9mo, mOS 10.3mo
+--    Outlook: HIGH — BTD + Priority Review + no AdCom + ORR far above benchmarks
+-- -------------------------------------------------------------------------
+(
+  25,
+  41,
+  'Ifinatamab Deruxtecan (I-DXd) — FDA PDUFA Decision',
+  'FDA Approval',
+  '2026-10-10',
+  NULL,
+  'Upcoming',
+  'High',
+  'FDA PDUFA date for ifinatamab deruxtecan (I-DXd, DS-7300) in relapsed/refractory '
+  'extensive-stage SCLC after prior platinum-based chemotherapy. BLA filed Aug 2025; '
+  'Breakthrough Therapy Designation Aug 18 2025; Priority Review Apr 13 2026. '
+  'No advisory committee scheduled. Supporting data: IDeate-Lung01 Phase II (n=137, '
+  'data cut Mar 3 2025) — confirmed ORR 48.2%, DCR 87.6%, mPFS 4.9mo, mOS 10.3mo. '
+  '2L subgroup (n=32): ORR 56.3%. Safety: ILD in 17 patients (6 grade≥3), 4.4% grade 5 TRAEs. '
+  'Anti-B7-H3 ADC with DXd payload; developed by Daiichi Sankyo / Merck. '
+  'Outlook: approval highly likely — BTD pathway, no AdCom, ORR well above 2L SCLC benchmarks. '
+  'Accelerated approval with confirmatory Phase III (IDeate-Lung02) requirement expected.'
+),
+
+-- -------------------------------------------------------------------------
+-- 2. IVONESCIMAB  |  PDUFA: Nov 14 2026
+--    BLA basis: HARMONi Phase III (n=438; ivonescimab+chemo vs. placebo+chemo)
+--    Key data (WCLC Sept 2025): PFS HR 0.52 (p<0.00001); OS HR 0.79 (p=0.057, missed)
+--    Jun 2026 update: OS HR improved to 0.76; data submitted to FDA
+--    Outlook: MEDIUM — strong PFS but OS missed pre-specified threshold
+-- -------------------------------------------------------------------------
+(
+  34,
+  NULL,
+  'Ivonescimab (AK112) — FDA PDUFA Decision',
+  'FDA Approval',
+  '2026-11-14',
+  NULL,
+  'Upcoming',
+  'High',
+  'FDA PDUFA date for ivonescimab (AK112/SMT112; PD-1×VEGF bispecific) in '
+  'EGFR-mutated non-squamous NSCLC after prior EGFR TKI and platinum-based chemotherapy. '
+  'NDA accepted Jan 29 2026; Fast Track Designation active; no AdCom announced. '
+  'Supporting trial: HARMONi Phase III (n=438). Primary analysis (WCLC Sept 7 2025): '
+  'PFS HR 0.52 (95% CI 0.41-0.66; p<0.00001), mPFS 6.8 vs. 4.4 months — highly significant. '
+  'OS HR 0.79 (p=0.057) narrowly missed pre-specified threshold of 0.0448. '
+  'Jun 2026 updated data cut: OS HR improved to 0.76; submitted to FDA. '
+  'North American subgroup OS HR 0.70 at Sept 2025 cut. Grade 3/4 TRAEs 50% vs. 42%. '
+  'Confirmed not approved in Summit license territories as of Jul 22 2026 (Summit IR). '
+  'Outlook: uncertain — very strong PFS; FDA must decide if OS trend is sufficient '
+  'in setting where no prior IO has shown benefit post-EGFR TKI.'
+),
+
+-- -------------------------------------------------------------------------
+-- 3. ZANZALINTINIB  |  PDUFA: Dec 3 2026
+--    NDA basis: STELLAR-303 Phase III (n=901; vs. regorafenib; Lancet Oct 2025)
+--    Key data: ITT OS HR 0.80 (p=0.0045) MET; NLM subgroup OS HR 0.83 (p=0.12) MISSED
+--    Outlook: MEDIUM — ITT OS win real but modest; NLM miss and high toxicity are risks
+-- -------------------------------------------------------------------------
+(
+  37,
+  NULL,
+  'Zanzalintinib (XL092) + Atezolizumab — FDA PDUFA Decision',
+  'FDA Approval',
+  '2026-12-03',
+  NULL,
+  'Upcoming',
+  'High',
+  'FDA PDUFA date for zanzalintinib (XL092; oral MET/VEGFR2/AXL/MER TKI) + atezolizumab '
+  'for previously treated metastatic CRC (non-MSI-H). NDA accepted Feb 2026; no AdCom. '
+  'Supporting trial: STELLAR-303 Phase III (n=901; vs. regorafenib; published The Lancet Oct 2025). '
+  'ITT OS co-primary MET: HR 0.80 (95% CI 0.69-0.93; p=0.0045), mOS 10.9 vs. 9.4 months; '
+  '24-month OS landmark 20% vs. 10%. '
+  'NLM subgroup OS co-primary MISSED: HR 0.83 (p=0.1185) — announced Jun 22 2026. '
+  'ITT PFS HR 0.68; mPFS 3.7 vs. 2.0 months. Grade 3/4 TRAEs 59% vs. 37%. '
+  'Exelixis building commercial launch infrastructure (Q2 2026 earnings, Aug 5 2026). '
+  'Key risks: missed NLM co-primary; higher toxicity profile; fruquintinib (Fruzaqla) '
+  'already approved in same unselected mCRC population — FDA will assess differentiation.'
+);

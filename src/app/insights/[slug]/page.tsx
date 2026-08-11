@@ -51,9 +51,14 @@ export default async function InsightDetailPage({ params }: InsightDetailPagePro
   // 2. Fetch Top Drugs
   const { data: topDrugs, error: drugsError } = await supabase
     .from('cancer_top_drugs')
-    .select('*')
+    .select('*, drugs(brand_name)')
     .eq('cancer_type_slug', slug)
     .order('rank', { ascending: true });
+
+  const mappedTopDrugs = topDrugs?.map(d => ({
+    ...d,
+    brand_name: d.drugs?.brand_name || d.brand_name
+  })) || [];
 
   if (drugsError) {
     console.error('Error fetching top drugs:', drugsError);
@@ -76,7 +81,7 @@ export default async function InsightDetailPage({ params }: InsightDetailPagePro
         <h1 className="text-3xl font-bold text-brand-navy">{overview.cancer_type}</h1>
       </div>
 
-      <ExecutiveOverview overview={overview} topDrugs={topDrugs || []} />
+      <ExecutiveOverview overview={overview} topDrugs={mappedTopDrugs} />
 
       {/* Patient Landscape — full width for the narrative to breathe */}
       <CancerEpidemiology overview={overview} />
@@ -87,7 +92,7 @@ export default async function InsightDetailPage({ params }: InsightDetailPagePro
         <DiseaseLandscape overview={overview} />
       </div>
 
-      <MarketLeaders topDrugs={topDrugs || []} />
+      <MarketLeaders topDrugs={mappedTopDrugs} />
 
     </div>
   );

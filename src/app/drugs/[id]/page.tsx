@@ -6,6 +6,7 @@ import { StatusBadge } from '@/components/ui/StatusBadge';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import { AIChatbot } from '@/components/chat/AIChatbot';
+import { PdfViewerButton } from '@/components/ui/PdfViewerButton';
 import { 
   ArrowLeft, Crosshair, FlaskConical, Hash, 
   CalendarClock, Activity, CheckCircle2, XCircle,
@@ -198,7 +199,14 @@ export default async function DrugDetailsPage({ params }: { params: { id: string
             </CardContent>
           </Card>
 
-
+          {drug.pi_link && (
+            <PdfViewerButton 
+              url={drug.pi_link}
+              drugName={drug.drug_name}
+              brandName={drug.brand_name}
+              companyName={drug.company?.company_name}
+            />
+          )}
         </div>
       </div>
       <AIChatbot entityType="drug" entityName={drug.drug_name} contextPayload={drug} />

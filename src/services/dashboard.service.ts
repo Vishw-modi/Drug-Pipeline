@@ -1,43 +1,42 @@
 import { createClient as createServerClient } from '@/lib/supabase/server';
+import { cache } from 'react';
 import { DashboardSummary, ChartDataCount } from '@/types/dashboard';
 import { UpcomingEvent, DrugUpdate } from '@/types/event';
 
-const buildDrugQuery = (supabase: any, filters?: Record<string, string>, ignoreFilter?: string) => {
-  let selectStr = '*, companies!inner(company_name), drug_indications!inner(therapeutic_area, indication, cancer_type)';
+const getCachedDrugs = cache(async (filtersStr: string): Promise<any[]> => {
+  const supabase = await createServerClient();
+  const filters = filtersStr ? JSON.parse(filtersStr) : undefined;
+  
+  let selectStr = 'id, drug_name, development_phase, approval_status, molecule_type, target, companies!inner(company_name), drug_indications!inner(therapeutic_area, indication, cancer_type)';
   let query = supabase.from('drugs').select(selectStr);
 
   if (filters) {
-    if (filters.drug && ignoreFilter !== 'drug') query = query.eq('drug_name', filters.drug);
-    if (filters.developmentPhase && ignoreFilter !== 'developmentPhase') query = query.eq('development_phase', filters.developmentPhase);
-    if (filters.moleculeType && ignoreFilter !== 'moleculeType') query = query.eq('molecule_type', filters.moleculeType);
-    if (filters.sponsor && ignoreFilter !== 'sponsor') query = query.eq('companies.company_name', filters.sponsor);
-    if (filters.therapeuticArea && ignoreFilter !== 'therapeuticArea') query = query.eq('drug_indications.therapeutic_area', filters.therapeuticArea);
-    if (filters.indication && ignoreFilter !== 'indication') query = query.eq('drug_indications.indication', filters.indication);
-    if (filters.cancerType && ignoreFilter !== 'cancerType') query = query.eq('drug_indications.cancer_type', filters.cancerType);
+    if (filters.drug) query = query.eq('drug_name', filters.drug);
+    if (filters.developmentPhase) query = query.eq('development_phase', filters.developmentPhase);
+    if (filters.moleculeType) query = query.eq('molecule_type', filters.moleculeType);
+    if (filters.sponsor) query = query.eq('companies.company_name', filters.sponsor);
+    if (filters.therapeuticArea) query = query.eq('drug_indications.therapeutic_area', filters.therapeuticArea);
+    if (filters.indication) query = query.eq('drug_indications.indication', filters.indication);
+    if (filters.cancerType) query = query.eq('drug_indications.cancer_type', filters.cancerType);
   }
-  return query;
-};
-
-// Deduplicate rows since inner joining drug_indications might return multiple rows per drug
-const deduplicateDrugs = (data: any[]) => {
+  
+  const { data, error } = await query;
+  if (error || !data) return [];
+  
   const seen = new Set();
-  return data.filter(d => {
+  return data.filter((d: any) => {
     if (seen.has(d.id)) return false;
     seen.add(d.id);
     return true;
   });
-};
+});
 
 export async function getDashboardSummary(filters?: Record<string, string>): Promise<DashboardSummary> {
-  const supabase = await createServerClient();
-  const query = buildDrugQuery(supabase, filters);
-  const { data: rawDrugs, error } = await query;
+  const drugs = await getCachedDrugs(filters ? JSON.stringify(filters) : '');
   
-  if (error || !rawDrugs) {
+  if (!drugs || drugs.length === 0) {
     return { total_pipeline_drugs: 0, early_stage: 0, mid_stage: 0, late_stage: 0, approved: 0 };
   }
-
-  const drugs = deduplicateDrugs(rawDrugs);
 
   let early = 0, mid = 0, late = 0, approved = 0;
   drugs.forEach(d => {
@@ -57,11 +56,8 @@ export async function getDashboardSummary(filters?: Record<string, string>): Pro
 }
 
 export async function getPipelineByPhase(filters?: Record<string, string>): Promise<ChartDataCount[]> {
-  const supabase = await createServerClient();
-  const { data: rawDrugs } = await buildDrugQuery(supabase, filters);
-  if (!rawDrugs) return [];
-
-  const drugs = deduplicateDrugs(rawDrugs);
+  const drugs = await getCachedDrugs(filters ? JSON.stringify(filters) : '');
+  if (!drugs) return [];
   const counts: Record<string, number> = {};
   drugs.forEach(d => {
     const phase = d.development_phase || 'Unknown';
@@ -72,9 +68,8 @@ export async function getPipelineByPhase(filters?: Record<string, string>): Prom
 }
 
 export async function getPipelineByCancerType(filters?: Record<string, string>): Promise<ChartDataCount[]> {
-  const supabase = await createServerClient();
-  const { data: rawDrugs } = await buildDrugQuery(supabase, filters);
-  if (!rawDrugs) return [];
+  const drugs = await getCachedDrugs(filters ? JSON.stringify(filters) : '');
+  if (!drugs) return [];
 
   const cancerData: Record<string, {
     count: number;
@@ -84,7 +79,7 @@ export async function getPipelineByCancerType(filters?: Record<string, string>):
     drugsSet: Set<number>;
   }> = {};
 
-  rawDrugs.forEach((d: any) => {
+  drugs.forEach((d: any) => {
     const cancerTypes = Array.isArray(d.drug_indications) ? d.drug_indications : [d.drug_indications];
     cancerTypes.forEach((ind: any) => {
       if (ind && ind.cancer_type) {
@@ -154,11 +149,9 @@ export async function getPipelineByCancerType(filters?: Record<string, string>):
 }
 
 export async function getPipelineByMoleculeType(filters?: Record<string, string>): Promise<ChartDataCount[]> {
-  const supabase = await createServerClient();
-  const { data: rawDrugs } = await buildDrugQuery(supabase, filters);
-  if (!rawDrugs) return [];
+  const drugs = await getCachedDrugs(filters ? JSON.stringify(filters) : '');
+  if (!drugs) return [];
 
-  const drugs = deduplicateDrugs(rawDrugs);
   const counts: Record<string, number> = {};
   drugs.forEach(d => {
     const type = d.molecule_type || 'Unknown';
@@ -169,12 +162,9 @@ export async function getPipelineByMoleculeType(filters?: Record<string, string>
 }
 
 export async function getPipelineBySponsor(filters?: Record<string, string>): Promise<ChartDataCount[]> {
-  const supabase = await createServerClient();
-  const { data: rawDrugs } = await buildDrugQuery(supabase, filters);
-  if (!rawDrugs) return [];
+  const drugs = await getCachedDrugs(filters ? JSON.stringify(filters) : '');
+  if (!drugs) return [];
 
-  const drugs = deduplicateDrugs(rawDrugs);
-  
   const sponsorData: Record<string, {
     count: number;
     phases: Record<string, number>;
@@ -257,7 +247,7 @@ export async function getPipelineBySponsor(filters?: Record<string, string>): Pr
 export async function getUpcomingCatalysts(filters?: Record<string, string>, limit = 100): Promise<UpcomingEvent[]> {
   // To filter catalysts, we need to apply filters on the related drug
   const supabase = await createServerClient();
-  const { data: validDrugs } = await buildDrugQuery(supabase, filters);
+  const validDrugs = await getCachedDrugs(filters ? JSON.stringify(filters) : '');
   const validDrugIds = validDrugs ? Array.from(new Set(validDrugs.map((d: any) => d.id))) : [];
 
   let query = supabase.from('upcoming_events')
@@ -294,7 +284,7 @@ export async function getUpcomingCatalysts(filters?: Record<string, string>, lim
 
 export async function getRecentUpdates(filters?: Record<string, string>): Promise<DrugUpdate[]> {
   const supabase = await createServerClient();
-  const { data: validDrugs } = await buildDrugQuery(supabase, filters);
+  const validDrugs = await getCachedDrugs(filters ? JSON.stringify(filters) : '');
   const validDrugIds = validDrugs ? Array.from(new Set(validDrugs.map((d: any) => d.id))) : [];
 
   let query = supabase.from('drug_updates')
