@@ -21,6 +21,7 @@ export interface Drug {
   j_code?: string | null;
   j_code_description?: string | null;
   ndc_code?: string | null;
+  pi_link?: string | null;
   created_at: string;
   updated_at: string;
   

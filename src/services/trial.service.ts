@@ -13,7 +13,7 @@ export async function getPipelineWithTrials(): Promise<any[]> {
   
   const { data, error } = await supabase
     .from('drugs')
-    .select('*, companies!inner(company_name), drug_indications(cancer_type), clinical_trials(id, status), cancer_top_drugs(brand_name)');
+    .select('*, companies!inner(company_name), drug_indications(cancer_type), clinical_trials(id, status)');
 
   if (error || !data) {
     console.error('Error fetching pipeline with trials:', error);
@@ -31,7 +31,6 @@ export async function getPipelineWithTrials(): Promise<any[]> {
   return deduplicated.map((d: any) => ({
     ...d,
     company: d.companies?.company_name || 'Unknown',
-    brand_name: d.cancer_top_drugs && d.cancer_top_drugs.length > 0 ? d.cancer_top_drugs[0].brand_name : null,
     cancer_type: d.drug_indications && d.drug_indications.length > 0 
       ? d.drug_indications[0].cancer_type 
       : 'N/A',

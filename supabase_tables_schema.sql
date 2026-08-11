@@ -568,3 +568,46 @@ CREATE TABLE IF NOT EXISTS cancer_top_drugs (
   created_at                  TIMESTAMPTZ     DEFAULT NOW(),
   UNIQUE (cancer_type_slug, rank)
 );
+
+-- =============================================================================
+-- 18_alter_drugs_add_pi_link.sql
+-- Adds a pi_link column to the drugs table.
+--
+-- pi_link stores the direct URL to the FDA-approved Prescribing Information (PI)
+-- PDF for each approved drug. For investigational drugs the column is NULL.
+--
+-- URL source: DailyMed (dailymed.nlm.nih.gov) getFile API
+--   Pattern: https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid={SETID}&type=pdf
+--   The setid is permanent and the endpoint always serves the current label,
+--   so these URLs do not go stale when new supplements are published.
+--
+-- PI links are populated in subsequent patch files (19_..., 20_..., etc.)
+-- =============================================================================
+
+ALTER TABLE drugs
+  ADD COLUMN IF NOT EXISTS pi_link TEXT;
+
+COMMENT ON COLUMN drugs.pi_link IS
+  'Direct URL to the FDA-approved Prescribing Information (PI) PDF via DailyMed. '
+  'NULL for investigational drugs that have not yet received FDA approval. '
+  'URL pattern: https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid={SETID}&type=pdf';
+
+  -- =============================================================================
+-- 21_alter_drugs_add_brand_name.sql
+-- Adds a brand_name column to the drugs table.
+--
+-- Design note: brand_name is a direct attribute of the drug entity and belongs
+-- in this table alongside drug_name (generic). Storing it here avoids joins
+-- and simplifies every query that needs to display the drug by its market name.
+--
+-- NULL for investigational drugs that have not yet received a confirmed brand name.
+-- Brand names populated in 22_update_drugs_brand_names.sql.
+-- =============================================================================
+
+ALTER TABLE drugs
+  ADD COLUMN IF NOT EXISTS brand_name VARCHAR(100);
+
+COMMENT ON COLUMN drugs.brand_name IS
+  'FDA-approved or internationally recognised commercial brand name '
+  '(e.g. Keytruda, Tagrisso). NULL for investigational drugs without '
+  'a confirmed brand name.';
