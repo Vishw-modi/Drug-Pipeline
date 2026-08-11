@@ -63,7 +63,6 @@ RULES:
       system: systemPrompt,
       messages: coreMessages,
       temperature,
-      maxTokens,
     });
 
     return result.toUIMessageStreamResponse();
