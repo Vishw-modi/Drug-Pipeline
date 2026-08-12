@@ -3247,3 +3247,198 @@ VALUES
   'Key risks: missed NLM co-primary; higher toxicity profile; fruquintinib (Fruzaqla) '
   'already approved in same unselected mCRC population — FDA will assess differentiation.'
 );
+
+
+-- =============================================================================
+-- 27_update_drugs_pi_links_batch3.sql
+-- Adds DailyMed PI (Prescribing Information) PDF links for 14 approved drugs
+-- that were missing pi_link after batch1 (19) and batch2 (20) were applied.
+--
+-- Run AFTER: 18_alter_drugs_add_pi_link.sql (column must exist)
+--
+-- SOURCE: DailyMed NLM REST API — setids verified Aug 12 2026
+--   Query pattern: GET https://dailymed.nlm.nih.gov/dailymed/services/v2/spls.json
+--                      ?drug_name=<NAME>&labeltype=prescription
+--   PDF URL pattern: https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=<SETID>&type=pdf
+--
+-- SETIDS ARE PERMANENT: DailyMed setids do not change when new supplements
+-- are filed; only the spl_version increments. These links will always resolve
+-- to the current approved label.
+--
+-- DRUGS COVERED:
+--   1.  Zanidatamab         (Ziihera)    — setid ae5d9425-fae5-4541-a158-150998343348
+--   2.  Tislelizumab        (Tevimbra)   — setid 08ef1e3e-496f-4b0b-94ee-fbba3cc1985a
+--   3.  Datopotamab DXd     (Datroway)   — setid 2950227c-6230-4ca4-a135-46e44d9424a0
+--   4.  Imlunestrant        (Inluriyo)   — setid 5bc172e4-e8a2-441a-be52-279a7f890196
+--   5.  Lurbinectedin       (Zepzelca)   — setid 632bb50c-3bcb-4c85-9056-fc33410550ae
+--   6.  Telisotuzumab VDT   (Emrelis)    — setid bc04f980-3957-4e35-ab81-8ec2ffe87215
+--   7.  Linvoseltamab       (Lynozyfic)  — setid e9fd0739-1b3f-4b8b-824a-1f0a902384d3
+--   8.  Zongertinib         (Hernexeos)  — setid d3fabf12-354e-4e5c-b5de-20fdb579b783
+--   9.  Vepdegestrant       (Veppanu)    — setid 751e18d5-1d41-4b67-b1f3-10272ca5312d
+--  10.  Gedatolisib         (Revtorpyk)  — setid 959d73ef-831f-4005-956c-210702270bda
+--  11.  Sonrotoclax         (Beqalzi)    — NULL (DailyMed not yet indexed as of Aug 12 2026)
+--  12.  Sevabertinib        (Hyrnuo)     — setid d7a11334-6e7a-445b-9a16-bdcd9acbe61f
+--  13.  Penpulimab          (Zynyz)      — setid 830004e8-31af-4cc6-ab16-e870cab1c5ca
+--  14.  Darolutamide        (Nubeqa)     — setid 1a7cb212-56e4-4b9d-a73d-bfee7fe4735e
+-- =============================================================================
+
+BEGIN;
+
+-- ---------------------------------------------------------------------------
+-- 1. Zanidatamab / Ziihera — Jazz Pharmaceuticals / BeiGene
+--    FDA accelerated approval: Nov 20 2024 (HER2+ biliary tract cancer)
+--    setid verified Aug 12 2026 via DailyMed API (drug_name=zanidatamab)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=ae5d9425-fae5-4541-a158-150998343348&type=pdf'
+WHERE drug_name = 'Zanidatamab';
+
+-- ---------------------------------------------------------------------------
+-- 2. Tislelizumab / Tevimbra — BeOne Medicines (formerly BeiGene)
+--    FDA approvals: Mar 2024 (ESCC); Dec 2024 (GC/GEJC); Mar 2025 (1L ESCC)
+--    setid verified Aug 12 2026 via DailyMed API (drug_name=tislelizumab)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=08ef1e3e-496f-4b0b-94ee-fbba3cc1985a&type=pdf'
+WHERE drug_name = 'Tislelizumab';
+
+-- ---------------------------------------------------------------------------
+-- 3. Datopotamab Deruxtecan / Datroway — Daiichi Sankyo / AstraZeneca
+--    FDA approval: Jan 17 2025 (HR+/HER2- mBC); Jun 23 2025 (EGFR-mut NSCLC)
+--    setid verified Aug 12 2026 via DailyMed API (drug_name=datopotamab+deruxtecan)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=2950227c-6230-4ca4-a135-46e44d9424a0&type=pdf'
+WHERE drug_name = 'Datopotamab Deruxtecan';
+
+-- ---------------------------------------------------------------------------
+-- 4. Imlunestrant / Inluriyo — Eli Lilly
+--    FDA approval: Sep 25 2025 (ER+/HER2-, ESR1-mutated advanced breast cancer)
+--    setid verified Aug 12 2026 via DailyMed API (drug_name=imlunestrant)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=5bc172e4-e8a2-441a-be52-279a7f890196&type=pdf'
+WHERE drug_name = 'Imlunestrant';
+
+-- ---------------------------------------------------------------------------
+-- 5. Lurbinectedin / Zepzelca — PharmaMar / Jazz Pharmaceuticals
+--    FDA approvals: Jun 2020 (2L+ SCLC monotherapy); Oct 2025 (1L SCLC + atezo)
+--    setid verified Aug 12 2026 via DailyMed API (drug_name=lurbinectedin)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=632bb50c-3bcb-4c85-9056-fc33410550ae&type=pdf'
+WHERE drug_name = 'Lurbinectedin';
+
+-- ---------------------------------------------------------------------------
+-- 6. Telisotuzumab Vedotin / Emrelis — AbbVie
+--    FDA accelerated approval: May 14 2025 (c-Met-overexpressing EGFR-wt NSCLC)
+--    setid verified Aug 12 2026 via DailyMed API (drug_name=telisotuzumab+vedotin)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=bc04f980-3957-4e35-ab81-8ec2ffe87215&type=pdf'
+WHERE drug_name = 'Telisotuzumab Vedotin';
+
+-- ---------------------------------------------------------------------------
+-- 7. Linvoseltamab / Lynozyfic — Regeneron
+--    FDA accelerated approval: Jul 2 2025 (R/R multiple myeloma, 3+ prior lines)
+--    setid verified Aug 12 2026 via DailyMed API (drug_name=linvoseltamab)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=e9fd0739-1b3f-4b8b-824a-1f0a902384d3&type=pdf'
+WHERE drug_name = 'Linvoseltamab';
+
+-- ---------------------------------------------------------------------------
+-- 8. Zongertinib / Hernexeos — Boehringer Ingelheim
+--    FDA accelerated approval: Aug 8 2025 (HER2 TKD-mutated non-squamous NSCLC)
+--    setid verified Aug 12 2026 via DailyMed API (drug_name=zongertinib)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=d3fabf12-354e-4e5c-b5de-20fdb579b783&type=pdf'
+WHERE drug_name = 'Zongertinib';
+
+-- ---------------------------------------------------------------------------
+-- 9. Vepdegestrant / Veppanu — Pfizer / Arvinas
+--    FDA approval: May 1 2026 (ER+/HER2-, ESR1-mutated advanced breast cancer)
+--    First approved PROTAC oncology drug globally
+--    setid: Arvinas originator label (spl_version 2, May 20 2026)
+--    Note: A second entry under Rigel Pharmaceuticals also exists (484e21ba);
+--    using Arvinas setid as the originator/NDA holder
+--    setid verified Aug 12 2026 via DailyMed API (drug_name=vepdegestrant)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=751e18d5-1d41-4b67-b1f3-10272ca5312d&type=pdf'
+WHERE drug_name = 'Vepdegestrant';
+
+-- ---------------------------------------------------------------------------
+-- 10. Gedatolisib / Revtorpyk — Pfizer
+--     FDA approval: Jul 14 2026 (HR+/HER2- advanced BC, PIK3CA-wildtype)
+--     setid verified Aug 12 2026 via DailyMed API (drug_name=gedatolisib)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=959d73ef-831f-4005-956c-210702270bda&type=pdf'
+WHERE drug_name = 'Gedatolisib';
+
+-- ---------------------------------------------------------------------------
+-- 11. Sonrotoclax / Beqalzi — BeOne Medicines (formerly BeiGene)
+--     FDA accelerated approval: May 13 2026 (R/R mantle cell lymphoma)
+--     pi_link: NULL — DailyMed returned 0 results for both "sonrotoclax" and
+--     "beqalzi" as of Aug 12 2026. Label indexing lag post-approval is common
+--     for recently approved drugs. Re-run once indexed:
+--       Query: GET https://dailymed.nlm.nih.gov/dailymed/services/v2/spls.json
+--                   ?drug_name=beqalzi&labeltype=prescription
+--       Then: UPDATE drugs SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=<SETID>&type=pdf'
+--             WHERE drug_name = 'Sonrotoclax';
+-- ---------------------------------------------------------------------------
+-- No UPDATE for Sonrotoclax — pi_link remains NULL until DailyMed indexes the label.
+
+-- ---------------------------------------------------------------------------
+-- 12. Sevabertinib / Hyrnuo — Bayer
+--     FDA accelerated approval: Nov 19 2025 (HER2 TKD-mutated non-squamous NSCLC)
+--     setid verified Aug 12 2026 via DailyMed API (drug_name=sevabertinib)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=d7a11334-6e7a-445b-9a16-bdcd9acbe61f&type=pdf'
+WHERE drug_name = 'Sevabertinib';
+
+-- ---------------------------------------------------------------------------
+-- 13. Penpulimab / Zynyz — Akeso
+--     FDA approval: Apr 23 2025 (non-keratinizing nasopharyngeal carcinoma)
+--     setid verified Aug 12 2026 via DailyMed API (drug_name=penpulimab)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=830004e8-31af-4cc6-ab16-e870cab1c5ca&type=pdf'
+WHERE drug_name = 'Penpulimab';
+
+-- ---------------------------------------------------------------------------
+-- 14. Darolutamide / Nubeqa — Bayer / Orion
+--     FDA approvals: Jul 2019 (nmCRPC); Sep 2022 (mCRPC); Jun 3 2025 (mCSPC)
+--     setid verified Aug 12 2026 via DailyMed API (drug_name=darolutamide)
+-- ---------------------------------------------------------------------------
+UPDATE drugs
+SET pi_link = 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=1a7cb212-56e4-4b9d-a73d-bfee7fe4735e&type=pdf'
+WHERE drug_name = 'Darolutamide';
+
+COMMIT;
+
+-- =============================================================================
+-- VERIFICATION — confirm pi_link is now populated for these 14 drugs
+-- =============================================================================
+/*
+SELECT
+  drug_name,
+  brand_name,
+  pi_link,
+  approval_status
+FROM drugs
+WHERE drug_name IN (
+  'Zanidatamab', 'Tislelizumab', 'Datopotamab Deruxtecan', 'Imlunestrant',
+  'Lurbinectedin', 'Telisotuzumab Vedotin', 'Linvoseltamab', 'Zongertinib',
+  'Vepdegestrant', 'Gedatolisib', 'Sonrotoclax', 'Sevabertinib',
+  'Penpulimab', 'Darolutamide'
+)
+ORDER BY drug_name;
+
+-- Expected:
+--   13 drugs with pi_link populated (DailyMed PDF URL)
+--   Sonrotoclax → pi_link = NULL (pending DailyMed indexing)
+*/
