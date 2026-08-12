@@ -4,6 +4,7 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import { Topbar } from '@/components/layout/Topbar';
 import { DashboardFilterProvider } from '@/context/DashboardFilterContext';
 import { ThemeProvider } from '@/providers/ThemeProvider';
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
   title: 'DRUGSCAPE',
@@ -21,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased min-h-screen bg-background text-foreground" suppressHydrationWarning>
+          <Analytics />
         <ThemeProvider>
           <DashboardFilterProvider>
             <div className="flex h-screen overflow-hidden">
