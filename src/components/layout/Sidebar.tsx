@@ -124,8 +124,7 @@ export function Sidebar() {
           {!isCollapsed && <p className="px-3 text-xs font-semibold text-muted uppercase tracking-wider mb-2">Resources</p>}
           <div className="space-y-1">
             {[
-              { route: '/reports', icon: FileText, label: 'Reports' },
-              { route: '/glossary', icon: BookOpen, label: 'Glossary' }
+              { route: '/reports', icon: FileText, label: 'Reports' }
             ].map(({ route, icon: Icon, label }) => (
               <Link 
                 key={route}
